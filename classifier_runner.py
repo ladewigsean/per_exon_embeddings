@@ -659,7 +659,7 @@ def run_hpo_mode(train_dataset,wandb_project,wandb_entity,hpo_metric="weighted a
             
         }
         if nn_model == "Transformer":
-            trial_params["nhead"] = trial.suggest_categorical("nhead", [2, 4, 6])#,8
+            trial_params["nhead"] = trial.suggest_categorical("nhead", [2, 4, 8])#,8
             trial_params["dim_feedforward"] = trial.suggest_categorical("dim_feedforward", [1024,1536, 2048 ])#, 4096
             trial_params["num_layers_transformer"] = trial.suggest_categorical("num_layers_transformer", [1,2,3])#, 4
 
