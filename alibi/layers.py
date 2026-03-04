@@ -21,12 +21,12 @@ class FeedForward(nn.Module):
 
 
 class ALiBiTransformerLayer(nn.Module):
-    def __init__(self, config: ALiBiConfig) -> None:
+    def __init__(self, config: ALiBiConfig,device) -> None:
         super().__init__()
         self.ffn_norm = nn.LayerNorm(config.d_model)
         self.attn_norm = nn.LayerNorm(config.d_model)
         self.ffn = FeedForward(config)
-        self.attn = ALiBiMultiHeadAttention(config)
+        self.attn = ALiBiMultiHeadAttention(config,device=device)
 
     def forward(self, x: torch.tensor) -> torch.tensor:
         x = x + self.attn(self.attn_norm(x))

@@ -213,21 +213,21 @@ class PositionalEncoding(nn.Module):
     https://pytorch.org/tutorials/beginner/transformer_tutorial.html
     """
 
-    def __init__(self, d_model, max_length=5000, dropout=0.1):
+    def __init__(self, d_model,device, max_length=5000, dropout=0.1,factor = 0.01):
         super().__init__()
         self.dropout = nn.Dropout(p=dropout)
 
-        pe = torch.zeros(max_length, d_model,dtype=torch.float16)
-        position = torch.arange(0, max_length, dtype=torch.float16).unsqueeze(1)
+        pe = torch.zeros(max_length, d_model,dtype=torch.float16,device=device)
+        position = torch.arange(0, max_length, dtype=torch.float16,device=device).unsqueeze(1)
         div_term = torch.exp(
-            torch.arange(0, d_model, 2,dtype=torch.float16)
+            torch.arange(0, d_model, 2,dtype=torch.float16,device=device)
             * (-math.log(10000.0) / d_model)
         )
         pe[:, 0::2] = torch.sin(position * div_term)
         pe[:, 1::2] = torch.cos(position * div_term)
         pe = pe.unsqueeze(0)
         #print(pe.shape) --> torch.Size([1, 28, 1024])
-        
+        pe = pe * factor
         self.register_buffer("pe", pe)
 
     def forward(self, x):
@@ -320,7 +320,7 @@ def gen_pad_mask(max_length,lengths,device,dtype= torch.float16):
         padding_mask = torch.cat([padding_mask,row.unsqueeze(0)])
     return padding_mask
 def gen_pad_mask_bool(max_length,lengths,device):
-
+    
     """
     padding_mask = torch.empty((0,max_length),dtype=bool,device=device)
     for y in lengths:
@@ -342,24 +342,24 @@ def gen_pad_mask_bool(max_length,lengths,device):
 #has gone threw a lot of testing figuring out why PE has such negative effects
 class TransformerClassifier(nn.Module):
     def __init__(self, num_classes, embed_size=1024, hidden_dim1=512,  dropout_rate=0.4,
-                    max_length = 5000, dim_feedforward = 2048 ,nhead=4,num_layers_transformer = 1,device = "cuda",use_alibi = False):
+                    max_length = 5000, dim_feedforward = 2048 ,nhead=4,num_layers_transformer = 1,device = "cuda",use_alibi = False,pe_factor=0.01):
         super().__init__()
         self.max_len = max_length
         self.device = device
         self.embed_size = embed_size
         layers = []
-        self.position_encoder = PositionalEncoding(d_model=embed_size,dropout=dropout_rate,max_length=self.max_len)
+        self.position_encoder = PositionalEncoding(d_model=embed_size,device=device,dropout=dropout_rate,max_length=self.max_len,factor=pe_factor)
         #self.position_encoder = LearnedPositionalEmbedding(embed_size,max_len=max_length,dropout=dropout_rate)
         #self.position_encoder = RotaryPositionalEmbeddings(embed_size,max_len=max_length,dropout=dropout_rate)
         if use_alibi:
             #https://github.com/jaketae/alibi
             config = ALiBiConfig(num_layers=num_layers_transformer,d_model = embed_size, num_heads = nhead,max_len=max_length,dropout=dropout_rate,causal = False)
-            self.transformer_encoder = ALiBiTransformer(config)
+            self.transformer_encoder = ALiBiTransformer(config,device=self.device)
         else:
             transformer_layer = TransformerEncoderLayer(
                 d_model=embed_size,nhead=nhead,dim_feedforward=dim_feedforward,dropout=dropout_rate,batch_first=True)
             self.transformer_encoder = TransformerEncoder(transformer_layer, num_layers=num_layers_transformer)
-        
+        self.use_alibi = use_alibi
         self.conv_layer =nn.Conv1d(self.max_len,1, kernel_size=3, padding = 1)
         layers.append(nn.Linear(embed_size, hidden_dim1))
         layers.append(nn.ReLU())
@@ -369,21 +369,27 @@ class TransformerClassifier(nn.Module):
         self.network = nn.Sequential(*layers)
         
     def forward(self, x,lengths):
+        #truncate padding per batch, testing if this helps
+        
+        seq_len = x.size(1)
         #padding mask[batch,max_length] of 0s at exons and -inf at padding
         
         #bool padding mask
-        padding_mask = gen_pad_mask_bool(self.max_len,lengths,self.device)
+        padding_mask = gen_pad_mask_bool(seq_len,lengths,self.device)
         #print(padding_mask.shape) --> torch.Size([16, 28])
         
         #forward mask [max_length,max_length] 
-        #src_mask = nn.Transformer.generate_square_subsequent_mask(self.max_len, device=self.device,dtype=torch.float16)
+        #src_mask = nn.Transformer.generate_square_subsequent_mask(seq_len, device=self.device,dtype=torch.float16)
 
         #position encoder +[1,max_length,embed_size]
         x = self.position_encoder(x)
 
         #[batch,max_length,embed_size]
         #x = self.transformer_encoder(x,src_mask,src_key_padding_mask=padding_mask)
-        x = self.transformer_encoder(x,src_key_padding_mask=padding_mask)
+        if self.use_alibi:
+            x = self.transformer_encoder(x)
+        else: 
+            x = self.transformer_encoder(x,src_key_padding_mask=padding_mask)
         #output from [batch,max_length,embed_size] --> [batch,embed_size]
         #x = x.mean(dim=1)
         #x = self.conv_layer(x)[:,-1,:]
@@ -433,10 +439,10 @@ class MultiClassTrainer:
             self.model = TransformerClassifier(**self.model_config).to(self.device)
         elif model == "Basic":
             self.model = NominalClassifier(**self.model_config).to(self.device)
-        #leads to some form of tritonmissing error, which isnt windows compatable
+        #leads to some form of tritonmissing error, which isnt windows compatable, works in linux but has too many errors and performance doesnt seem to be much much better 
         """
         if self.device.type == 'cuda':
-            self.model = torch.compile(self.model)
+            self.model = torch.compile(self.model,mode= "reduce-overhead")
             self.model = self.model.to(self.device.type)
             print("INFO: Model compiled with torch.compile() for speedup.")
         """
@@ -465,10 +471,10 @@ class MultiClassTrainer:
             self.scheduler = torch.optim.lr_scheduler.CosineAnnealingWarmRestarts(self.optimizer,T_0 = 8,T_mult = 2, eta_min = learning_rate/10)
         #also warm resets. exp_range is like curved triangler where it converges onto base_lr each cycle
         elif scheduler == "Cyclic":
-            self.scheduler = torch.optim.lr_scheduler.CyclicLR(self.optimizer,base_lr = learning_rate, max_lr = learning_rate*10,step_size_up = 8,mode="exp_range" )
+            self.scheduler = torch.optim.lr_scheduler.CyclicLR(self.optimizer,base_lr = learning_rate, max_lr = learning_rate*10,step_size_up = 16,mode="exp_range" )
         #no scheduler basicaly, just need a scheduler object, constant has other use
         elif scheduler == "None":
-             self.scheduler = torch.optim.lr_scheduler.ConstatnLR(self.optimizer,factor = 1, total_iters=1)
+             self.scheduler = torch.optim.lr_scheduler.ConstantLR(self.optimizer,factor = 1, total_iters=1)
         #needed because float16, i think 
         self.use_amp = (self.device.type == 'cuda')
         self.scaler = GradScaler(enabled=self.use_amp)
@@ -539,6 +545,7 @@ class MultiClassTrainer:
             if trial:
                 trial.report(current_val_f1, epoch + step_offset)
                 if trial.should_prune():
+                    #need to clean up prune
                     raise optuna.exceptions.TrialPruned()   
         
         if os.path.exists(checkpoint_path):
@@ -559,6 +566,8 @@ class MultiClassTrainer:
             embeddings = embeddings.to(self.device)
             labels = labels.float().to(self.device)
             lengths = lengths.to(self.device)
+            local_max = torch.max(lengths)
+            embeddings = embeddings[:,:local_max,:]
             if training:
                 self.optimizer.zero_grad()
                 with autocast(device_type=self.device.type, enabled=self.use_amp):
@@ -594,7 +603,9 @@ class MultiClassTrainer:
             for embeddings, labels, ids_batch,lengths in data_loader:
                 embeddings = embeddings.to(self.device)
                 labels = labels.float().to(self.device)
-                lengths = lengths.to(self.device)                
+                lengths = lengths.to(self.device)
+                local_max = torch.max(lengths)
+                embeddings = embeddings[:,:local_max,:]                
                 with autocast(device_type=self.device.type, enabled=self.use_amp):
                     outputs = self.model(embeddings,lengths)
                 predictions = (torch.argmax(outputs, axis=1)).float()
@@ -612,7 +623,7 @@ class MultiClassTrainer:
         #
         return report,  all_preds, all_ids, all_labels
 def run_hpo_mode(train_dataset,wandb_project,wandb_entity,hpo_metric="weighted avg",n_trials = 50,num_epochs = 100 ,wandb_disable=False,k_folds = 5,max_length = 5000,nn_model = "RNN",random_seed = 42,embed_size=1024,patience = 10):
-    #to give wandb params, maybe there is easier way
+    #to give wandb params, maybe there is easier way, also gives defualts
     args = {
         "hpo_metric":hpo_metric,
         "embed_size":embed_size,
@@ -629,8 +640,14 @@ def run_hpo_mode(train_dataset,wandb_project,wandb_entity,hpo_metric="weighted a
         'hidden_dim1': 512,
         "criterion": "MSE",
         "optimizer":"Lion",
+        "dim_feedforward": 2048,
+        "use_alibi": False,
+        "pe_factor": 0.01,
+        "nhead": 4,
+        "num_layers_transformer":2,
         'batch_size': 16
     } 
+    
     print(f"\n{'='*60}")
     print(f"Starting HPO: {n_trials} trials, optimizing '{hpo_metric}'")
     print(f"{'='*60}\n")
@@ -640,7 +657,7 @@ def run_hpo_mode(train_dataset,wandb_project,wandb_entity,hpo_metric="weighted a
             project=wandb_project, 
             entity=wandb_entity, 
             config=args, 
-            reinit='return_previous', 
+            reinit='finish_previous', 
             mode="disabled" if wandb_disable else "online",
             name=f"trial_{trial.number}"
         )
@@ -650,18 +667,19 @@ def run_hpo_mode(train_dataset,wandb_project,wandb_entity,hpo_metric="weighted a
             'learning_rate': trial.suggest_float('learning_rate', 1e-7, 1e-4, log=True),
             'weight_decay': trial.suggest_float('weight_decay', 1e-8, 1e-3, log=True),
             'dropout_rate': trial.suggest_float('dropout_rate', 0.0, 0.6),
-            'hidden_dim1': trial.suggest_categorical('hidden_dim1', [256, 512, 768]),
+            #'hidden_dim1': trial.suggest_categorical('hidden_dim1', [256, 512, 768]),
             #'batch_size': trial.suggest_categorical('batch_size', [16, 32, 64]),
             #"optimizer": trial.suggest_categorical("optimizer", ["Adam", "AdamW", "Lion"]),
             "optimizer": trial.suggest_categorical("optimizer", [ "AdamW", "Lion"]),
-            "criterion": trial.suggest_categorical("criterion", ["CEL","MSE", "CEL_weightless"]),#
-            "scheduler": trial.suggest_categorical("scheduler", ["Plateau","Exponential", "CosineAnnealingWarmRestarts","Cyclic","None"])
+            "criterion": trial.suggest_categorical("criterion", ["MSE", "CEL_weightless"]),#"CEL",
+            "scheduler": trial.suggest_categorical("scheduler", ["Plateau", "CosineAnnealingWarmRestarts","None"])#"Exponential","Cyclic",
             
         }
         if nn_model == "Transformer":
-            trial_params["nhead"] = trial.suggest_categorical("nhead", [2, 4, 8])#,8
-            trial_params["dim_feedforward"] = trial.suggest_categorical("dim_feedforward", [1024,1536, 2048 ])#, 4096
-            trial_params["num_layers_transformer"] = trial.suggest_categorical("num_layers_transformer", [1,2,3])#, 4
+            #trial_params["nhead"] = trial.suggest_categorical("nhead", [2, 4])#,8
+            #trial_params["dim_feedforward"] = trial.suggest_categorical("dim_feedforward", [1024,1536, 2048 ])#, 4096
+            #trial_params["num_layers_transformer"] = trial.suggest_categorical("num_layers_transformer", [1,2])#, 4
+            trial_params["pe_factor"]= trial.suggest_categorical("pe_factor", [0.1,0.01,0.001])
 
         wandb.config.update(trial_params, allow_val_change=True)
         #"""
@@ -691,8 +709,10 @@ def run_hpo_mode(train_dataset,wandb_project,wandb_entity,hpo_metric="weighted a
             model_config["nhead"] = cfg.nhead
             model_config["dim_feedforward"] = cfg.dim_feedforward
             model_config["num_layers_transformer"] = cfg.num_layers_transformer
+            model_config["use_alibi"] = cfg.use_alibi
+            model_config["pe_factor"] = cfg.pe_factor
         global_step = 0
-        print(f"Optimizer: {cfg.optimizer}\nCriterion: {cfg.criterion}")
+        print(f"Optimizer: {cfg.optimizer}\nCriterion: {cfg.criterion}\nScheduler: {cfg.scheduler}\nDropout: {cfg.dropout_rate}\nPe_Factor: {cfg.pe_factor}")
         #as is now, does kfold k times for each tuning step, dont know if this is right or if it should cycle through kfold once each step
         for fold, (train_idx, val_idx) in enumerate(skf.split(np.zeros(len(labels)),labels )):
             print(f"\n--- Trial {trial.number}, Fold {fold+1}/{k_folds} ---")
@@ -701,24 +721,28 @@ def run_hpo_mode(train_dataset,wandb_project,wandb_entity,hpo_metric="weighted a
             train_loader = DataLoader(
                 Subset(train_dataset, train_idx),
                 batch_size=cfg.batch_size,
-                
+                num_workers=8,
+                pin_memory=True,
+                persistent_workers=False,
                 shuffle=True 
             )
             val_loader = DataLoader(
                 Subset(train_dataset, val_idx),
                 batch_size=cfg.batch_size,
-                
+                num_workers=8,
+                pin_memory=True,
+                persistent_workers=False,
                 shuffle=False
             )
             #adding this to loaders causes pickle issue with h5py object(not 100% sure why its trying to pickle h5) will try to fix later when i have bigger dataset but for now training time is managable
             """
                 num_workers=8,
                 pin_memory=True,
-                persistent_workers=False
+                persistent_workers=False,
             """
             #
             # Train model
-            trainer = MultiClassTrainer(model_config, cfg.learning_rate, cfg.weight_decay, weights,model=nn_model,optimizer=cfg.optimizer,criterion=cfg.criterion)
+            trainer = MultiClassTrainer(model_config, cfg.learning_rate, cfg.weight_decay, weights,model=nn_model,optimizer=cfg.optimizer,criterion=cfg.criterion,scheduler=cfg.scheduler)
             checkpoint = f"temp_trial_{trial.number}_{wandb_project}_fold_{fold}.pt"
 
             # Pass step_offset and update it
@@ -811,6 +835,40 @@ def run(h5,metadata,wandb_project,wandb_entity,nn_model = "Transformer",num_epoc
     run_hpo_mode(train_dataset=dataset ,wandb_project=wandb_project,wandb_entity=wandb_entity,nn_model =nn_model,max_length=max_length,n_trials=n_trials,num_epochs=num_epochs,patience=patience,wandb_disable=wandb_disable )
     #torch.backends.cudnn.deterministic = True
     #torch.backends.cudnn.benchmark = False
+def train_model_transformer(train_dataset,val_dataset, wandb_project,wandb_entity,cfg_model,cfg_trainer,wandb_disable=False,trial_name="trial_0"):
+    args = cfg_model|cfg_trainer
+    run = wandb.init(
+        project=wandb_project, 
+        entity=wandb_entity, 
+        config=args, 
+        reinit='finish_previous', 
+        mode="disabled" if wandb_disable else "online",
+        name=trial_name
+    )
+    train_loader = DataLoader(
+        train_dataset,
+        batch_size=cfg_trainer.batch_size,               
+        shuffle=True 
+    )
+    val_loader = DataLoader(
+        val_dataset,
+        batch_size=cfg_trainer.batch_size,               
+        shuffle=False
+    )
+    labels = np.argmax(train_dataset.encodings, axis=1)
+    class_counts = Counter(labels)
+    weights = torch.tensor([1.0 / class_counts.get(i, 1) for i in range(train_dataset.num_classes)], dtype=torch.float)
+    weights = weights / weights.sum() * len(weights)  # Normalize weights
+    trainer = MultiClassTrainer(cfg_model, cfg_trainer.learning_rate, cfg_trainer.weight_decay, weights,model="Transformer",optimizer=cfg_trainer.optimizer,criterion=cfg_trainer.criterion,scheduler=cfg_trainer.scheduler)
+    checkpoint = f"temp_{trial_name}_{wandb_project}.pt"
+    val_metrics, epochs_ran = trainer.train_and_validate(
+        train_loader, val_loader,
+        cfg_trainer.num_epochs, cfg_trainer.patience,
+        checkpoint, train_dataset.label_encoder,
+        log_to_wandb=True,
+        trial=None,
+        step_offset=0 # Pass the current global step
+    )
 
 
 #personal key lol
@@ -819,8 +877,8 @@ if __name__ == '__main__':
     #nn_model = "RNN"
     nn_model = "Transformer"
     #nn_model = "Basic"
-    h5,csv = "splits\\per_exon_train.h5","splits\\per_exon_train.csv"
+    h5,csv = os.path.join("splits","per_exon_train.h5"),os.path.join("splits","per_exon_train.csv")
     #h5,csv = "splits\\per_prot_train.h5","splits\\per_prot_train.csv"
-    #entity = "v6_transformer_per_exon_pe"
-    entity = "testing"
-    run(h5,csv,entity,"per-exon-testing",nn_model=nn_model,n_trials=50,num_epochs=150,wandb_disable=True)
+    entity = "v6_transformer_per_exon_pe_magnitude_reduction"
+    #entity = "testing"
+    run(h5,csv,entity,"per-exon-testing",nn_model=nn_model,n_trials=50,num_epochs=100,wandb_disable=False)

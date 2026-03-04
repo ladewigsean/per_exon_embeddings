@@ -7,35 +7,36 @@ from torch.nn import functional as F
 from alibi.config import ALiBiConfig
 
 
-def get_relative_positions(seq_len: int) -> torch.tensor:
-    x = torch.arange(seq_len)[None, :]
-    y = torch.arange(seq_len)[:, None]
+def get_relative_positions(seq_len: int, device) -> torch.tensor:
+    x = torch.arange(seq_len,device=device)[None, :]
+    y = torch.arange(seq_len,device=device)[:, None]
     return x - y
 
 
-def get_alibi_slope(num_heads):
+def get_alibi_slope(num_heads,device):
     x = (2 ** 8) ** (1 / num_heads)
     return (
-        torch.tensor([1 / x ** (i + 1) for i in range(num_heads)])
+        torch.tensor([1 / x ** (i + 1) for i in range(num_heads)],device=device)
         .unsqueeze(-1)
         .unsqueeze(-1)
     )
 
 
 class ALiBiMultiHeadAttention(nn.Module):
-    def __init__(self, config: ALiBiConfig) -> None:
+    def __init__(self, config: ALiBiConfig, device) -> None:
         super().__init__()
+        self.device = device
         self.causal = config.causal
         self.num_heads = config.num_heads
         self.scale = math.sqrt(config.d_model)
         self.dropout = nn.Dropout(config.dropout)
-        self.register_buffer("m", get_alibi_slope(self.num_heads))
+        self.register_buffer("m", get_alibi_slope(self.num_heads,self.device))
         self.kqv = nn.Linear(config.d_model, 3 * config.d_model, bias=False)
         if config.causal:
             self.register_buffer(
                 "mask", torch.tril(torch.ones(1, 1, config.max_len, config.max_len))
             )
-
+    
     def forward(self, x: torch.tensor) -> torch.tensor:
         batch_size, seq_len, _ = x.shape
 
@@ -46,7 +47,7 @@ class ALiBiMultiHeadAttention(nn.Module):
         value = value.view(batch_size, seq_len, self.num_heads, -1).transpose(1, 2)
         # qv.shape == (batch_size, num_heads, seq_len, d_head)
 
-        bias = (self.m * get_relative_positions(seq_len)).unsqueeze(0)
+        bias = (self.m * get_relative_positions(seq_len,device=self.device)).unsqueeze(0)
         # bias.shape == (1, num_heads, seq_len, seq_len)
 
         score = torch.matmul(query, key) / self.scale + bias
