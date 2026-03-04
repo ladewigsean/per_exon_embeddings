@@ -1,0 +1,25 @@
+[project]
+name = "per-exon-embeddings"
+version = "0.1.0"
+description = "Transformer-based classifier for per-exon protein embeddings"
+requires-python = ">=3.10"
+dependencies = [
+    "h5py>=3.10",
+    "lion-pytorch>=0.2",
+    "numpy>=1.24",
+    "optuna>=3.0",
+    "pandas>=2.0",
+    "PyYAML>=6.0",
+    "scikit-learn>=1.3",
+    "torch>=2.0",
+    "tqdm>=4.60",
+    "wandb>=0.15",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

@@ -1,4 +1,29 @@
-wandb\
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Weights & Biases
 wandb/
+
+# Training artifacts
 *.pt
 *.yaml
+!pyproject.toml
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+
+# Pytest
+.pytest_cache/
