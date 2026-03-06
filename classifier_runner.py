@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import os
 import math
-
+import random
 import h5py
 import numpy as np
 import pandas as pd
@@ -585,7 +585,7 @@ def run_hpo_mode(train_dataset, wandb_project, wandb_entity,
             "scheduler": trial.suggest_categorical("scheduler", ["Plateau", "CosineAnnealingWarmRestarts", "None"]),
         }
         if nn_model == "Transformer":
-            trial_params["pe_factor"] = trial.suggest_float("pe_factor", 0.01, 1.0, log=True)
+            trial_params["pe_factor"] = trial.suggest_float("pe_factor", 0.001, 1.0, log=True)
 
         wandb.config.update(trial_params, allow_val_change=True)
         cfg = wandb.config
@@ -623,10 +623,15 @@ def run_hpo_mode(train_dataset, wandb_project, wandb_entity,
             f"Dropout: {cfg.dropout_rate}\n"
             f"PE Factor: {cfg.pe_factor}"
         )
-
+        folds_todo=3
         for fold, (train_idx, val_idx) in enumerate(skf.split(np.zeros(len(labels)), labels)):
             print(f"\n--- Trial {trial.number}, Fold {fold + 1}/{k_folds} ---")
-
+            folds_remaining = k_folds-fold
+            odds = folds_todo/folds_remaining 
+            if random.random() > odds:
+                print(f"skipping fold {fold+1}, {folds_todo} remaining folds")
+                continue
+            folds_todo = folds_todo-1
             train_loader = DataLoader(
                 Subset(train_dataset, train_idx),
                 batch_size=cfg.batch_size,
@@ -682,7 +687,7 @@ def run_hpo_mode(train_dataset, wandb_project, wandb_entity,
 
     study = optuna.create_study(
         direction="maximize",
-        pruner=optuna.pruners.MedianPruner(n_startup_trials=15, n_warmup_steps=30),
+        pruner=optuna.pruners.MedianPruner(n_startup_trials=10, n_warmup_steps=30),
     )
     study.optimize(objective, n_trials=n_trials)
 
@@ -737,6 +742,6 @@ if __name__ == "__main__":
     nn_model = "Transformer"
     h5 = os.path.join("splits", "per_exon_train.h5")
     csv = os.path.join("splits", "per_exon_train.csv")
-    entity = "v6_transformer_per_exon_pe_magnitude_reduction"
+    entity = "v7_transformer_per_exon_test_branch_version"
     run(h5, csv, entity, "per-exon-testing", nn_model=nn_model,
-        n_trials=50, num_epochs=100, wandb_disable=False)
+        n_trials=50, num_epochs=35, wandb_disable=False)
