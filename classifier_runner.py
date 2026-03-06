@@ -169,10 +169,10 @@ class PositionalEncoding(nn.Module):
     embeddings. The `factor` parameter scales the encoding magnitude.
     """
 
-    def __init__(self, d_model, max_length=5000, dropout=0.1, factor=1.0):
+    def __init__(self, d_model, max_length=5000, dropout=0.1 ):
         super().__init__()
         self.dropout = nn.Dropout(p=dropout)
-        self.factor = factor
+        self.factor = nn.Parameter(torch.tensor(0.01))
 
         # Always compute in float32 for numerical stability
         pe = torch.zeros(max_length, d_model)
@@ -270,14 +270,14 @@ def gen_pad_mask_bool(max_length,lengths,device):
 class TransformerClassifier(nn.Module):
     def __init__(self, num_classes, embed_size=1024, hidden_dim1=512,  dropout_rate=0.4,
                 max_length = 5000, dim_feedforward = 2048 ,nhead=4,num_layers_transformer = 1,
-                device = "cuda",use_alibi = False,pe_factor=0.01):
+                device = "cuda",use_alibi = False):
         super().__init__()
         self.max_len = max_length
         self.device = device
         self.embed_size = embed_size
        
         self.position_encoder = PositionalEncoding(d_model=embed_size,dropout=dropout_rate,
-                                                   max_length=self.max_len,factor=pe_factor)
+                                                   max_length=self.max_len)
         #self.position_encoder = LearnedPositionalEmbedding(embed_size,max_len=max_length,dropout=dropout_rate)
         
         if use_alibi:
@@ -484,7 +484,7 @@ class MultiClassTrainer:
             checkpoint = torch.load(checkpoint_path, map_location=self.device)
             self.model.load_state_dict(checkpoint['model_state_dict'])
             print(f"INFO: Loaded best model from checkpoint (val_f1: {checkpoint.get('val_f1_macro', 0):.4f})")
-
+        print(f"Ending PE_factor of {self.model.position_encoder.factor}")
         val_metrics, _, _,_ = self.evaluate_on_loader(val_loader, label_encoder)
         
         return val_metrics, last_epoch + 1
@@ -575,7 +575,6 @@ def run_hpo_mode(train_dataset,wandb_project,wandb_entity,hpo_metric="weighted a
         "optimizer":"Lion",
         "dim_feedforward": 2048,
         "use_alibi": False,
-        "pe_factor": 0.0,
         "nhead": 4,
         "num_layers_transformer":2,
         'batch_size': 16
@@ -613,7 +612,7 @@ def run_hpo_mode(train_dataset,wandb_project,wandb_entity,hpo_metric="weighted a
             #trial_params["nhead"] = trial.suggest_categorical("nhead", [2, 4])#,8
             #trial_params["dim_feedforward"] = trial.suggest_categorical("dim_feedforward", [1024,1536, 2048 ])#, 4096
             #trial_params["num_layers_transformer"] = trial.suggest_categorical("num_layers_transformer", [1,2])#, 4
-            #trial_params["pe_factor"]= trial.suggest_float("pe_factor", 0.001, 1.0, log=True)
+           
         """
         wandb.config.update(trial_params, allow_val_change=True)
        
@@ -643,11 +642,11 @@ def run_hpo_mode(train_dataset,wandb_project,wandb_entity,hpo_metric="weighted a
             model_config["dim_feedforward"] = cfg.dim_feedforward
             model_config["num_layers_transformer"] = cfg.num_layers_transformer
             model_config["use_alibi"] = cfg.use_alibi
-            model_config["pe_factor"] = cfg.pe_factor
+            
         global_step = 0
         folds_todo=3
         
-        print(f"Optimizer: {cfg.optimizer}\nCriterion: {cfg.criterion}\nScheduler: {cfg.scheduler}\nDropout: {cfg.dropout_rate}\nPe_Factor: {cfg.pe_factor}")
+        print(f"Optimizer: {cfg.optimizer}\nCriterion: {cfg.criterion}\nScheduler: {cfg.scheduler}\nDropout: {cfg.dropout_rate}")
         #as is now, does kfold k times for each tuning step, dont know if this is right or if it should cycle through kfold once each step
         for fold, (train_idx, val_idx) in enumerate(skf.split(np.zeros(len(labels)),labels )):
             print(f"\n--- Trial {trial.number}, Fold {fold+1}/{k_folds} ---")
@@ -709,7 +708,7 @@ def run_hpo_mode(train_dataset,wandb_project,wandb_entity,hpo_metric="weighted a
                 metric_value = val_metrics['weighted avg']['f1-score']
 
             fold_metrics.append(metric_value)
-
+            
             # Clean up checkpoint
             if os.path.exists(checkpoint):
                 os.remove(checkpoint)
@@ -827,6 +826,6 @@ if __name__ == '__main__':
     #nn_model = "Basic"
     h5,csv = os.path.join("splits","per_exon_train.h5"),os.path.join("splits","per_exon_train.csv")
     #h5,csv = "splits\\per_prot_train.h5","splits\\per_prot_train.csv"
-    entity = "v7_transformer_per_exon_pe_factor_0"
+    entity = "v7_transformer_per_exon_learned_pe_factor"
     #entity = "testing"
     run(h5,csv,entity,"per-exon-testing",nn_model=nn_model,n_trials=50,num_epochs=35,patience=6,wandb_disable=False)
