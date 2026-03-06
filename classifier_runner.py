@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import sys
+import random
 import os
 from alibi import ALiBiConfig, ALiBiTransformer
 import argparse
@@ -84,14 +85,19 @@ class MultiClassDataset(Dataset):
         # Load as float32 — mixed precision autocast handles the rest
         embedding = torch.tensor(self.h5f[str(row[self.id_column])][:], dtype=torch.float32)
         
-        if self.max_length >1:
-            og_size = embedding.shape[0]
-            data_pad_len = self.max_length - og_size
-            embedding = torch.cat([embedding,torch.zeros(data_pad_len,1024,dtype = torch.float32)])
+        if self.max_length > 1:
+            seq_len = embedding.shape[0]
+            pad_len = self.max_length - seq_len
+            embedding = torch.cat([
+                embedding,
+                torch.zeros(pad_len, self.embedding_dim, dtype=torch.float32),
+            ])
         else:
-            og_size = 1
+            seq_len = 1
             embedding = embedding.unsqueeze(0)
-        return embedding, torch.tensor(row['label']), str(row[self.id_column]),og_size
+
+        label = torch.tensor(row["label"], dtype=torch.float32)
+        return embedding, label, str(row[self.id_column]), seq_len
 
     def __len__(self):
         return len(self.metadata_df)
@@ -569,7 +575,7 @@ def run_hpo_mode(train_dataset,wandb_project,wandb_entity,hpo_metric="weighted a
         "optimizer":"Lion",
         "dim_feedforward": 2048,
         "use_alibi": False,
-        "pe_factor": 0.01,
+        "pe_factor": 0.0,
         "nhead": 4,
         "num_layers_transformer":2,
         'batch_size': 16
@@ -602,12 +608,13 @@ def run_hpo_mode(train_dataset,wandb_project,wandb_entity,hpo_metric="weighted a
             "scheduler": trial.suggest_categorical("scheduler", ["Plateau", "CosineAnnealingWarmRestarts","None"])#"Exponential","Cyclic",
             
         }
+        """
         if nn_model == "Transformer":
             #trial_params["nhead"] = trial.suggest_categorical("nhead", [2, 4])#,8
             #trial_params["dim_feedforward"] = trial.suggest_categorical("dim_feedforward", [1024,1536, 2048 ])#, 4096
             #trial_params["num_layers_transformer"] = trial.suggest_categorical("num_layers_transformer", [1,2])#, 4
-            trial_params["pe_factor"]= trial.suggest_float("pe_factor", 0.001, 1.0, log=True)
-
+            #trial_params["pe_factor"]= trial.suggest_float("pe_factor", 0.001, 1.0, log=True)
+        """
         wandb.config.update(trial_params, allow_val_change=True)
        
         cfg = wandb.config
@@ -638,11 +645,18 @@ def run_hpo_mode(train_dataset,wandb_project,wandb_entity,hpo_metric="weighted a
             model_config["use_alibi"] = cfg.use_alibi
             model_config["pe_factor"] = cfg.pe_factor
         global_step = 0
+        folds_todo=3
+        
         print(f"Optimizer: {cfg.optimizer}\nCriterion: {cfg.criterion}\nScheduler: {cfg.scheduler}\nDropout: {cfg.dropout_rate}\nPe_Factor: {cfg.pe_factor}")
         #as is now, does kfold k times for each tuning step, dont know if this is right or if it should cycle through kfold once each step
         for fold, (train_idx, val_idx) in enumerate(skf.split(np.zeros(len(labels)),labels )):
             print(f"\n--- Trial {trial.number}, Fold {fold+1}/{k_folds} ---")
-
+            folds_remaining = k_folds-fold
+            odds = folds_todo/folds_remaining 
+            if random.random() > odds:
+                print(f"skipping fold {fold+1}, {folds_todo} remaining folds")
+                continue
+            folds_todo = folds_todo-1
             # Create data loaders
             train_loader = DataLoader(
                 Subset(train_dataset, train_idx),
@@ -813,6 +827,6 @@ if __name__ == '__main__':
     #nn_model = "Basic"
     h5,csv = os.path.join("splits","per_exon_train.h5"),os.path.join("splits","per_exon_train.csv")
     #h5,csv = "splits\\per_prot_train.h5","splits\\per_prot_train.csv"
-    entity = "v7_transformer_per_exon_baseline"
+    entity = "v7_transformer_per_exon_pe_factor_0"
     #entity = "testing"
-    run(h5,csv,entity,"per-exon-testing",nn_model=nn_model,n_trials=50,num_epochs=50,patience=6,wandb_disable=False)
+    run(h5,csv,entity,"per-exon-testing",nn_model=nn_model,n_trials=50,num_epochs=35,patience=6,wandb_disable=False)
