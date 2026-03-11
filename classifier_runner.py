@@ -169,10 +169,10 @@ class PositionalEncoding(nn.Module):
     embeddings. The `factor` parameter scales the encoding magnitude.
     """
 
-    def __init__(self, d_model, max_length=5000, dropout=0.1, factor=1.0):
+    def __init__(self, d_model, max_length=5000, dropout=0.1):
         super().__init__()
         self.dropout = nn.Dropout(p=dropout)
-        self.factor = factor
+        
 
         # Always compute in float32 for numerical stability
         pe = torch.zeros(max_length, d_model)
@@ -182,12 +182,12 @@ class PositionalEncoding(nn.Module):
         )
         pe[:, 0::2] = torch.sin(position * div_term)
         pe[:, 1::2] = torch.cos(position * div_term)
-        pe = pe.unsqueeze(0)  # [1, max_length, d_model]
-        self.register_buffer("pe", pe)
+        pe = pe.unsqueeze(0) * 0.001 # [1, max_length, d_model]
+        self.pe = nn.Parameter(pe)
 
     def forward(self, x):
         # x: [batch, seq_len, d_model]
-        x = x + self.pe[:, : x.size(1), :] * self.factor
+        x = x + self.pe[:, : x.size(1), :]
         return self.dropout(x)
 #learned pos encodings from here
 #https://github.com/johnrobinsn/blog_notebooks/blob/main/02_learned_embeddings.ipynb
@@ -270,15 +270,15 @@ def gen_pad_mask_bool(max_length,lengths,device):
 class TransformerClassifier(nn.Module):
     def __init__(self, num_classes, embed_size=1024, hidden_dim1=512,  dropout_rate=0.4,
                 max_length = 5000, dim_feedforward = 2048 ,nhead=4,num_layers_transformer = 1,
-                device = "cuda",use_alibi = False,pe_factor=0.01):
+                device = "cuda",use_alibi = False):
         super().__init__()
         self.max_len = max_length
         self.device = device
         self.embed_size = embed_size
        
-        self.position_encoder = PositionalEncoding(d_model=embed_size,dropout=dropout_rate,
-                                                   max_length=self.max_len,factor=pe_factor)
-        #self.position_encoder = LearnedPositionalEmbedding(embed_size,max_len=max_length,dropout=dropout_rate)
+        #self.position_encoder = PositionalEncoding(d_model=embed_size,dropout=dropout_rate,
+        #                                           max_length=self.max_len)
+        self.position_encoder = LearnedPositionalEmbedding(embed_size,max_len=max_length,dropout=dropout_rate)
         
         if use_alibi:
             #https://github.com/jaketae/alibi
@@ -575,7 +575,7 @@ def run_hpo_mode(train_dataset,wandb_project,wandb_entity,hpo_metric="weighted a
         "optimizer":"Lion",
         "dim_feedforward": 2048,
         "use_alibi": False,
-        "pe_factor": 0.0,
+        ##"pe_factor": 1,
         "nhead": 4,
         "num_layers_transformer":2,
         'batch_size': 16
@@ -643,11 +643,11 @@ def run_hpo_mode(train_dataset,wandb_project,wandb_entity,hpo_metric="weighted a
             model_config["dim_feedforward"] = cfg.dim_feedforward
             model_config["num_layers_transformer"] = cfg.num_layers_transformer
             model_config["use_alibi"] = cfg.use_alibi
-            model_config["pe_factor"] = cfg.pe_factor
+            ##model_config["pe_factor"] = cfg.pe_factor
         global_step = 0
         folds_todo=3
         
-        print(f"Optimizer: {cfg.optimizer}\nCriterion: {cfg.criterion}\nScheduler: {cfg.scheduler}\nDropout: {cfg.dropout_rate}\nPe_Factor: {cfg.pe_factor}")
+        print(f"Optimizer: {cfg.optimizer}\nCriterion: {cfg.criterion}\nScheduler: {cfg.scheduler}\nDropout: {cfg.dropout_rate}")
         #as is now, does kfold k times for each tuning step, dont know if this is right or if it should cycle through kfold once each step
         for fold, (train_idx, val_idx) in enumerate(skf.split(np.zeros(len(labels)),labels )):
             print(f"\n--- Trial {trial.number}, Fold {fold+1}/{k_folds} ---")
@@ -827,6 +827,6 @@ if __name__ == '__main__':
     #nn_model = "Basic"
     h5,csv = os.path.join("splits","per_exon_train.h5"),os.path.join("splits","per_exon_train.csv")
     #h5,csv = "splits\\per_prot_train.h5","splits\\per_prot_train.csv"
-    entity = "v7_transformer_per_exon_pe_factor_0"
+    entity = "v7_transformer_per_exon_learned_pe_random_base"
     #entity = "testing"
     run(h5,csv,entity,"per-exon-testing",nn_model=nn_model,n_trials=50,num_epochs=35,patience=6,wandb_disable=False)
