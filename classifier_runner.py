@@ -19,9 +19,9 @@ from lion_pytorch import Lion
 from sklearn.model_selection import StratifiedKFold
 from sklearn.metrics import classification_report, confusion_matrix
 from sklearn.preprocessing import OneHotEncoder
-#import seaborn as sns
-#import matplotlib.pyplot as plt
-#import inspect
+import seaborn as sns
+import matplotlib.pyplot as plt
+
 import wandb
 import optuna
 from tqdm import tqdm
@@ -106,8 +106,12 @@ class MultiClassDataset(Dataset):
             if self.h5f is None:
                 self.h5f = h5py.File(self.embeddings_file_path, 'r')
             self.max_length = 1
+
             for key in self.h5f.keys():
                 shape = self.h5f[key][:].shape
+                if len(shape) == 1:
+                    self.max_length = 1
+                    continue
                 if shape[0] > self.max_length:
                     self.max_length = shape[0]
         return self.max_length 
@@ -123,6 +127,7 @@ class MultiClassSubset(torch.utils.data.Subset):
     def __init__(self, dataset, indices):
         super().__init__(dataset, indices)
         self.data = dataset.get_data().iloc[indices]
+        self.encodings = dataset.encodings[indices]
         self.num_classes = dataset.num_classes
         self.label_encoder = dataset.label_encoder
         self.embeddings_file_path = dataset.embeddings_file_path
@@ -157,7 +162,7 @@ class NominalClassifier(nn.Module):
             nn.Softmax(dim = 1)
         )
 
-    def forward(self, x):
+    def forward(self, x,lengths):
         #is expecting [batch,1,embed_size] for other models, needs [batch,embed_size]
         x = x[:,-1,:]
         return self.network(x)
@@ -481,8 +486,7 @@ class MultiClassTrainer:
                     raise optuna.exceptions.TrialPruned()   
         
         if os.path.exists(checkpoint_path):
-            checkpoint = torch.load(checkpoint_path, map_location=self.device)
-            self.model.load_state_dict(checkpoint['model_state_dict'])
+            checkpoint= self.load_checkpoint(checkpoint_path)
             print(f"INFO: Loaded best model from checkpoint (val_f1: {checkpoint.get('val_f1_macro', 0):.4f})")
 
         val_metrics, _, _,_ = self.evaluate_on_loader(val_loader, label_encoder)
@@ -525,7 +529,14 @@ class MultiClassTrainer:
         avg_loss = total_loss / total_samples if total_samples > 0 else 0
         accuracy = (100 * total_correct / total_samples) if total_samples > 0 else 0
         return avg_loss, accuracy
+    def load_checkpoint(self, checkpoint_path):
+        
+        checkpoint = torch.load(checkpoint_path, map_location=self.device)
+        self.model.load_state_dict(checkpoint['model_state_dict'])
+        return checkpoint
+    
     #idk seperate function for validation to make report and works as easy function for eval in other cases
+    
     def evaluate_on_loader(self, data_loader, label_encoder):
         self.model.eval()
         all_labels = []
@@ -608,13 +619,13 @@ def run_hpo_mode(train_dataset,wandb_project,wandb_entity,hpo_metric="weighted a
             "scheduler": trial.suggest_categorical("scheduler", ["Plateau", "CosineAnnealingWarmRestarts","None"])#"Exponential","Cyclic",
             
         }
-        """
+       
         if nn_model == "Transformer":
-            #trial_params["nhead"] = trial.suggest_categorical("nhead", [2, 4])#,8
+            trial_params["nhead"] = trial.suggest_categorical("nhead", [2, 4,8])#,8
             #trial_params["dim_feedforward"] = trial.suggest_categorical("dim_feedforward", [1024,1536, 2048 ])#, 4096
-            #trial_params["num_layers_transformer"] = trial.suggest_categorical("num_layers_transformer", [1,2])#, 4
-            #trial_params["pe_factor"]= trial.suggest_float("pe_factor", 0.001, 1.0, log=True)
-        """
+            trial_params["num_layers_transformer"] = trial.suggest_categorical("num_layers_transformer", [1,2,4])#, 4
+            trial_params["pe_factor"]= trial.suggest_float("pe_factor", 0.0001, 1.0, log=True)
+        
         wandb.config.update(trial_params, allow_val_change=True)
        
         cfg = wandb.config
@@ -624,6 +635,7 @@ def run_hpo_mode(train_dataset,wandb_project,wandb_entity,hpo_metric="weighted a
         
         skf = StratifiedKFold(n_splits=k_folds, shuffle=True, random_state=random_seed)
         fold_metrics = []
+        val_accuracy_metrics = []
         
         # Calculate class weights
         class_counts = Counter(labels)
@@ -696,6 +708,7 @@ def run_hpo_mode(train_dataset,wandb_project,wandb_entity,hpo_metric="weighted a
             )
             global_step += epochs_ran # Update the counter for the next fold
             
+            
             metric_key = hpo_metric
             if metric_key in val_metrics and isinstance(val_metrics[metric_key], dict):
                 # handles 'weighted avg', 'macro avg', or a specific class name by getting its f1-score
@@ -709,17 +722,19 @@ def run_hpo_mode(train_dataset,wandb_project,wandb_entity,hpo_metric="weighted a
                 metric_value = val_metrics['weighted avg']['f1-score']
 
             fold_metrics.append(metric_value)
-
+            val_accuracy_metrics.append(val_metrics["accuracy"])
             # Clean up checkpoint
             if os.path.exists(checkpoint):
                 os.remove(checkpoint)
             
         # Calculate average metric across folds
         avg_metric = np.mean(fold_metrics)
+        val_avg_acc = np.mean(val_accuracy_metrics)
         std_metric = np.std(fold_metrics)
         
         wandb.log({
             "avg_cv_metric": avg_metric,
+            "fold_avg_val_acc": val_avg_acc ,
             "std_cv_metric": std_metric,
             "fold_metrics": fold_metrics
         })
@@ -751,6 +766,7 @@ def run_hpo_mode(train_dataset,wandb_project,wandb_entity,hpo_metric="weighted a
     print(f"\n💾 Best hyperparameters saved to '{best_params_path}':")
     for key, value in study.best_trial.params.items():
         print(f"  {key}: {value}")
+    return best_params_path
 def split_dataset_into_subsets(dataset):
     df = dataset.get_data()
     max_length = dataset.get_max_length()
@@ -761,9 +777,10 @@ def split_dataset_into_subsets(dataset):
     #val_loader = DataLoader(val_dataset, batch_size=32, shuffle=False)
     #test_loader = DataLoader(test_dataset, batch_size=32, shuffle=False)
     return train_dataset, val_dataset, test_dataset, max_length
-def run(h5,metadata,wandb_project,wandb_entity,nn_model = "Transformer",
+#this is kind of pointless now but whatever
+def run(test_dataset,wandb_project,wandb_entity,nn_model = "Transformer",
         num_epochs = 100,patience = 10, kfolds = 5,n_trials = 50, random_seed =42,
-        wandb_disable = False ):
+        wandb_disable = False,max_length=5000 ):
     torch.manual_seed(random_seed)
     np.random.seed(random_seed)
     if torch.cuda.is_available():
@@ -771,62 +788,292 @@ def run(h5,metadata,wandb_project,wandb_entity,nn_model = "Transformer",
         torch.backends.cudnn.benchmark = True
         
         
-    dataset = MultiClassDataset(embeddings_path=h5,csv_path=metadata)
-    max_length = dataset.get_max_length()
+    
+    
 
-    run_hpo_mode(
-        train_dataset=dataset, wandb_project=wandb_project,
+    yaml_path = run_hpo_mode(
+        train_dataset=test_dataset, wandb_project=wandb_project,
         wandb_entity=wandb_entity, nn_model=nn_model,
         max_length=max_length, n_trials=n_trials,
         num_epochs=num_epochs, patience=patience,
         wandb_disable=wandb_disable, k_folds=kfolds,
     )
+    return yaml_path
     #torch.backends.cudnn.deterministic = True
     #torch.backends.cudnn.benchmark = False
-def train_model_transformer(train_dataset,val_dataset, wandb_project,wandb_entity,cfg_model,cfg_trainer,wandb_disable=False,trial_name="trial_0"):
-    args = cfg_model|cfg_trainer
-    run = wandb.init(
-        project=wandb_project, 
-        entity=wandb_entity, 
-        config=args, 
-        reinit='finish_previous', 
-        mode="disabled" if wandb_disable else "online",
-        name=trial_name
-    )
+def train_model(train_dataset,val_dataset, wandb_project,wandb_entity,yaml_file,wandb_disable=False,embed_size = 1024,max_length=500,num_epochs=200, nn_model="Transformer",patience = 20):
+    random_seeds = [42,121,1023,4398,5000]
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
+    #defualt args
+    args = {
+        "embed_size":embed_size,
+        "max_length":  max_length,
+        "nn_model":  nn_model,
+        "num_epochs": num_epochs,
+        "patience": patience,
+        "dropout_rate": 0.2,
+        'learning_rate': 1e-4,
+        'weight_decay':1e-4,
+        'hidden_dim1': 512,
+        "criterion": "MSE",
+        "optimizer":"Lion",
+        "dim_feedforward": 2048,
+        "use_alibi": False,
+        "pe_factor": 0.0,
+        "nhead": 4,
+        "num_layers_transformer":2,
+        'batch_size': 16
+    } 
+    #update with hyperparameter values
+    with open(yaml_file, 'r') as stream:
+        data_loaded = yaml.safe_load(stream)
+    
+    args.update(data_loaded)
+    
+    model_config = {
+        'num_classes': train_dataset.num_classes, 
+        'embed_size': args["embed_size"], 
+        'hidden_dim1': args["hidden_dim1"], 
+        'dropout_rate': args["dropout_rate"], 
+        "max_length" : max_length
+        
+    }
+    if nn_model == "Transformer":
+        model_config["nhead"] = args["nhead"]
+        model_config["dim_feedforward"] = args["dim_feedforward"]
+        model_config["num_layers_transformer"] = args["num_layers_transformer"]
+        model_config["use_alibi"] = args["use_alibi"]
+        model_config["pe_factor"] = args["pe_factor"]
+    
     train_loader = DataLoader(
         train_dataset,
-        batch_size=cfg_trainer.batch_size,               
+        batch_size=args["batch_size"],               
         shuffle=True 
     )
     val_loader = DataLoader(
         val_dataset,
-        batch_size=cfg_trainer.batch_size,               
+        batch_size=args["batch_size"],               
         shuffle=False
     )
     labels = np.argmax(train_dataset.encodings, axis=1)
     class_counts = Counter(labels)
     weights = torch.tensor([1.0 / class_counts.get(i, 1) for i in range(train_dataset.num_classes)], dtype=torch.float)
     weights = weights / weights.sum() * len(weights)  # Normalize weights
-    trainer = MultiClassTrainer(cfg_model, cfg_trainer.learning_rate, cfg_trainer.weight_decay, weights,model="Transformer",optimizer=cfg_trainer.optimizer,criterion=cfg_trainer.criterion,scheduler=cfg_trainer.scheduler)
-    checkpoint = f"temp_{trial_name}_{wandb_project}.pt"
-    val_metrics, epochs_ran = trainer.train_and_validate(
-        train_loader, val_loader,
-        cfg_trainer.num_epochs, cfg_trainer.patience,
-        checkpoint, train_dataset.label_encoder,
-        log_to_wandb=True,
-        trial=None,
-        step_offset=0 # Pass the current global step
+    best_acc = 0
+    for random_seed in random_seeds:
+        print(f"starting random seed: {random_seed}")
+        torch.manual_seed(random_seed)
+        np.random.seed(random_seed)
+        if torch.cuda.is_available():
+            torch.cuda.manual_seed(random_seed)
+        trial_name = f"val_seed_{random_seed}"
+        args["random_seed"] = random_seed
+        run = wandb.init(
+            project=wandb_project, 
+            entity=wandb_entity, 
+            config=args, 
+            reinit='finish_previous', 
+            mode="disabled" if wandb_disable else "online",
+            name=trial_name
+        )
+        cfg = wandb.config
+        trainer = MultiClassTrainer(model_config, cfg.learning_rate, cfg.weight_decay, weights,model=nn_model,optimizer=cfg.optimizer,criterion=cfg.criterion,scheduler=cfg.scheduler)
+        checkpoint = f"{trial_name}_{wandb_project}.pt"
+        val_metrics, epochs_ran = trainer.train_and_validate(
+            train_loader, val_loader,
+            cfg.num_epochs, cfg.patience,
+            checkpoint, train_dataset.label_encoder,
+            log_to_wandb=True,
+            trial=None,
+            step_offset=0 
+        )
+        print(f"✅ Model training complete. Final model saved to '{checkpoint}'")
+        wandb.log({
+            "report": val_metrics,  
+        })
+        current_acc = val_metrics["accuracy"]
+        if current_acc > best_acc:
+            best_acc = current_acc
+            best_checkpoint = checkpoint
+        run.finish()
+    return best_checkpoint
+def plot_multiclass_confusion_matrix(y_true, y_pred, class_names, save_path):
+    
+    cm = confusion_matrix(y_true, y_pred)
+    
+    # Dynamic figure size based on number of classes
+    fig_size = max(10, len(class_names) * 0.5)
+    plt.figure(figsize=(fig_size, fig_size))
+    
+    # Use percentage if many classes
+    if len(class_names) > 20:
+        cm_normalized = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis] * 100
+        fmt = '.1f'
+        cbar_label = 'Percentage (%)'
+    else:
+        cm_normalized = cm
+        fmt = 'd'
+        cbar_label = 'Count'
+    
+    sns.heatmap(cm_normalized, annot=True, fmt=fmt, cmap='Blues', 
+                xticklabels=class_names, yticklabels=class_names,
+                cbar_kws={'label': cbar_label})
+    
+    plt.title('Confusion Matrix', fontsize=16)
+    plt.ylabel('True Label', fontsize=12)
+    plt.xlabel('Predicted Label', fontsize=12)
+    plt.xticks(rotation=45, ha='right')
+    plt.yticks(rotation=0)
+    plt.tight_layout()
+    
+    plt.savefig(save_path, dpi=100, bbox_inches='tight')
+    plt.close()
+    print(f"INFO: Confusion matrix saved to {save_path}")
+#prob should add test to train_model function but i like them being callable seperate 
+def test_model(test_dataset, wandb_project,wandb_entity,yaml_file,checkpoint_path,wandb_disable=False,embed_size = 1024,max_length=500,num_epochs=200, nn_model="Transformer",patience = 20):
+    args = {
+        "embed_size":embed_size,
+        "max_length":  max_length,
+        "nn_model":  nn_model,
+        "num_epochs": num_epochs,
+        "patience": patience,
+        "dropout_rate": 0.2,
+        'learning_rate': 1e-4,
+        'weight_decay':1e-4,
+        'hidden_dim1': 512,
+        "criterion": "MSE",
+        "optimizer":"Lion",
+        "dim_feedforward": 2048,
+        "use_alibi": False,
+        "pe_factor": 0.0,
+        "nhead": 4,
+        "num_layers_transformer":2,
+        'batch_size': 16
+    } 
+    #update with hyperparameter values
+    with open(yaml_file, 'r') as stream:
+        data_loaded = yaml.safe_load(stream)
+    
+    args.update(data_loaded)
+    
+    model_config = {
+        'num_classes': test_dataset.num_classes, 
+        'embed_size': args["embed_size"], 
+        'hidden_dim1': args["hidden_dim1"], 
+        'dropout_rate': args["dropout_rate"], 
+        "max_length" : max_length
+        
+    }
+    if nn_model == "Transformer":
+        model_config["nhead"] = args["nhead"]
+        model_config["dim_feedforward"] = args["dim_feedforward"]
+        model_config["num_layers_transformer"] = args["num_layers_transformer"]
+        model_config["use_alibi"] = args["use_alibi"]
+        model_config["pe_factor"] = args["pe_factor"] 
+    test_loader = DataLoader(
+        test_dataset,
+        batch_size=args["batch_size"],               
+        shuffle=False
     )
-
-
+    run = wandb.init(
+        project=wandb_project, 
+        entity=wandb_entity, 
+        config=args, 
+        reinit='finish_previous', 
+        mode="disabled" if wandb_disable else "online",
+        name="final_test"
+    )
+    cfg = wandb.config
+    trainer = MultiClassTrainer(model_config, cfg.learning_rate, cfg.weight_decay, None,model=nn_model,optimizer=cfg.optimizer,criterion=cfg.criterion,scheduler=cfg.scheduler)
+    trainer.load_checkpoint(checkpoint_path)
+    label_encoder = test_dataset.label_encoder
+    report, pred_labels, all_ids, true_labels = trainer.evaluate_on_loader(test_loader,label_encoder)
+    wandb.log({"report": report})
+    cm_path = "final_model_confusion_matrix.png"
+    plot_multiclass_confusion_matrix(true_labels, pred_labels, label_encoder.categories_[0], cm_path)
+    wandb.log({"final_confusion_matrix": wandb.Image(cm_path)})
+    run.finish()
 #personal key lol
 #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
 if __name__ == '__main__':
+    #python classifier_runner.py --h5 CYP_PA_Attempt4_per_exon.h5 --csv CYP_PA_Attempt4_train_val_test.csv --entity per_exon --nn_model Transformer
+    parser = argparse.ArgumentParser(description="Train or optimize a multi-class SCPP classifier.")
+    parser.add_argument("--h5", required=True, help="Path to embeddings HDF5 file")
+    parser.add_argument("--csv", required=True, help="Path to metadata CSV")
+    parser.add_argument("--entity", required=True, help="entity name")
+    parser.add_argument("--nn_model", required=True, help="nn_model type",choices=["Basic","Transformer"])
+    parser.add_argument("--project", default="per-exon-testing")
+    parser.add_argument("--wandb_disable", action="store_true")
+    args = parser.parse_args()
+    train_dataset, val_dataset, test_dataset, max_length =split_dataset_into_subsets(MultiClassDataset(embeddings_path=args.h5,csv_path=args.csv))
+    yaml_path = run(train_dataset,args.entity+"_HPO",args.project,nn_model=args.nn_model,n_trials=60,num_epochs=50,patience=10,wandb_disable=False)
+    best_model= train_model(train_dataset,val_dataset,args.entity+"_test",args.project,yaml_path,nn_model = args.nn_model,wandb_disable=False)
+    test_model(test_dataset,args.entity+"_test",args.project,yaml_path,best_model,nn_model = args.nn_model)
+
+
+
+
+
+
+
+
+#did everything manually before really messy, keeping just in case
+"""
     #nn_model = "RNN"
-    nn_model = "Transformer"
-    #nn_model = "Basic"
-    h5,csv = os.path.join("splits","per_exon_train.h5"),os.path.join("splits","per_exon_train.csv")
+    #nn_model = "Transformer"
+    nn_model = "Basic"
+    #h5,csv = os.path.join("splits","per_exon_train.h5"),os.path.join("splits","per_exon_train.csv")
+    #h5,csv = os.path.join("splits","per_prot_train.h5"),os.path.join("splits","per_prot_train.csv")
+    #h5,csv = os.path.join("splits","fixed_length_chunks_train.h5"),os.path.join("splits","fixed_length_chunks_train.csv")
+    #h5,csv = os.path.join("splits","fixed_total_chunks_train.h5"),os.path.join("splits","fixed_total_chunks_train.csv")
     #h5,csv = "splits\\per_prot_train.h5","splits\\per_prot_train.csv"
-    entity = "v7_transformer_per_exon_pe_factor_0"
+    #entity = "final_Transformer_fixed_total_chunks"
     #entity = "testing"
-    run(h5,csv,entity,"per-exon-testing",nn_model=nn_model,n_trials=50,num_epochs=35,patience=6,wandb_disable=False)
+    #run(h5,csv,entity,"per-exon-testing",nn_model=nn_model,n_trials=60,num_epochs=50,patience=10,wandb_disable=False)
+    
+    
+    
+    
+    h5,csv = "CYP_PA_Attempt4_per_prot.h5","CYP_PA_Attempt4_train_val_test.csv"
+    yaml_file = "final_Basic_per_prot.yaml"
+    entity = "val_per_prot_basic"
+    train_dataset, val_dataset, test_dataset, max_length =split_dataset_into_subsets(MultiClassDataset(embeddings_path=h5,csv_path=csv)) 
+    #best_model= train_model(train_dataset,val_dataset,entity,"per-exon-testing",yaml_file,nn_model = nn_model)
+    best_model = "seed_121_val_per_prot_basic.pt"
+    test_model(test_dataset,entity,"per-exon-testing",yaml_file,best_model,nn_model = nn_model)
+    
+    nn_model = "Transformer"
+    h5,csv = "CYP_PA_Attempt4_per_exon.h5","CYP_PA_Attempt4_train_val_test.csv"
+    yaml_file = "final_transformer_per_exon.yaml"
+    entity = "val_per_exon"
+    train_dataset, val_dataset, test_dataset, max_length =split_dataset_into_subsets(MultiClassDataset(embeddings_path=h5,csv_path=csv)) 
+    #best_model = train_model(train_dataset,val_dataset,entity,"per-exon-testing",yaml_file)
+    best_model = "seed_4398_val_per_exon.pt"
+    test_model(test_dataset,entity,"per-exon-testing",yaml_file,best_model,nn_model = nn_model)
+
+    h5 = "CYP_PA_Attempt4_per_prot.h5"
+    yaml_file = "final_transformer_per_prot.yaml"
+    entity = "val_per_prot"
+    train_dataset, val_dataset, test_dataset, max_length =split_dataset_into_subsets(MultiClassDataset(embeddings_path=h5,csv_path=csv)) 
+    #best_model = train_model(train_dataset,val_dataset,entity,"per-exon-testing",yaml_file)
+    best_model = "seed_5000_val_per_prot.pt"
+    test_model(test_dataset,entity,"per-exon-testing",yaml_file,best_model,nn_model = nn_model)
+
+    h5 = "CYP_PA_Attempt4_fixed_length_chunks.h5"
+    yaml_file = "final_Transformer_fixed_length_chunks.yaml"
+    entity = "val_fixed_length_chunks"
+    train_dataset, val_dataset, test_dataset, max_length =split_dataset_into_subsets(MultiClassDataset(embeddings_path=h5,csv_path=csv)) 
+    #best_model = train_model(train_dataset,val_dataset,entity,"per-exon-testing",yaml_file)
+    best_model = "seed_4398_val_fixed_length_chunks.pt"
+    test_model(test_dataset,entity,"per-exon-testing",yaml_file,best_model,nn_model = nn_model)
+
+    h5 = "CYP_PA_Attempt4_fixed_total_chunks.h5"
+    yaml_file = "final_Transformer_fixed_total_chunks.yaml"
+    entity = "val_fixed_total_chunks"
+    train_dataset, val_dataset, test_dataset, max_length =split_dataset_into_subsets(MultiClassDataset(embeddings_path=h5,csv_path=csv)) 
+    #best_model = train_model(train_dataset,val_dataset,entity,"per-exon-testing",yaml_file)
+    best_model = "seed_121_val_fixed_total_chunks.pt"
+    test_model(test_dataset,entity,"per-exon-testing",yaml_file,best_model,nn_model = nn_model)
+"""
+    

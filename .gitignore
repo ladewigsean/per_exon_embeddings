@@ -2,3 +2,4 @@ wandb\
 wandb/
 *.pt
 *.yaml
+*.png
