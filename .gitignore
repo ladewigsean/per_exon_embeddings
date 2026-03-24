@@ -3,3 +3,8 @@ wandb/
 *.pt
 *.yaml
 *.png
+dataset_creation/json_folder/
+dataset_creation/output_entrez/
+dataset_creation/output_entrez_rna/
+dataset_creation/temp/
+dataset_creation/CYP_PA_Attempt4_per_res.h5

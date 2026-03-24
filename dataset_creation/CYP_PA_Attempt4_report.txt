@@ -1,0 +1,337 @@
+**********
+Short Report
+**********
+
+CYP11A	326-->73   	85%
+CYP11B	1055-->291 	85%
+CYP17A	495-->158  	85%
+CYP19A	651-->97   	85%
+CYP1A	3147-->872 	85%
+CYP1B	1533-->285 	85%
+CYP1C	84-->26    	85%
+CYP1D	111-->35   	85%
+CYP20A	1867-->317 	85%
+CYP21A	390-->118  	85%
+CYP24A	1210-->175 	85%
+CYP26A	1216-->160 	85%
+CYP26B	1588-->135 	85%
+CYP26C	727-->114  	85%
+CYP27A	562-->204  	85%
+CYP27B	328-->65   	85%
+CYP27C	1500-->292 	85%
+CYP2A	1405-->439 	85%
+CYP2AB	1-->1      	85%
+CYP2AC	1-->1      	85%
+CYP2B	1769-->690 	85%
+CYP2C	4250-->1286	85%
+CYP2D	1502-->524 	85%
+CYP2E	407-->94   	85%
+CYP2F	1805-->549 	85%
+CYP2G	2097-->723 	85%
+CYP2J	5464-->1616	85%
+CYP2R	695-->69   	85%
+CYP2S	250-->49   	85%
+CYP2T	7-->3      	85%
+CYP2U	1983-->1013	85%
+CYP2W	696-->150  	85%
+CYP39A	705-->105  	85%
+CYP3A	4796-->1714	85%
+CYP46A	288-->32   	85%
+CYP4A	1451-->370 	85%
+CYP4B	1973-->460 	85%
+CYP4F	4276-->793 	85%
+CYP4V	2792-->1009	85%
+CYP4X	412-->77   	85%
+CYP4Z	30-->15    	85%
+CYP51A	317-->24   	85%
+CYP5A	69-->13    	85%
+CYP7A	984-->136  	85%
+CYP7B	1235-->237 	85%
+CYP8A	5-->2      	85%
+CYP8B	194-->50   	85%
+
+**********************
+Complete Positive Dataset Report
+**********************
+
+********
+CYP11A
+********
+ncbi efetch proteins: 326
+Proteins after clustering: 73
+
+********
+CYP11B
+********
+ncbi efetch proteins: 1055
+Proteins after clustering: 291
+
+********
+CYP17A
+********
+ncbi efetch proteins: 495
+Proteins after clustering: 158
+
+********
+CYP19A
+********
+ncbi efetch proteins: 651
+Proteins after clustering: 97
+
+********
+CYP1A
+********
+ncbi efetch proteins: 3147
+Proteins after clustering: 872
+
+********
+CYP1B
+********
+ncbi efetch proteins: 1533
+Proteins after clustering: 285
+
+********
+CYP1C
+********
+ncbi efetch proteins: 84
+Proteins after clustering: 26
+
+********
+CYP1D
+********
+ncbi efetch proteins: 111
+Proteins after clustering: 35
+
+********
+CYP20A
+********
+ncbi efetch proteins: 1867
+Proteins after clustering: 317
+
+********
+CYP21A
+********
+ncbi efetch proteins: 390
+Proteins after clustering: 118
+
+********
+CYP24A
+********
+ncbi efetch proteins: 1210
+Proteins after clustering: 175
+
+********
+CYP26A
+********
+ncbi efetch proteins: 1216
+Proteins after clustering: 160
+
+********
+CYP26B
+********
+ncbi efetch proteins: 1588
+Proteins after clustering: 135
+
+********
+CYP26C
+********
+ncbi efetch proteins: 727
+Proteins after clustering: 114
+
+********
+CYP27A
+********
+ncbi efetch proteins: 562
+Proteins after clustering: 204
+
+********
+CYP27B
+********
+ncbi efetch proteins: 328
+Proteins after clustering: 65
+
+********
+CYP27C
+********
+ncbi efetch proteins: 1500
+Proteins after clustering: 292
+
+********
+CYP2A
+********
+ncbi efetch proteins: 1405
+Proteins after clustering: 439
+
+********
+CYP2AB
+********
+ncbi efetch proteins: 1
+Proteins after clustering: 1
+
+********
+CYP2AC
+********
+ncbi efetch proteins: 1
+Proteins after clustering: 1
+
+********
+CYP2B
+********
+ncbi efetch proteins: 1769
+Proteins after clustering: 690
+
+********
+CYP2C
+********
+ncbi efetch proteins: 4250
+Proteins after clustering: 1286
+
+********
+CYP2D
+********
+ncbi efetch proteins: 1502
+Proteins after clustering: 524
+
+********
+CYP2E
+********
+ncbi efetch proteins: 407
+Proteins after clustering: 94
+
+********
+CYP2F
+********
+ncbi efetch proteins: 1805
+Proteins after clustering: 549
+
+********
+CYP2G
+********
+ncbi efetch proteins: 2097
+Proteins after clustering: 723
+
+********
+CYP2J
+********
+ncbi efetch proteins: 5464
+Proteins after clustering: 1616
+
+********
+CYP2R
+********
+ncbi efetch proteins: 695
+Proteins after clustering: 69
+
+********
+CYP2S
+********
+ncbi efetch proteins: 250
+Proteins after clustering: 49
+
+********
+CYP2T
+********
+ncbi efetch proteins: 7
+Proteins after clustering: 3
+
+********
+CYP2U
+********
+ncbi efetch proteins: 1983
+Proteins after clustering: 1013
+
+********
+CYP2W
+********
+ncbi efetch proteins: 696
+Proteins after clustering: 150
+
+********
+CYP39A
+********
+ncbi efetch proteins: 705
+Proteins after clustering: 105
+
+********
+CYP3A
+********
+ncbi efetch proteins: 4796
+Proteins after clustering: 1714
+
+********
+CYP46A
+********
+ncbi efetch proteins: 288
+Proteins after clustering: 32
+
+********
+CYP4A
+********
+ncbi efetch proteins: 1451
+Proteins after clustering: 370
+
+********
+CYP4B
+********
+ncbi efetch proteins: 1973
+Proteins after clustering: 460
+
+********
+CYP4F
+********
+ncbi efetch proteins: 4276
+Proteins after clustering: 793
+
+********
+CYP4V
+********
+ncbi efetch proteins: 2792
+Proteins after clustering: 1009
+
+********
+CYP4X
+********
+ncbi efetch proteins: 412
+Proteins after clustering: 77
+
+********
+CYP4Z
+********
+ncbi efetch proteins: 30
+Proteins after clustering: 15
+
+********
+CYP51A
+********
+ncbi efetch proteins: 317
+Proteins after clustering: 24
+
+********
+CYP5A
+********
+ncbi efetch proteins: 69
+Proteins after clustering: 13
+
+********
+CYP7A
+********
+ncbi efetch proteins: 984
+Proteins after clustering: 136
+
+********
+CYP7B
+********
+ncbi efetch proteins: 1235
+Proteins after clustering: 237
+
+********
+CYP8A
+********
+ncbi efetch proteins: 5
+Proteins after clustering: 2
+
+********
+CYP8B
+********
+ncbi efetch proteins: 194
+Proteins after clustering: 50
