@@ -18,6 +18,8 @@ import numpy as np
 from Bio import Entrez
 from UniProtMapper import ProtMapper
 import math
+import seaborn as sns
+import matplotlib.pyplot as plt
 ENABLE_DEBUG_PRINTS = False
 RAPIDFUZZ_AVAILABLE = True
 DATASETS_CMD = ["wsl", "--exec", "/mnt/c/Users/ladew/Documents/datasets_path/datasets"]
@@ -505,13 +507,14 @@ def read_metadata_fasta(fasta,metadata,filter_keep = None):
         symbols = symbols.intersection(set(filter_keep))
     for symbol in symbols:
         parsed_data[symbol]= {}
-        df_symbol = df[df["gene"]==symbol]
-        for seq_record in SeqIO.parse(fasta, "fasta"):
-            row = df_symbol[df_symbol["identifier"]==seq_record.id]
-            if row.size == 0:
-                continue
-            row = row.iloc[0]
-            parsed_data[symbol][seq_record.id] = {'meta': [seq_record.id, row["gene"], row["species"],row["cut_pos"]], 'seq': str(seq_record.seq), 'full_header': seq_record.description}
+    
+    for seq_record in SeqIO.parse(fasta, "fasta"):
+        row = df[df["identifier"]==seq_record.id]
+        if row.shape[0] != 1:
+            print(f"{seq_record.id} {row.size}")
+            continue
+        row = row.iloc[0]
+        parsed_data[row["gene"]][seq_record.id] = {'meta': [seq_record.id, row["gene"], row["species"],row["cut_pos"]], 'seq': str(seq_record.seq), 'full_header': seq_record.description}
     return parsed_data
 def flatten_dict(input_dict):
     output_dict ={}
@@ -695,33 +698,110 @@ def generate_fasta_with_splits(fasta,metadata_csv,output_fasta):
             row = row.iloc[0]
             seq = generate_splits_for_seq(seq_record.seq,row["cut_pos"])
             file.write(bytes(f">{seq_record.id}\n{seq}\n", "UTF-8"))
-def splice_aware_filter_attmept1(dict1,report_file, ident_threshold="80",mode="diamond"):
+def length_df(flat_dict):
+    dict_for_df = {}
+    for key, item in flat_dict.items():
+        length_seq = len(item["seq"])
+        length_exon = len(split_string_to_list(item["meta"][-1]))+1
+        gene = item["meta"][1]
+        dict_for_df[key] = [gene ,length_seq,length_exon]
+    df = pd.DataFrame.from_dict(dict_for_df, orient="index", columns=["Gene", "length_seq", "length_exon"])
+    return df
+def filter_outliers_all_graphic(parsed_dict,prefix = "boxplot",whisk = 2):
+    parsed_dict = flatten_dict(parsed_dict)
+    
+    df = length_df(parsed_dict)
+
+    plt.close()
+    sns.set_theme(rc={'figure.figsize':(40,8)})
+    sns.set_style('whitegrid')
+    plt.xticks(rotation=30)
+    ax= sns.boxplot(x='Gene',y='length_seq',data=df,whis=whisk,notch=True)
+    #ax = sns.stripplot(x="Gene", y="length_seq",data=df)
+    plt.savefig(prefix + "_seq_length.png")
+    plt.close()
+    #just in case i need to reformat
+    sns.set_style('whitegrid')
+    plt.xticks(rotation=30)
+    ax= sns.boxplot(x='Gene',y='length_exon',data=df,whis=whisk,notch=True)
+    #ax = sns.stripplot(x="Gene", y="length_exon",data=df)
+    plt.savefig(prefix + "_exon_length.png")
+    plt.close()
+    sns.set_style('whitegrid')
+    plt.xticks(rotation=30)
+    ax = sns.countplot(x='Gene',data=df)
+    
+    ax.bar_label(ax.containers[0])
+    plt.savefig(prefix + "_counts.png")
+def filter_outliers_length_data(flat_dict,whisk = 2):
+    df = length_df(flat_dict)
+    q75_s, q25_s = np.percentile(df["length_seq"], [75 ,25])
+    iqr_s = q75_s - q25_s
+    bottom_bound_s = q25_s-(iqr_s*whisk)
+    top_bound_s = q75_s+(iqr_s*whisk)
+    q75_e, q25_e = np.percentile(df["length_exon"], [75 ,25])
+    iqr_e = q75_e - q25_e
+    bottom_bound_e = q25_e-(iqr_e*whisk)
+    top_bound_e = q75_e+(iqr_e*whisk)
+    df = df[(df["length_seq"] >= bottom_bound_s)&(df["length_seq"] <= top_bound_s) & (df["length_exon"] >= bottom_bound_e)&(df["length_exon"] <= top_bound_e)]
+    filtered_data = {key: flat_dict[key] for key in df.index}
+    
+    return filtered_data
+def splice_aware_filter_attmept1(dict1,prefix, ident_threshold="80",mode="diamond",whisk = 2,min_nummer = 60):
     log=["\n\n**********************\nComplete Positive Dataset Report\n**********************\n"]
     short_report=["**********\nShort Report\n**********\n"]
     combined_all ={}
     combined_all_filtered = {}
     midway_filter={}
-    sorted_symbols = sorted(set(dict1.keys()))
+    sorted_symbols = sorted(list(dict1.keys()))
+    unique_num = []
+    outliers_num= []
+    clustering_num = []
     for symbol in sorted_symbols:
         print(f"filtering {symbol}")
         log.append(f"********\n{symbol}\n********")
         unique_count = len(dict1[symbol])
+        unique_num.append(unique_count )
         log.append(f"ncbi efetch proteins: {len(dict1[symbol])}")
-        
-        
         combined_all.update(dict1[symbol])
         
-        filtered_combined= thin_data_original(dict1[symbol], p_identity=ident_threshold,mode = mode)
-        log.append(f"Proteins after clustering: {len(filtered_combined)}\n")
-        short_report.append("\t".join([symbol, (f"{unique_count}-->{len(filtered_combined)}".ljust(11)), f"{ident_threshold}%"]))
-        combined_all_filtered.update(filtered_combined)
-    with open(report_file,"w") as file:
+        filtered_combined = filter_outliers_length_data(dict1[symbol],whisk=whisk)
+        outliers_num.append(len(filtered_combined))
+        log.append(f"Proteins after filtering outliers: {len(filtered_combined)}")
+        filtered_combined= thin_data(filtered_combined, p_identity=ident_threshold,mode = mode)
+        clustering_num.append(len(filtered_combined))
+        log.append(f"Proteins after clustering: {len(filtered_combined)}")
+        included_symbol = "X"
+        
+        if len(filtered_combined) >= min_nummer:
+            combined_all_filtered.update(filtered_combined)
+            included_symbol = ""
+            #adds emtpy line
+            log.append("")
+        else:
+            log.append(f"Not enough data in class, the entire class will be removed from final data({len(filtered_combined)} < {min_nummer})\n")
+        short_report.append("\t".join([symbol, (f"{unique_count}-->{len(filtered_combined)}".ljust(11)), f"{ident_threshold}%",included_symbol]))
+        
+    df_counts = pd.DataFrame.from_dict({"Gene":sorted_symbols,'Original':unique_num, 'Post_Outlier_removal':outliers_num, 'Post_clustering':clustering_num})
+    #prob could have made original data melted but this is simpler
+    tidy = df_counts.melt(id_vars='Gene')
+    plt.close()
+    sns.set_theme(rc={'figure.figsize':(40,8)})
+    sns.set_style('whitegrid')
+    plt.xticks(rotation=30)
+    ax = sns.barplot(x="Gene",y = "value",hue="variable",data=tidy)
+    for container in ax.containers:
+        ax.bar_label(container,fontsize="x-small",rotation=40 )
+    ax.set(ylabel="Count")
+    plt.savefig(prefix + "_counts_after_filtering.png")
+    with open(prefix+"_report.txt","w") as file:
         file.write("\n".join(short_report))
         file.write("\n".join(log))
     return combined_all_filtered 
+
 with open('CYP_input.json',"r") as f:
     main_family_dict = json.load(f)
-prefix = "CYP_PA_Attempt4"
+prefix = "CYP_PA_Attempt5"
 download = False
 
 if download:
@@ -740,8 +820,12 @@ else:
     parsed_data = flatten_dict(parsed_data)
 """
 #convert_to_accession(f"{prefix}_no_filter.csv",f"{prefix}_no_filter_entrez.csv")
+prefix = "CYP_PA_Attempt4"
 parsed_data = read_metadata_fasta(f"{prefix}_no_filter.fasta",f"{prefix}_no_filter_cuts.csv")
-print("test_1")
-combined_all_filtered = splice_aware_filter_attmept1(parsed_data,f"{prefix}_report_no_splice.txt", ident_threshold="85",mode="mmseqs")
-save_fasta(combined_all_filtered,f"{prefix}_no_splice.fasta")
-save_csv_splits(combined_all_filtered,f"{prefix}_no_splice.csv")
+prefix = "CYP_PA_Attempt5"
+whisk = 3
+filter_outliers_all_graphic(parsed_data,prefix=prefix,whisk=whisk)
+
+#combined_all_filtered = splice_aware_filter_attmept1(parsed_data,prefix, ident_threshold="85",mode="mmseqs",whisk=whisk)
+#save_fasta(combined_all_filtered,f"{prefix}.fasta")
+#save_csv_splits(combined_all_filtered,f"{prefix}.csv")
