@@ -748,7 +748,7 @@ def run_hpo_mode(train_dataset,wandb_project,wandb_entity,hpo_metric="weighted a
     #not 100% percent sure how this hpo works but it works
     study = optuna.create_study(
         direction="maximize", 
-        pruner=optuna.pruners.MedianPruner(n_startup_trials=10, n_warmup_steps=30)
+        pruner=optuna.pruners.MedianPruner(n_startup_trials=10, n_warmup_steps=50)
     )
     study.optimize(objective, n_trials=n_trials)
     
@@ -1012,7 +1012,8 @@ if __name__ == '__main__':
     parser.add_argument("--wandb_disable", action="store_true")
     args = parser.parse_args()
     train_dataset, val_dataset, test_dataset, max_length =split_dataset_into_subsets(MultiClassDataset(embeddings_path=args.h5,csv_path=args.csv))
-    yaml_path = run(train_dataset,args.entity+"_HPO",args.project,nn_model=args.nn_model,n_trials=60,num_epochs=50,patience=10,wandb_disable=False)
+    print(f"Max Length: {max_length}")
+    yaml_path = run(train_dataset,args.entity+"_HPO",args.project,nn_model=args.nn_model,n_trials=80,num_epochs=30,patience=5,wandb_disable=False)
     best_model= train_model(train_dataset,val_dataset,args.entity+"_test",args.project,yaml_path,nn_model = args.nn_model,wandb_disable=False)
     test_model(test_dataset,args.entity+"_test",args.project,yaml_path,best_model,nn_model = args.nn_model)
 

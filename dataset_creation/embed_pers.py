@@ -153,6 +153,6 @@ def combine_h5(files, output_file ='final4\\combined6.h5' ):
      
 
 
-#["per_exon","fixed_length_chunks","fixed_total_chunks"]
-embed("C:\\Users\\ladew\\Documents\\School_related\\Bachelor_related\\dataset_creation\\CYP_PA_Attempt4.fasta","C:\\Users\\ladew\\Documents\\School_related\\Bachelor_related\\dataset_creation\\CYP_PA_Attempt4.csv",embedding_types=["per_res"])
+#["per_prot","per_exon","per_res","fixed_length_chunks","fixed_total_chunks"]
+embed("CYP_PA_Attempt5.fasta","CYP_PA_Attempt5.csv",embedding_types=["per_prot","per_exon","per_res","fixed_length_chunks","fixed_total_chunks"])
 

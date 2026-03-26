@@ -252,170 +252,8 @@ def parse_symbol_grab(file,gene, file_format="fasta",check_symbol= True):
             continue 
         parsed_data[seq_record.id] = {'meta': [seq_record.id, gene, species], 'seq': str(seq_record.seq), 'full_header': seq_record.description}
     return parsed_data 
-def filter_self(parsed_data, max_levenshtein_distance=4):
-    if not parsed_data:
-        return set(), 0, 0, 0
-    initial_count = len(parsed_data) # Count after parser's duplicate accession removal
-    print(f"\nStep 2: Filtering {initial_count} unique sequences from parser...")
 
-    # Filter identical
-    print("  [Filter 1/3] Identifying identical sequences...")
-    start_time = time.time()
-    sequence_to_accessions = defaultdict(list)
-    for acc, data in parsed_data.items():
-        if data.get('seq'):
-            sequence_to_accessions[data['seq']].append(acc)
-        else:
-             debug_print(f"WARN: Skipping accession '{acc}' in identity check - missing sequence.")
-
-    debug_print(f"Identical sequence check: {len(sequence_to_accessions)} unique sequences found.")
-
-    accessions_after_identity_check = set()
-    num_removed_identical = 0
-    for sequence, accessions in sequence_to_accessions.items():
-        if len(accessions) > 1:
-            debug_print(f"Found {len(accessions)} accessions for sequence (len {len(sequence)}): {accessions}")
-            accessions.sort()
-            kept_acc = accessions[0]
-            accessions_after_identity_check.add(kept_acc)
-            num_removed_identical += (len(accessions) - 1)
-            debug_print(f" -> Keeping '{kept_acc}', removing {len(accessions)-1}.")
-        else:
-            accessions_after_identity_check.add(accessions[0])
-
-    count_after_identity = len(accessions_after_identity_check)
-    print(f"  - Removed {num_removed_identical} identical sequences ({initial_count} -> {count_after_identity}). Time: {time.time() - start_time:.2f}s")
-    # num_removed_identical > 0 means different accessions had the same sequence; a redundant check 
-
-    # Filter by Levenshtein distance
-    num_removed_near_identical = 0
-    accessions_after_near_identity_check = accessions_after_identity_check # Default if skipping
-
-    if max_levenshtein_distance and max_levenshtein_distance > 0:
-        if not RAPIDFUZZ_AVAILABLE:
-            print(f"  [Filter 2/3] Skipping near-identical check: 'rapidfuzz' library not found.")
-        else:
-            print(f"  [Filter 2/3] Identifying near-identical sequences (Levenshtein <= {max_levenshtein_distance}) among remaining {count_after_identity}...")
-            start_time = time.time()
-            unique_seq_data = []
-            for acc in accessions_after_identity_check:
-                if acc in parsed_data and parsed_data[acc].get('seq'):
-                    unique_seq_data.append((acc, parsed_data[acc]['seq']))
-                else:
-                     debug_print(f"WARN: Skipping accession '{acc}' in near-identity check - missing sequence data.")
-            unique_seq_data.sort(key=lambda x: len(x[1]), reverse=True)
-            representatives = []
-            accessions_to_remove_near_identity = set()
-            num_compared = 0
-            for acc, seq in unique_seq_data:
-                if acc in accessions_to_remove_near_identity: continue
-                is_near_duplicate = False
-                for rep_acc, rep_seq in representatives:
-                    num_compared += 1
-                    if abs(len(seq) - len(rep_seq)) > max_levenshtein_distance: continue
-                    distance = Levenshtein.distance(seq, rep_seq, score_cutoff=max_levenshtein_distance)
-                    if distance <= max_levenshtein_distance:
-                        accessions_to_remove_near_identity.add(acc)
-                        is_near_duplicate = True
-                        debug_print(f"Near-Identical: Removing '{acc}' (dist {distance} to '{rep_acc}')")
-                        break
-                if not is_near_duplicate:
-                    representatives.append((acc, seq))
-            accessions_after_near_identity_check = accessions_after_identity_check - accessions_to_remove_near_identity
-            num_removed_near_identical = len(accessions_to_remove_near_identity)
-            count_after_near_identity = len(accessions_after_near_identity_check)
-            print(f"  - Removed {num_removed_near_identical} near-identical sequences ({count_after_identity} -> {count_after_near_identity}). Compared pairs vs reps: {num_compared}. Time: {time.time() - start_time:.2f}s")
-    else:
-         print(f"  [Filter 2/3] Skipping near-identical sequence check.")
-
-
-    # Filter fragments
-    print(f"  [Filter 3/3] Identifying fragment sequences among the remaining {len(accessions_after_near_identity_check)}...")
-    start_time = time.time()
-    accessions_to_remove_substrings = set()
-    candidate_accessions = list(accessions_after_near_identity_check)
-    n_candidates = len(candidate_accessions)
-
-    
-    for i in range(n_candidates):
-        acc1 = candidate_accessions[i]
-        if acc1 in accessions_to_remove_substrings: continue
-        if not (acc1 in parsed_data and parsed_data[acc1].get('seq')):
-            debug_print(f"WARN: Skipping accession '{acc1}' in substring check - missing sequence data.")
-            continue
-        seq1 = parsed_data[acc1]['seq']
-        len1 = len(seq1)
-        for j in range(i + 1, n_candidates):
-            acc2 = candidate_accessions[j]
-            if acc2 in accessions_to_remove_substrings: continue
-            if not (acc2 in parsed_data and parsed_data[acc2].get('seq')):
-                 debug_print(f"WARN: Skipping comparison with '{acc2}' in substring check - missing sequence data.")
-                 continue
-            seq2 = parsed_data[acc2]['seq']
-            len2 = len(seq2)
-            if acc1 == acc2 or seq1 == seq2: continue
-            try:
-                if len1 < len2 and seq1 in seq2:
-                    accessions_to_remove_substrings.add(acc1)
-                    debug_print(f"Fragment: Removing '{acc1}' (substring of '{acc2}')")
-                    break
-                elif len2 < len1 and seq2 in seq1:
-                    accessions_to_remove_substrings.add(acc2)
-                    debug_print(f"Fragment: Removing '{acc2}' (substring of '{acc1}')")
-            except Exception as e:
-                print(f"  ERROR comparing substrings for {acc1} and {acc2}: {e}", file=sys.stderr)
-
-    final_accessions_to_keep = accessions_after_near_identity_check - accessions_to_remove_substrings
-    num_removed_substrings = len(accessions_to_remove_substrings)
-    final_count = len(final_accessions_to_keep)
-    count_before_substring = len(accessions_after_near_identity_check)
-    print(f"  - Removed {num_removed_substrings} fragment sequences ({count_before_substring} -> {final_count}). Time: {time.time() - start_time:.2f}s")
-
-    print(f"Step 2: Finished filtering.")
-    return final_accessions_to_keep, num_removed_identical, num_removed_near_identical, num_removed_substrings
-def filter_from(data_to_remove_from, data_to_remove, ram = "32G",p_identity="80", mode = "diamond"):
-    print("Remove positive proteins")
-    print(f"length before: {len(data_to_remove_from)}")
-    remove_by_accessions=data_to_remove_from.copy()
-    for key in data_to_remove.keys():
-        if key in remove_by_accessions:
-            del remove_by_accessions[key]
-    to_be_clustered = remove_by_accessions | data_to_remove
-    
-    temp_input = f"temp_{p_identity}_all_to_all.fasta"
-    save_fasta(to_be_clustered,temp_input)
-    temp_output = f"temp_{p_identity}_all_to_all.tsv"
-    if mode == "diamond":
-        subprocess.run(["diamond","cluster","-d",temp_input,"-o",temp_output,"--approx-id",p_identity,"-M",ram])
-        df = pd.read_csv(temp_output,sep="\t",names=["cluster","entry"],header=None)
-    elif mode == "mmseqs":
-        p_identity = str(int(p_identity)/100)
-        subprocess.run(["wsl","--exec","mmseqs","easy-cluster",temp_input,temp_output,"temp/","--min-seq-id",p_identity,"-c","0.8","--cov-mode","0"])
-        with open(temp_output+"_cluster.tsv", "r") as file:
-            tsv = file.read().replace("\n\t","\t")
-        with open(temp_output+"_cluster.tsv", "w") as file:
-            file.write(tsv)
-        df = pd.read_csv(temp_output+"_cluster.tsv",sep="\t",names=["cluster","entry"],header=None)
-        if os.path.isfile(temp_output+"_cluster.tsv"):
-            os.remove(temp_output+"_cluster.tsv")
-        #if os.path.isfile(temp_output+"_rep_seq.fasta"):
-            #os.remove(temp_output+"_rep_seq.fasta")
-        if os.path.isfile(temp_output+"_all_seqs.fasta"):
-            os.remove(temp_output+"_all_seqs.fasta")
-    #this seems really messy because it is
-    
-    df = df[~df["cluster"].isin(set(data_to_remove.keys()))] 
-    to_be_purged= set(df[df["entry"].isin(set(data_to_remove.keys()))]["cluster"])
-    df = df[~df["cluster"].isin(to_be_purged)] 
-    # keeping just clusters would make sense as they will be filtered out later anyways, but want to this function to only remove overlaps not thin  
-    keys_to_keep = set(df["cluster"])#.union(set(df["entry"]))
-    filtered_data = {key: remove_by_accessions[key] for key in keys_to_keep}
-    print(f"length after: {len(filtered_data)}")
-    if os.path.isfile(temp_input):
-        os.remove(temp_input)
-    if os.path.isfile(temp_output):
-        os.remove(temp_output)
-    return filtered_data
+"""
 def thin_data_original(data, ram = "32G",p_identity="50",mode = "diamond"):
     print("Thinning data")
     print(f"length before: {len(data)}")
@@ -431,12 +269,6 @@ def thin_data_original(data, ram = "32G",p_identity="50",mode = "diamond"):
     elif mode == "mmseqs":
         p_identity = str(int(p_identity)/100)
         subprocess.run(["wsl","--exec","mmseqs","easy-cluster",temp_input,temp_output,"temp/","--min-seq-id",p_identity,"-c","0.8","--cov-mode","0"])
-        """
-        with open(temp_output+"_cluster.tsv", "r") as file:
-            tsv = file.read().replace("\n\t","\t")
-        with open(temp_output+"_cluster.tsv", "w") as file:
-            file.write(tsv)
-        """
         df = pd.read_csv(temp_output+"_cluster.tsv",sep="\t",names=["cluster","entry"],header=None)
         if os.path.isfile(temp_output+"_cluster.tsv"):
             os.remove(temp_output+"_cluster.tsv")
@@ -453,6 +285,7 @@ def thin_data_original(data, ram = "32G",p_identity="50",mode = "diamond"):
     if os.path.isfile(temp_output):
         os.remove(temp_output)
     return filtered_data
+"""
 def thin_data(data, ram = "32G",p_identity="50",mode = "diamond"):
     print("Thinning data")
     print(f"length before: {len(data)}")
@@ -528,34 +361,7 @@ def repair_data(csv, dict_, output_csv):
     species_list = [dict_[key]["meta"][2] for key in id_list]
     original["species"] = species_list
     original.to_csv(output_csv, index=False)
-def merge_positive(dict1,report_file, ident_threshold="80",mode="diamond"):
-    log=["\n\n**********************\nComplete Positive Dataset Report\n**********************\n"]
-    short_report=["**********\nShort Report\n**********\n"]
-    combined_all ={}
-    combined_all_filtered = {}
-    midway_filter={}
-    sorted_symbols = sorted(set(dict1.keys()))
-    for symbol in sorted_symbols:
-        print(f"filtering {symbol}")
-        log.append(f"********\n{symbol}\n********")
-        
-        log.append(f"ncbi efetch proteins: {len(dict1[symbol])}")
-        
-        
-        combined_all.update(dict1[symbol])
-        unique_accessions = filter_self(dict1[symbol],max_levenshtein_distance=0)[0]
-        filtered_combined={key: dict1[symbol][key] for key in unique_accessions}
-        midway_filter.update(filtered_combined)
-        log.append(f"proteins after removing duplicate sequences/substrings: {len(filtered_combined)}")
-        unique_count = len(filtered_combined)
-        filtered_combined= thin_data(filtered_combined, p_identity=ident_threshold,mode = mode)
-        log.append(f"Proteins after clustering: {len(filtered_combined)}\n")
-        short_report.append("\t".join([symbol, (f"{unique_count}-->{len(filtered_combined)}".ljust(11)), f"{ident_threshold}%"]))
-        combined_all_filtered.update(filtered_combined)
-    with open(report_file,"w") as file:
-        file.write("\n".join(short_report))
-        file.write("\n".join(log))
-    return combined_all,midway_filter,combined_all_filtered 
+
 
 def run_datasets_for_accession(accession, json_folder):
     output_json = os.path.join(json_folder, f"{accession}.json")
@@ -716,14 +522,14 @@ def filter_outliers_all_graphic(parsed_dict,prefix = "boxplot",whisk = 2):
     sns.set_theme(rc={'figure.figsize':(40,8)})
     sns.set_style('whitegrid')
     plt.xticks(rotation=30)
-    ax= sns.boxplot(x='Gene',y='length_seq',data=df,whis=whisk,notch=True)
+    ax= sns.boxplot(x='Gene',y='length_seq',data=df,whis=whisk,medianprops={"color": "r", "linewidth": 2})
     #ax = sns.stripplot(x="Gene", y="length_seq",data=df)
     plt.savefig(prefix + "_seq_length.png")
     plt.close()
     #just in case i need to reformat
     sns.set_style('whitegrid')
     plt.xticks(rotation=30)
-    ax= sns.boxplot(x='Gene',y='length_exon',data=df,whis=whisk,notch=True)
+    ax= sns.boxplot(x='Gene',y='length_exon',data=df,whis=whisk,medianprops={"color": "r", "linewidth": 2})
     #ax = sns.stripplot(x="Gene", y="length_exon",data=df)
     plt.savefig(prefix + "_exon_length.png")
     plt.close()
@@ -736,11 +542,11 @@ def filter_outliers_all_graphic(parsed_dict,prefix = "boxplot",whisk = 2):
 def filter_outliers_length_data(flat_dict,whisk = 2):
     df = length_df(flat_dict)
     q75_s, q25_s = np.percentile(df["length_seq"], [75 ,25])
-    iqr_s = q75_s - q25_s
+    iqr_s = max(q75_s - q25_s,0.5)
     bottom_bound_s = q25_s-(iqr_s*whisk)
     top_bound_s = q75_s+(iqr_s*whisk)
     q75_e, q25_e = np.percentile(df["length_exon"], [75 ,25])
-    iqr_e = q75_e - q25_e
+    iqr_e = max(q75_e - q25_e,.5)
     bottom_bound_e = q25_e-(iqr_e*whisk)
     top_bound_e = q75_e+(iqr_e*whisk)
     df = df[(df["length_seq"] >= bottom_bound_s)&(df["length_seq"] <= top_bound_s) & (df["length_exon"] >= bottom_bound_e)&(df["length_exon"] <= top_bound_e)]
@@ -806,7 +612,7 @@ download = False
 
 if download:
     parsed_data = download_entrez(main_family_dict)
-    #combined_all,midway_filter,combined_all_filtered= merge_positive(parsed_data,f"{prefix}_report.txt", ident_threshold="85",mode="mmseqs")
+    
     #parsed_data =download_entrez_rna(main_family_dict)
     midway_filter = flatten_dict(parsed_data)
     
@@ -826,6 +632,6 @@ prefix = "CYP_PA_Attempt5"
 whisk = 3
 filter_outliers_all_graphic(parsed_data,prefix=prefix,whisk=whisk)
 
-#combined_all_filtered = splice_aware_filter_attmept1(parsed_data,prefix, ident_threshold="85",mode="mmseqs",whisk=whisk)
-#save_fasta(combined_all_filtered,f"{prefix}.fasta")
-#save_csv_splits(combined_all_filtered,f"{prefix}.csv")
+combined_all_filtered = splice_aware_filter_attmept1(parsed_data,prefix, ident_threshold="85",mode="mmseqs",whisk=whisk)
+save_fasta(combined_all_filtered,f"{prefix}.fasta")
+save_csv_splits(combined_all_filtered,f"{prefix}.csv")
