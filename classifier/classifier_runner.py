@@ -1007,12 +1007,12 @@ if __name__ == '__main__':
     if args.yaml_file:
         yaml_path = args.yaml_file
     else:
-        yaml_path = run(train_dataset,args.entity+"_HPO",args.project,nn_model=args.nn_model,n_trials=80,num_epochs=30,patience=5,wandb_disable=False)
+        yaml_path = run(train_dataset,args.entity+"_HPO",args.project,nn_model=args.nn_model,n_trials=80,num_epochs=30,patience=5,wandb_disable=args.wandb_disable)
     if args.pt_file and args.yaml_file:
         best_model = args.pt_file
     else:
-        best_model= train_model(train_dataset,val_dataset,args.entity+"_test",args.project,yaml_path,nn_model = args.nn_model,wandb_disable=False)
-    test_model(test_dataset,args.entity+"_test",args.project,yaml_path,best_model,nn_model = args.nn_model)
+        best_model= train_model(train_dataset,val_dataset,args.entity+"_test",args.project,yaml_path,nn_model = args.nn_model,wandb_disable=args.wandb_disable)
+    test_model(test_dataset,args.entity+"_test",args.project,yaml_path,best_model,nn_model = args.nn_model,wandb_disable=args.wandb_disable)
 
 
     
