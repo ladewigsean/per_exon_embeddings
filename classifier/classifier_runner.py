@@ -846,6 +846,7 @@ def train_model(train_dataset,val_dataset, wandb_project,wandb_entity,yaml_file,
     weights = torch.tensor([1.0 / class_counts.get(i, 1) for i in range(train_dataset.num_classes)], dtype=torch.float)
     weights = weights / weights.sum() * len(weights)  # Normalize weights
     best_acc = 0
+    
     for random_seed in random_seeds:
         print(f"starting random seed: {random_seed}")
         torch.manual_seed(random_seed)
@@ -880,8 +881,9 @@ def train_model(train_dataset,val_dataset, wandb_project,wandb_entity,yaml_file,
         current_acc = val_metrics["accuracy"]
         if current_acc > best_acc:
             best_acc = current_acc
-            if os.path.exists(best_checkpoint):
-                os.remove(best_checkpoint)
+            if best_checkpoint:
+                if os.path.exists(best_checkpoint):
+                    os.remove(best_checkpoint)
             best_checkpoint = checkpoint
         else:
             if os.path.exists(best_checkpoint):
