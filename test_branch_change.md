@@ -1,7 +1,7 @@
-## Summary
 
 
-##Removed RNNCLassifier, was never used
+
+## Removed RNNCLassifier, was never used
 
 ## Critical Bugs Fixed
 
