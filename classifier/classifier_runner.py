@@ -17,7 +17,7 @@ from torch.nn.modules.transformer import TransformerEncoderLayer, TransformerEnc
 from torch.utils.data import Dataset, DataLoader, Subset
 from lion_pytorch import Lion
 from sklearn.model_selection import StratifiedKFold
-from sklearn.metrics import classification_report, confusion_matrix
+from sklearn.metrics import classification_report
 from sklearn.preprocessing import OneHotEncoder
 import seaborn as sns
 import matplotlib.pyplot as plt
@@ -73,7 +73,7 @@ class MultiClassDataset(Dataset):
         with h5py.File(self.embeddings_file_path, 'r') as h5f:
             sample_key = list(h5f.keys())[0]
             self.embedding_dim = h5f[sample_key].shape[-1]
-        self.get_max_length()
+        self._compute_max_length()
     
         
 
@@ -101,19 +101,22 @@ class MultiClassDataset(Dataset):
 
     def __len__(self):
         return len(self.metadata_df)
+
+    def _compute_max_length(self):
+        if self.h5f is None:
+            self.h5f = h5py.File(self.embeddings_file_path, 'r')
+        self.max_length = 1
+
+        for key in self.h5f.keys():
+            shape = self.h5f[key].shape
+            if len(shape) == 1:
+                self.max_length = 1
+                continue
+            if shape[0] > self.max_length:
+                self.max_length = shape[0]
     def get_max_length(self):
         if self.max_length == None:
-            if self.h5f is None:
-                self.h5f = h5py.File(self.embeddings_file_path, 'r')
-            self.max_length = 1
-
-            for key in self.h5f.keys():
-                shape = self.h5f[key][:].shape
-                if len(shape) == 1:
-                    self.max_length = 1
-                    continue
-                if shape[0] > self.max_length:
-                    self.max_length = shape[0]
+            self._compute_max_length()
         return self.max_length 
 
     def get_labels(self):
@@ -159,7 +162,7 @@ class NominalClassifier(nn.Module):
             nn.BatchNorm1d(hidden_dim1),
 
             nn.Linear(hidden_dim1, num_classes),
-            nn.Softmax(dim = 1)
+            
         )
 
     def forward(self, x,lengths):
@@ -336,20 +339,20 @@ class TransformerClassifier(nn.Module):
 #https://www.geeksforgeeks.org/deep-learning/implementing-recurrent-neural-networks-in-pytorch/
 class RNNClassifier(nn.Module):    
     def __init__(self, num_classes, embed_size=1024, hidden_dim1=512,  dropout_rate=0.4,
-                  activation_function="tanh",  max_length = 5000, device = "cuda"):
+                  activation_function="tanh",  max_length = 2, device = "cuda"):
         super().__init__()
         self.max_length = max_length
         self.hidden_dim1 = hidden_dim1
         self.device = device
         self.rnn = nn.RNN(embed_size, hidden_dim1, num_layers=max_length,batch_first=True,nonlinearity = activation_function,dropout=dropout_rate)
         self.hiddenlayer = nn.Linear(hidden_dim1,num_classes)
-        self.softmax = nn.Softmax(dim=1)
+        
     def forward(self, x,lengths):
         #best guess is that for first run there needs to be initial values
         h0 = torch.zeros(self.max_length, x.size(0), self.hidden_dim1).to(x.device)
         x,_ = self.rnn(x,h0)
         x = self.hiddenlayer(x[:, -1, :])
-        x = self.softmax(x)
+        
         return x     
 #used prev trainers as outline 
 class MultiClassTrainer:
@@ -586,7 +589,7 @@ def run_hpo_mode(train_dataset,wandb_project,wandb_entity,hpo_metric="weighted a
         "optimizer":"Lion",
         "dim_feedforward": 2048,
         "use_alibi": False,
-        "pe_factor": 0.0,
+        "pe_factor": 1.0,
         "nhead": 4,
         "num_layers_transformer":2,
         'batch_size': 16
@@ -820,7 +823,7 @@ def train_model(train_dataset,val_dataset, wandb_project,wandb_entity,yaml_file,
         "optimizer":"Lion",
         "dim_feedforward": 2048,
         "use_alibi": False,
-        "pe_factor": 0.0,
+        "pe_factor": 1.0,
         "nhead": 4,
         "num_layers_transformer":2,
         'batch_size': 16
@@ -899,7 +902,7 @@ def train_model(train_dataset,val_dataset, wandb_project,wandb_entity,yaml_file,
         run.finish()
     return best_checkpoint
 def plot_multiclass_confusion_matrix(y_true, y_pred, class_names, save_path):
-    
+    from sklearn.metrics import confusion_matrix
     cm = confusion_matrix(y_true, y_pred)
     
     # Dynamic figure size based on number of classes
@@ -947,7 +950,7 @@ def test_model(test_dataset, wandb_project,wandb_entity,yaml_file,checkpoint_pat
         "optimizer":"Lion",
         "dim_feedforward": 2048,
         "use_alibi": False,
-        "pe_factor": 0.0,
+        "pe_factor": 1.0,
         "nhead": 4,
         "num_layers_transformer":2,
         'batch_size': 16
