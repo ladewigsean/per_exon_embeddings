@@ -1,8 +1,7 @@
-## Summary
 
-This PR fixes 14 bugs in the classifier pipeline and adds a comprehensive test suite (77 tests). Every fix has a `BUG FIX:` comment explaining what was wrong and why.
 
-**Please review each fix carefully** — understanding these bugs will help you avoid similar issues in future work.
+
+## Removed RNNCLassifier, was never used
 
 ## Critical Bugs Fixed
 
@@ -10,14 +9,13 @@ This PR fixes 14 bugs in the classifier pipeline and adds a comprehensive test s
 Fixed
 
 ### 2. RNNClassifier had 5000 layers
-Fixed
+Fixed/ Removed RNN Classifier
 
 ### 3. Positional Encoding factor default was 0.0 / 0.01
 Fixed
 
 ### 4. ALiBi Transformer ignored padding mask
-The padding mask was computed but **never passed** to the ALiBi transformer. Padded positions contributed to attention and mean pooling.
-- **Fix:** Added `padding_mask` parameter through the full stack: `ALiBiTransformer` → `ALiBiTransformerLayer` → `ALiBiMultiHeadAttention`. Changed `nn.Sequential` to `nn.ModuleList` (Sequential can't pass extra args).
+Fixed
 
 ### 5. Checkpoint logged wrong key
 Fixed
@@ -27,9 +25,9 @@ Fixed
 
 ## Other Fixes
 - Removed unused `conv_layer` (created but never used in forward) (Fixed)
-- Removed commented-out WandB API key from source code (But I want to see it :( )
+- Removed commented-out WandB API key from source code (Fixed )
 - `get_max_length()` now reads `.shape` metadata instead of loading full arrays(Fixed)
-- Removed ~60 lines of dead commented-out code at end of file(Sry need this just incase)
+- Removed ~60 lines of dead commented-out code at end of file(Removed)
 - Cleaned up imports (removed unused `sys`(use this for when I quickly debug and use sys.exit()), `argparse` not needed at top(still at top in this version ?), `confusion_matrix` moved to where used(Ok moved but why?))
 
 ## Test Suite (77 tests)
@@ -51,6 +49,15 @@ pip install -e ".[dev]"
 pytest tests/ -v
 ```
 
-## How to review
-
-Every bug fix has a `BUG FIX:` comment in the code explaining what was wrong. Search for `BUG FIX:` to find them all. The tests in `tests/` verify each fix works.
+## results from testing
+mostly rnn errors, but RNN is removed now anyway
+```bash
+FAILED tests/test_integration.py::TestEndToEndTransformerTraining::test_padding_invariance_integration - RuntimeError: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cpu!
+FAILED tests/test_integration.py::TestAllModelVariantsTrainable::test_training_step[RNN-extra_config2] - TypeError: RNNClassifier.__init__() got an unexpected keyword argument 'num_rnn_layers'
+FAILED tests/test_models.py::TestRNNClassifier::test_output_shape - TypeError: RNNClassifier.__init__() got an unexpected keyword argument 'num_rnn_layers'
+FAILED tests/test_models.py::TestRNNClassifier::test_no_softmax_in_output - TypeError: RNNClassifier.__init__() got an unexpected keyword argument 'num_rnn_layers'
+FAILED tests/test_models.py::TestRNNClassifier::test_accepts_lengths_parameter - TypeError: RNNClassifier.__init__() got an unexpected keyword argument 'num_rnn_layers'
+FAILED tests/test_models.py::TestRNNClassifier::test_num_rnn_layers_is_small - TypeError: RNNClassifier.__init__() got an unexpected keyword argument 'num_rnn_layers'
+FAILED tests/test_trainer.py::TestMultiClassTrainer::test_rnn_model_training_runs - TypeError: RNNClassifier.__init__() got an unexpected keyword argument 'num_rnn_layers'
+============================================= 7 failed, 70 passed in 6.05s =============================================
+```
