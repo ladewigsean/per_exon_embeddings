@@ -1,12 +1,36 @@
-wandb\
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+
+# Training artifacts
 wandb/
 *.pt
 *.yaml
 *.png
+
+# Dataset creation temp files
 dataset_creation/json_folder/
 dataset_creation/output_entrez/
 dataset_creation/output_entrez_rna/
 dataset_creation/temp/
-dataset_creation/CYP_PA_Attempt4_per_res.h5
 dataset_creation/temp*
+dataset_creation/CYP_PA_Attempt4_per_res.h5
 classifier/CYP_PA_Attempt5_per_res.h5
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# pytest
+.pytest_cache/
