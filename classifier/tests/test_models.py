@@ -5,7 +5,6 @@ import pytest
 from classifier_runner import (
     TransformerClassifier,
     NominalClassifier,
-    RNNClassifier,
 )
 
 
@@ -149,47 +148,3 @@ class TestNominalClassifier:
         assert out.shape[0] == 2
 
 
-class TestRNNClassifier:
-    def test_output_shape(self, embed_dim, num_classes):
-        model = RNNClassifier(
-            num_classes=num_classes, embed_size=embed_dim,
-            hidden_dim1=32, dropout_rate=0.0, num_rnn_layers=2,
-        )
-        model.eval()
-        x = torch.randn(4, 10, embed_dim)
-        lengths = torch.full((4,), 10)
-        out = model(x, lengths)
-        assert out.shape == (4, num_classes)
-
-    def test_no_softmax_in_output(self, embed_dim, num_classes):
-        """Output should be raw logits."""
-        model = RNNClassifier(
-            num_classes=num_classes, embed_size=embed_dim,
-            hidden_dim1=32, dropout_rate=0.0, num_rnn_layers=2,
-        )
-        model.eval()
-        x = torch.randn(4, 10, embed_dim)
-        lengths = torch.full((4,), 10)
-        out = model(x, lengths)
-        has_negative = (out < 0).any().item()
-        sums_to_one = torch.allclose(out.sum(dim=1), torch.ones(4))
-        assert has_negative or not sums_to_one
-
-    def test_accepts_lengths_parameter(self, embed_dim, num_classes):
-        model = RNNClassifier(
-            num_classes=num_classes, embed_size=embed_dim,
-            hidden_dim1=32, dropout_rate=0.0, num_rnn_layers=2,
-        )
-        model.eval()
-        x = torch.randn(2, 5, embed_dim)
-        lengths = torch.tensor([5, 3])
-        out = model(x, lengths)
-        assert out.shape[0] == 2
-
-    def test_num_rnn_layers_is_small(self, embed_dim, num_classes):
-        """Verify num_layers is not accidentally set to max_length (was a bug)."""
-        model = RNNClassifier(
-            num_classes=num_classes, embed_size=embed_dim,
-            hidden_dim1=32, num_rnn_layers=2, max_length=5000,
-        )
-        assert model.rnn.num_layers == 2

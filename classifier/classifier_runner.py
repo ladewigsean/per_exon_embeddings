@@ -339,8 +339,11 @@ class TransformerClassifier(nn.Module):
 class MultiClassTrainer:
     def __init__(self, model_config, learning_rate, weight_decay,
                  class_weights_tensor, model="Transformer",
-                 criterion="CEL", optimizer="Adam", scheduler="Plateau"):
-        self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+                 criterion="CEL", optimizer="Adam", scheduler="Plateau",device = None):
+        if device is None:
+            self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+        else:
+            self.device = torch.device(device)
         print(f"INFO: Using device: {self.device}")
         
         self.model_config = model_config

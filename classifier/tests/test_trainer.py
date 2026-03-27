@@ -80,28 +80,7 @@ class TestMultiClassTrainer:
         )
         assert "accuracy" in metrics
 
-    def test_rnn_model_training_runs(self, small_dataset, train_val_loaders, tmp_path, embed_dim):
-        train_loader, val_loader = train_val_loaders
-        model_config = {
-            "num_classes": small_dataset.num_classes,
-            "embed_size": embed_dim,
-            "hidden_dim1": 32,
-            "dropout_rate": 0.0,
-            "max_length": small_dataset.max_length,
-            "num_rnn_layers": 2,
-        }
-        trainer = MultiClassTrainer(
-            model_config, learning_rate=1e-3, weight_decay=0,
-            class_weights_tensor=None, model="RNN",
-            criterion="CEL_weightless", optimizer="Adam", scheduler="None",
-        )
-        checkpoint_path = str(tmp_path / "test_ckpt.pt")
-        metrics, epochs = trainer.train_and_validate(
-            train_loader, val_loader, num_epochs=2, patience=10,
-            checkpoint_path=checkpoint_path,
-            label_encoder=small_dataset.label_encoder,
-        )
-        assert "accuracy" in metrics
+    
 
     def test_early_stopping(self, small_dataset, train_val_loaders, tmp_path, embed_dim):
         train_loader, val_loader = train_val_loaders

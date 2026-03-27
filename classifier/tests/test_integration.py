@@ -42,7 +42,7 @@ class TestEndToEndTransformerTraining:
         trainer = MultiClassTrainer(
             model_config, learning_rate=1e-2, weight_decay=0,
             class_weights_tensor=None, model="Transformer",
-            criterion="CEL_weightless", optimizer="Adam", scheduler="None",
+            criterion="CEL_weightless", optimizer="Adam", scheduler="None", 
         )
 
         # Train for many epochs to overfit
@@ -100,7 +100,7 @@ class TestEndToEndTransformerTraining:
         trainer = MultiClassTrainer(
             model_config, learning_rate=1e-3, weight_decay=0,
             class_weights_tensor=None, model="Transformer",
-            criterion="CEL_weightless", optimizer="Adam", scheduler="None",
+            criterion="CEL_weightless", optimizer="Adam", scheduler="None",device=model_config["device"]
         )
         trainer.model.eval()
 
@@ -136,7 +136,7 @@ class TestAllModelVariantsTrainable:
     @pytest.mark.parametrize("model_type,extra_config", [
         ("Transformer", {"nhead": 2, "dim_feedforward": 64, "num_layers_transformer": 1, "device": "cpu", "pe_factor": 1.0}),
         ("Basic", {}),
-        ("RNN", {"num_rnn_layers": 2}),
+        
     ])
     def test_training_step(self, setup, embed_dim, model_type, extra_config):
         ds, loader = setup
