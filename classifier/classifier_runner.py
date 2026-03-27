@@ -335,25 +335,6 @@ class TransformerClassifier(nn.Module):
         x = masked_mean(x, padding_mask)
         #[batch,embed_size] --> [batch,number_classes]
         return self.network(x)   
-#reference from here
-#https://www.geeksforgeeks.org/deep-learning/implementing-recurrent-neural-networks-in-pytorch/
-class RNNClassifier(nn.Module):    
-    def __init__(self, num_classes, embed_size=1024, hidden_dim1=512,  dropout_rate=0.4,
-                  activation_function="tanh",  max_length = 2, device = "cuda"):
-        super().__init__()
-        self.max_length = max_length
-        self.hidden_dim1 = hidden_dim1
-        self.device = device
-        self.rnn = nn.RNN(embed_size, hidden_dim1, num_layers=max_length,batch_first=True,nonlinearity = activation_function,dropout=dropout_rate)
-        self.hiddenlayer = nn.Linear(hidden_dim1,num_classes)
-        
-    def forward(self, x,lengths):
-        #best guess is that for first run there needs to be initial values
-        h0 = torch.zeros(self.max_length, x.size(0), self.hidden_dim1).to(x.device)
-        x,_ = self.rnn(x,h0)
-        x = self.hiddenlayer(x[:, -1, :])
-        
-        return x     
 #used prev trainers as outline 
 class MultiClassTrainer:
     def __init__(self, model_config, learning_rate, weight_decay,
@@ -373,9 +354,7 @@ class MultiClassTrainer:
         #wierdly works best despite not being meant for 
         elif criterion == "MSE":
             self.criterion = nn.MSELoss()
-        if model == "RNN":
-            self.model = RNNClassifier(**self.model_config).to(self.device)
-        elif model == "Transformer":
+        if model == "Transformer":
             self.model = TransformerClassifier(**self.model_config).to(self.device)
         elif model == "Basic":
             self.model = NominalClassifier(**self.model_config).to(self.device)
@@ -898,7 +877,12 @@ def train_model(train_dataset,val_dataset, wandb_project,wandb_entity,yaml_file,
         current_acc = val_metrics["accuracy"]
         if current_acc > best_acc:
             best_acc = current_acc
+            if os.path.exists(best_checkpoint):
+                os.remove(best_checkpoint)
             best_checkpoint = checkpoint
+        else:
+            if os.path.exists(best_checkpoint):
+                os.remove(best_checkpoint)
         run.finish()
     return best_checkpoint
 def plot_multiclass_confusion_matrix(y_true, y_pred, class_names, save_path):
@@ -1013,76 +997,20 @@ if __name__ == '__main__':
     parser.add_argument("--nn_model", required=True, help="nn_model type",choices=["Basic","Transformer"])
     parser.add_argument("--project", default="per-exon-testing")
     parser.add_argument("--wandb_disable", action="store_true")
+    parser.add_argument("--yaml_file", help="Yaml file with params, if given, will skip HPO step")
+    parser.add_argument("--pt_file", help="path to pt file contianing model weights, will skip validation step, if a yaml_file was also given")
     args = parser.parse_args()
     train_dataset, val_dataset, test_dataset, max_length =split_dataset_into_subsets(MultiClassDataset(embeddings_path=args.h5,csv_path=args.csv))
     print(f"Max Length: {max_length}")
-    yaml_path = run(train_dataset,args.entity+"_HPO",args.project,nn_model=args.nn_model,n_trials=80,num_epochs=30,patience=5,wandb_disable=False)
-    best_model= train_model(train_dataset,val_dataset,args.entity+"_test",args.project,yaml_path,nn_model = args.nn_model,wandb_disable=False)
+    if args.yaml_file:
+        yaml_path = args.yaml_file
+    else:
+        yaml_path = run(train_dataset,args.entity+"_HPO",args.project,nn_model=args.nn_model,n_trials=80,num_epochs=30,patience=5,wandb_disable=False)
+    if args.pt_file and args.yaml_file:
+        best_model = args.pt_file
+    else:
+        best_model= train_model(train_dataset,val_dataset,args.entity+"_test",args.project,yaml_path,nn_model = args.nn_model,wandb_disable=False)
     test_model(test_dataset,args.entity+"_test",args.project,yaml_path,best_model,nn_model = args.nn_model)
 
 
-
-
-
-
-
-
-#did everything manually before really messy, keeping just in case
-"""
-    #nn_model = "RNN"
-    #nn_model = "Transformer"
-    nn_model = "Basic"
-    #h5,csv = os.path.join("splits","per_exon_train.h5"),os.path.join("splits","per_exon_train.csv")
-    #h5,csv = os.path.join("splits","per_prot_train.h5"),os.path.join("splits","per_prot_train.csv")
-    #h5,csv = os.path.join("splits","fixed_length_chunks_train.h5"),os.path.join("splits","fixed_length_chunks_train.csv")
-    #h5,csv = os.path.join("splits","fixed_total_chunks_train.h5"),os.path.join("splits","fixed_total_chunks_train.csv")
-    #h5,csv = "splits\\per_prot_train.h5","splits\\per_prot_train.csv"
-    #entity = "final_Transformer_fixed_total_chunks"
-    #entity = "testing"
-    #run(h5,csv,entity,"per-exon-testing",nn_model=nn_model,n_trials=60,num_epochs=50,patience=10,wandb_disable=False)
-    
-    
-    
-    
-    h5,csv = "CYP_PA_Attempt4_per_prot.h5","CYP_PA_Attempt4_train_val_test.csv"
-    yaml_file = "final_Basic_per_prot.yaml"
-    entity = "val_per_prot_basic"
-    train_dataset, val_dataset, test_dataset, max_length =split_dataset_into_subsets(MultiClassDataset(embeddings_path=h5,csv_path=csv)) 
-    #best_model= train_model(train_dataset,val_dataset,entity,"per-exon-testing",yaml_file,nn_model = nn_model)
-    best_model = "seed_121_val_per_prot_basic.pt"
-    test_model(test_dataset,entity,"per-exon-testing",yaml_file,best_model,nn_model = nn_model)
-    
-    nn_model = "Transformer"
-    h5,csv = "CYP_PA_Attempt4_per_exon.h5","CYP_PA_Attempt4_train_val_test.csv"
-    yaml_file = "final_transformer_per_exon.yaml"
-    entity = "val_per_exon"
-    train_dataset, val_dataset, test_dataset, max_length =split_dataset_into_subsets(MultiClassDataset(embeddings_path=h5,csv_path=csv)) 
-    #best_model = train_model(train_dataset,val_dataset,entity,"per-exon-testing",yaml_file)
-    best_model = "seed_4398_val_per_exon.pt"
-    test_model(test_dataset,entity,"per-exon-testing",yaml_file,best_model,nn_model = nn_model)
-
-    h5 = "CYP_PA_Attempt4_per_prot.h5"
-    yaml_file = "final_transformer_per_prot.yaml"
-    entity = "val_per_prot"
-    train_dataset, val_dataset, test_dataset, max_length =split_dataset_into_subsets(MultiClassDataset(embeddings_path=h5,csv_path=csv)) 
-    #best_model = train_model(train_dataset,val_dataset,entity,"per-exon-testing",yaml_file)
-    best_model = "seed_5000_val_per_prot.pt"
-    test_model(test_dataset,entity,"per-exon-testing",yaml_file,best_model,nn_model = nn_model)
-
-    h5 = "CYP_PA_Attempt4_fixed_length_chunks.h5"
-    yaml_file = "final_Transformer_fixed_length_chunks.yaml"
-    entity = "val_fixed_length_chunks"
-    train_dataset, val_dataset, test_dataset, max_length =split_dataset_into_subsets(MultiClassDataset(embeddings_path=h5,csv_path=csv)) 
-    #best_model = train_model(train_dataset,val_dataset,entity,"per-exon-testing",yaml_file)
-    best_model = "seed_4398_val_fixed_length_chunks.pt"
-    test_model(test_dataset,entity,"per-exon-testing",yaml_file,best_model,nn_model = nn_model)
-
-    h5 = "CYP_PA_Attempt4_fixed_total_chunks.h5"
-    yaml_file = "final_Transformer_fixed_total_chunks.yaml"
-    entity = "val_fixed_total_chunks"
-    train_dataset, val_dataset, test_dataset, max_length =split_dataset_into_subsets(MultiClassDataset(embeddings_path=h5,csv_path=csv)) 
-    #best_model = train_model(train_dataset,val_dataset,entity,"per-exon-testing",yaml_file)
-    best_model = "seed_121_val_fixed_total_chunks.pt"
-    test_model(test_dataset,entity,"per-exon-testing",yaml_file,best_model,nn_model = nn_model)
-"""
     
