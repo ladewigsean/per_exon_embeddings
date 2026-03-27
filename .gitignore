@@ -10,3 +10,17 @@ dataset_creation/temp/
 dataset_creation/CYP_PA_Attempt4_per_res.h5
 dataset_creation/temp*
 classifier/CYP_PA_Attempt5_per_res.h5
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# OS
+.DS_Store
+
+# Secrets
+.env
+*temp*
