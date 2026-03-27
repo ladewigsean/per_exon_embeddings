@@ -23,4 +23,3 @@ __pycache__/
 
 # Secrets
 .env
-*temp*

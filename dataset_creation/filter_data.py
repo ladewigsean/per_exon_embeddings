@@ -2,6 +2,7 @@ import argparse
 import csv
 import sys
 import os
+from dotenv import load_dotenv
 from collections import defaultdict
 import time 
 from Bio import SeqIO
@@ -48,8 +49,9 @@ def save_acc(dict_to_save,file_name):
 def download_entrez(main_family_dict,output_folder="output_entrez",taxon = "animals",batch_size=32 ):
     if not os.path.exists(output_folder):
         os.makedirs(output_folder)
-    Entrez.email = "ladewigsean@gmail.com"
-    Entrez.api_key = "22c1495b8546b4ba67e46ca57de28aba5b09"
+    load_dotenv(".env")
+    Entrez.email = os.environ['entrez_email']
+    Entrez.api_key = os.environ['entrez_key']
     parsed_data = {}
     main_family = main_family_dict["main_family"]
     prefix = main_family_dict["prefix"]
@@ -135,8 +137,9 @@ def download_entrez(main_family_dict,output_folder="output_entrez",taxon = "anim
 def download_entrez_rna(main_family_dict,output_folder="output_entrez_rna",taxon = "animals",batch_size=32 ):
     if not os.path.exists(output_folder):
         os.makedirs(output_folder)
-    Entrez.email = "ladewigsean@gmail.com"
-    Entrez.api_key = "22c1495b8546b4ba67e46ca57de28aba5b09"
+    load_dotenv(".env")
+    Entrez.email = os.environ['entrez_email']
+    Entrez.api_key = os.environ['entrez_key']
     parsed_data = {}
     main_family = main_family_dict["main_family"]
     prefix = main_family_dict["prefix"]

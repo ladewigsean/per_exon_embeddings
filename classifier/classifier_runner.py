@@ -989,7 +989,7 @@ def test_model(test_dataset, wandb_project,wandb_entity,yaml_file,checkpoint_pat
     plot_multiclass_confusion_matrix(true_labels, pred_labels, label_encoder.categories_[0], cm_path)
     wandb.log({"final_confusion_matrix": wandb.Image(cm_path)})
     run.finish()
-#personal key lol
+
 if __name__ == '__main__':
     #python classifier_runner.py --h5 CYP_PA_Attempt4_per_exon.h5 --csv CYP_PA_Attempt4_train_val_test.csv --entity per_exon --nn_model Transformer
     parser = argparse.ArgumentParser(description="Train or optimize a multi-class SCPP classifier.")
