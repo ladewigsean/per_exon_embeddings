@@ -25,9 +25,9 @@ Fixed
 
 ## Other Fixes
 - Removed unused `conv_layer` (created but never used in forward) (Fixed)
-- Removed commented-out WandB API key from source code (But I want to see it :( )
+- Removed commented-out WandB API key from source code (Fixed )
 - `get_max_length()` now reads `.shape` metadata instead of loading full arrays(Fixed)
-- Removed ~60 lines of dead commented-out code at end of file(Sry need this just incase)
+- Removed ~60 lines of dead commented-out code at end of file(Removed)
 - Cleaned up imports (removed unused `sys`(use this for when I quickly debug and use sys.exit()), `argparse` not needed at top(still at top in this version ?), `confusion_matrix` moved to where used(Ok moved but why?))
 
 ## Test Suite (77 tests)
