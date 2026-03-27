@@ -278,7 +278,7 @@ def gen_pad_mask_bool(max_length,lengths,device):
 class TransformerClassifier(nn.Module):
     def __init__(self, num_classes, embed_size=1024, hidden_dim1=512,  dropout_rate=0.4,
                 max_length = 5000, dim_feedforward = 2048 ,nhead=4,num_layers_transformer = 1,
-                device = "cuda",use_alibi = False,pe_factor=0.01):
+                device = "cuda",use_alibi = False,pe_factor=1):
         super().__init__()
         self.max_len = max_length
         self.device = device
@@ -551,7 +551,7 @@ class MultiClassTrainer:
         )
         #
         return report,  all_preds, all_ids, all_labels
-def run_hpo_mode(train_dataset,wandb_project,wandb_entity,hpo_metric="weighted avg",n_trials = 50,num_epochs = 100 ,wandb_disable=False,k_folds = 5,max_length = 5000,nn_model = "RNN",random_seed = 42,embed_size=1024,patience = 10):
+def run_hpo_mode(train_dataset,wandb_project,wandb_entity,hpo_metric="weighted avg",n_trials = 50,num_epochs = 100 ,wandb_disable=False,k_folds = 5,max_length = 5000,nn_model = "Transformer",random_seed = 42,embed_size=1024,patience = 10):
     #to give wandb params, maybe there is easier way, also gives defualts
     args = {
         "hpo_metric":hpo_metric,
