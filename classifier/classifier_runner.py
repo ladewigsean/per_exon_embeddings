@@ -325,7 +325,7 @@ class TransformerClassifier(nn.Module):
         #[batch,max_length,embed_size]
         #x = self.transformer_encoder(x,src_mask,src_key_padding_mask=padding_mask)
         if self.use_alibi:
-            x = self.transformer_encoder(x)
+            x = self.transformer_encoder(x, padding_mask=padding_mask)
         else: 
             x = self.transformer_encoder(x,src_key_padding_mask=padding_mask)
         #output from [batch,max_length,embed_size] --> [batch,embed_size]
