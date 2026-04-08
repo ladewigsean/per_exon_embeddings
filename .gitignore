@@ -3,6 +3,7 @@ wandb/
 *.pt
 *.yaml
 *.png
+!.github/issue-assets/*.png
 dataset_creation/json_folder/
 dataset_creation/output_entrez/
 dataset_creation/output_entrez_rna/
