@@ -10,7 +10,7 @@ import h5py
 import numpy as np
 from collections import Counter
 import yaml
-#from positional_encodings.torch_encodings import PositionalEncoding1D,PositionalEncodingPermute1D, Summer
+
 import torch
 import torch.nn as nn
 from torch.nn.modules.transformer import TransformerEncoderLayer, TransformerEncoder
@@ -19,7 +19,6 @@ from lion_pytorch import Lion
 from sklearn.model_selection import StratifiedKFold
 from sklearn.metrics import classification_report
 from sklearn.preprocessing import OneHotEncoder
-import seaborn as sns
 import matplotlib.pyplot as plt
 
 import wandb
@@ -115,7 +114,7 @@ class MultiClassDataset(Dataset):
             if shape[0] > self.max_length:
                 self.max_length = shape[0]
     def get_max_length(self):
-        if self.max_length == None:
+        if self.max_length is None:
             self._compute_max_length()
         return self.max_length 
 
@@ -124,6 +123,22 @@ class MultiClassDataset(Dataset):
     
     def get_data(self):
         return self.metadata_df
+    def __del__(self):
+        """Close the HDF5 handle when the dataset is destroyed."""
+        if getattr(self, 'h5f', None) is not None:
+            try:
+                self.h5f.close()
+            except Exception:
+                pass
+            self.h5f = None
+
+
+def _h5_worker_init_fn(worker_id):
+    """Each DataLoader worker clears any inherited handle and re-opens
+    its own on first __getitem__ call (inside the worker process)."""
+    info = torch.utils.data.get_worker_info()
+    if info is not None and hasattr(info.dataset, 'h5f'):
+        info.dataset.h5f = None
     
 #omega scuffed but whatever, keeps it easier
 class MultiClassSubset(torch.utils.data.Subset):
@@ -278,15 +293,16 @@ def gen_pad_mask_bool(max_length,lengths,device):
 class TransformerClassifier(nn.Module):
     def __init__(self, num_classes, embed_size=1024, hidden_dim1=512,  dropout_rate=0.4,
                 max_length = 5000, dim_feedforward = 2048 ,nhead=4,num_layers_transformer = 1,
-                device = "cuda",use_alibi = False,pe_factor=1):
+                device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu"),use_alibi = False,pe_factor=1,pe_mode = "pe"):
         super().__init__()
         self.max_len = max_length
         self.device = device
         self.embed_size = embed_size
-       
-        self.position_encoder = PositionalEncoding(d_model=embed_size,dropout=dropout_rate,
+        if pe_mode == "pe":
+            self.position_encoder = PositionalEncoding(d_model=embed_size,dropout=dropout_rate,
                                                    max_length=self.max_len,factor=pe_factor)
-        #self.position_encoder = LearnedPositionalEmbedding(embed_size,max_len=max_length,dropout=dropout_rate)
+        if pe_mode =="learned_pe":
+            self.position_encoder = LearnedPositionalEmbedding(embed_size,max_len=max_length,dropout=dropout_rate)
         
         if use_alibi:
             #https://github.com/jaketae/alibi
@@ -298,7 +314,7 @@ class TransformerClassifier(nn.Module):
                 d_model=embed_size,nhead=nhead,dim_feedforward=dim_feedforward,dropout=dropout_rate,batch_first=True)
             self.transformer_encoder = TransformerEncoder(transformer_layer, num_layers=num_layers_transformer)
         self.use_alibi = use_alibi
-        #self.conv_layer =nn.Conv1d(self.max_len,1, kernel_size=3, padding = 1)
+        
         self.network = nn.Sequential(
             nn.Linear(embed_size, hidden_dim1),
             nn.ReLU(),
@@ -316,23 +332,22 @@ class TransformerClassifier(nn.Module):
         padding_mask = gen_pad_mask_bool(seq_len, lengths, x.device)
         #print(padding_mask.shape) --> torch.Size([16, 28])
         
-        #forward mask [max_length,max_length] 
-        #src_mask = nn.Transformer.generate_square_subsequent_mask(seq_len, device=self.device,dtype=torch.float32)
+        
+        
 
         #position encoder +[1,max_length,embed_size]
         x = self.position_encoder(x)
 
         #[batch,max_length,embed_size]
-        #x = self.transformer_encoder(x,src_mask,src_key_padding_mask=padding_mask)
+        
         if self.use_alibi:
             x = self.transformer_encoder(x, padding_mask=padding_mask)
         else: 
             x = self.transformer_encoder(x,src_key_padding_mask=padding_mask)
+
         #output from [batch,max_length,embed_size] --> [batch,embed_size]
-        #x = x.mean(dim=1)
-        #x = self.conv_layer(x)[:,-1,:]
-        #x= constrained_mean(x,lengths,self.device)
         x = masked_mean(x, padding_mask)
+        
         #[batch,embed_size] --> [batch,number_classes]
         return self.network(x)   
 #used prev trainers as outline 
@@ -362,6 +377,7 @@ class MultiClassTrainer:
         elif model == "Basic":
             self.model = NominalClassifier(**self.model_config).to(self.device)
         #leads to some form of tritonmissing error, which isnt windows compatable, works in linux but has too many errors and performance doesnt seem to be much much better 
+        #todo: get this to work   
         """
         if self.device.type == 'cuda':
             self.model = torch.compile(self.model,mode= "reduce-overhead")
@@ -403,7 +419,7 @@ class MultiClassTrainer:
         
 
     def train_and_validate(self, train_loader, val_loader, num_epochs, patience, checkpoint_path, 
-                      label_encoder, log_to_wandb=False, trial=None, step_offset=0):
+                      label_encoder, log_to_wandb=False, step_offset=0):
         #stop is decided by val macro f1, might change back to val accuracy
         best_val_f1 = 0.0 
         epochs_without_improvement = 0
@@ -463,12 +479,7 @@ class MultiClassTrainer:
                 if epochs_without_improvement >= patience:
                     print(f'INFO: Early stopping at epoch {epoch+1}. Best val_f1: {best_val_f1:.4f}')
                     break
-            
-            if trial:
-                trial.report(current_val_f1, epoch + step_offset)
-                if trial.should_prune():
-                    #need to clean up prune
-                    raise optuna.exceptions.TrialPruned()   
+              
         
         if os.path.exists(checkpoint_path):
             checkpoint= self.load_checkpoint(checkpoint_path)
@@ -642,41 +653,31 @@ def run_hpo_mode(train_dataset,wandb_project,wandb_entity,hpo_metric="weighted a
             model_config["use_alibi"] = cfg.use_alibi
             model_config["pe_factor"] = cfg.pe_factor
         global_step = 0
-        folds_todo=3
+        
         
         print(f"Optimizer: {cfg.optimizer}\nCriterion: {cfg.criterion}\nScheduler: {cfg.scheduler}\nDropout: {cfg.dropout_rate}\nPe_Factor: {cfg.pe_factor}")
         #as is now, does kfold k times for each tuning step, dont know if this is right or if it should cycle through kfold once each step
         for fold, (train_idx, val_idx) in enumerate(skf.split(np.zeros(len(labels)),labels )):
             print(f"\n--- Trial {trial.number}, Fold {fold+1}/{k_folds} ---")
-            folds_remaining = k_folds-fold
-            odds = folds_todo/folds_remaining 
-            if random.random() > odds:
-                print(f"skipping fold {fold+1}, {folds_todo} remaining folds")
-                continue
-            folds_todo = folds_todo-1
+            
             # Create data loaders
             train_loader = DataLoader(
                 Subset(train_dataset, train_idx),
                 batch_size=cfg.batch_size,
                 num_workers=8,
-                pin_memory=True,
-                persistent_workers=False,
+                worker_init_fn=_h5_worker_init_fn, 
+                persistent_workers=True,
                 shuffle=True 
             )
             val_loader = DataLoader(
                 Subset(train_dataset, val_idx),
                 batch_size=cfg.batch_size,
                 num_workers=8,
-                pin_memory=True,
-                persistent_workers=False,
+                worker_init_fn=_h5_worker_init_fn, 
+                persistent_workers=True,
                 shuffle=False
             )
-            #adding this to loaders causes pickle issue with h5py object(not 100% sure why its trying to pickle h5) will try to fix later when i have bigger dataset but for now training time is managable
-            """
-                num_workers=8,
-                pin_memory=True,
-                persistent_workers=False,
-            """
+            
             #
             # Train model
             trainer = MultiClassTrainer(model_config, cfg.learning_rate, cfg.weight_decay, weights,model=nn_model,optimizer=cfg.optimizer,criterion=cfg.criterion,scheduler=cfg.scheduler)
@@ -688,7 +689,7 @@ def run_hpo_mode(train_dataset,wandb_project,wandb_entity,hpo_metric="weighted a
                 cfg.num_epochs, cfg.patience,
                 checkpoint, train_dataset.label_encoder,
                 log_to_wandb=True,
-                trial=trial,
+                
                 step_offset=global_step # Pass the current global step
             )
             global_step += epochs_ran # Update the counter for the next fold
@@ -711,7 +712,9 @@ def run_hpo_mode(train_dataset,wandb_project,wandb_entity,hpo_metric="weighted a
             # Clean up checkpoint
             if os.path.exists(checkpoint):
                 os.remove(checkpoint)
-            
+            trial.report(metric_value, step=fold)
+            if trial.should_prune():
+                raise optuna.TrialPruned()
         # Calculate average metric across folds
         avg_metric = np.mean(fold_metrics)
         val_avg_acc = np.mean(val_accuracy_metrics)
@@ -733,7 +736,7 @@ def run_hpo_mode(train_dataset,wandb_project,wandb_entity,hpo_metric="weighted a
     #not 100% percent sure how this hpo works but it works
     study = optuna.create_study(
         direction="maximize", 
-        pruner=optuna.pruners.MedianPruner(n_startup_trials=10, n_warmup_steps=50)
+        pruner=optuna.pruners.MedianPruner(n_startup_trials=10, n_warmup_steps=2)
     )
     study.optimize(objective, n_trials=n_trials)
     
@@ -758,9 +761,6 @@ def split_dataset_into_subsets(dataset):
     train_dataset = MultiClassSubset(dataset, np.where(df["test_split"]==0)[0])
     val_dataset = MultiClassSubset(dataset, np.where(df["test_split"]==1)[0])
     test_dataset = MultiClassSubset(dataset, np.where(df["test_split"]==2)[0])
-    #train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
-    #val_loader = DataLoader(val_dataset, batch_size=32, shuffle=False)
-    #test_loader = DataLoader(test_dataset, batch_size=32, shuffle=False)
     return train_dataset, val_dataset, test_dataset, max_length
 #this is kind of pointless now but whatever
 def run(test_dataset,wandb_project,wandb_entity,nn_model = "Transformer",
@@ -833,12 +833,18 @@ def train_model(train_dataset,val_dataset, wandb_project,wandb_entity,yaml_file,
     
     train_loader = DataLoader(
         train_dataset,
-        batch_size=args["batch_size"],               
+        batch_size=args["batch_size"],
+        num_workers=8,
+        worker_init_fn=_h5_worker_init_fn, 
+        persistent_workers=True,               
         shuffle=True 
     )
     val_loader = DataLoader(
         val_dataset,
-        batch_size=args["batch_size"],               
+        batch_size=args["batch_size"],    
+        num_workers=8,
+        worker_init_fn=_h5_worker_init_fn, 
+        persistent_workers=True,              
         shuffle=False
     )
     labels = np.argmax(train_dataset.encodings, axis=1)
@@ -846,7 +852,7 @@ def train_model(train_dataset,val_dataset, wandb_project,wandb_entity,yaml_file,
     weights = torch.tensor([1.0 / class_counts.get(i, 1) for i in range(train_dataset.num_classes)], dtype=torch.float)
     weights = weights / weights.sum() * len(weights)  # Normalize weights
     best_acc = 0
-    
+    best_checkpoint = None
     for random_seed in random_seeds:
         print(f"starting random seed: {random_seed}")
         torch.manual_seed(random_seed)
@@ -871,7 +877,7 @@ def train_model(train_dataset,val_dataset, wandb_project,wandb_entity,yaml_file,
             cfg.num_epochs, cfg.patience,
             checkpoint, train_dataset.label_encoder,
             log_to_wandb=True,
-            trial=None,
+            
             step_offset=0 
         )
         print(f"✅ Model training complete. Final model saved to '{checkpoint}'")
@@ -892,6 +898,7 @@ def train_model(train_dataset,val_dataset, wandb_project,wandb_entity,yaml_file,
     return best_checkpoint
 def plot_multiclass_confusion_matrix(y_true, y_pred, class_names, save_path):
     from sklearn.metrics import confusion_matrix
+    import seaborn as sns
     cm = confusion_matrix(y_true, y_pred)
     
     # Dynamic figure size based on number of classes
@@ -967,7 +974,10 @@ def test_model(test_dataset, wandb_project,wandb_entity,yaml_file,checkpoint_pat
     #make loaders
     test_loader = DataLoader(
         test_dataset,
-        batch_size=args["batch_size"],               
+        batch_size=args["batch_size"], 
+        num_workers=8,
+        worker_init_fn=_h5_worker_init_fn, 
+        persistent_workers=True,                 
         shuffle=False
     )
     #init wandb
@@ -1009,7 +1019,8 @@ if __name__ == '__main__':
     if args.yaml_file:
         yaml_path = args.yaml_file
     else:
-        yaml_path = run(train_dataset,args.entity+"_HPO",args.project,nn_model=args.nn_model,n_trials=80,num_epochs=30,patience=5,wandb_disable=args.wandb_disable)
+        yaml_path = run(train_dataset,args.entity+"_HPO",args.project,nn_model=args.nn_model,n_trials=15,num_epochs=3,patience=5,wandb_disable=args.wandb_disable)
+        sys.exit()
     if args.pt_file and args.yaml_file:
         best_model = args.pt_file
     else:
