@@ -4,7 +4,7 @@ import torch
 from torch import nn
 from torch.nn import functional as F
 
-from alibi.config import ALiBiConfig
+from scripts.alibi.config import ALiBiConfig
 
 
 def get_relative_positions(seq_len: int, device) -> torch.Tensor:

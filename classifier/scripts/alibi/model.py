@@ -1,8 +1,8 @@
 import torch
 from torch import nn
 
-from alibi.config import ALiBiConfig
-from alibi.layers import ALiBiTransformerLayer
+from scripts.alibi.config import ALiBiConfig
+from scripts.alibi.layers import ALiBiTransformerLayer
 
 
 class ALiBiTransformer(nn.Module):

@@ -22,7 +22,7 @@ def setup_model(checkpoint):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     if "esm" in checkpoint:
         mod_type = "esm"
-        tokenizer = AutoTokenizer.from_pretrained(checkpoint)
+        tokenizer = AutoTokenizer.from_pretrained(checkpoint,Use_fast= False)
         model = EsmModel.from_pretrained(checkpoint)
     elif "ankh" in checkpoint:
         mod_type = "ankh"
@@ -43,7 +43,7 @@ def read_fasta(file_path):
         sequences.append(str(seq))
     return headers, sequences
 def generate_splits_for_embed(per_res_embed, splits_list ):
-    new_embed = np.empty((0,1024),np.float16)
+    new_embed = np.empty((0,per_res_embed.shape[-1]),np.float16)
     last_split = 0
 
     for split in splits_list:
@@ -101,6 +101,8 @@ def create_embedding(checkpoint, df, emb_types=["per_prot"], output_files=["prot
             header = row["header"]
             cut_pos = row["cut_pos"]
             embedding_per_res = compute_embedding(sequence, "per_res")
+            
+            
             if "per_res" in hdf_dict and header not in hdf_dict["per_res"]:
                 hdf_dict["per_res"].create_dataset(name=header, data=embedding_per_res[0])
             if "per_prot" in hdf_dict and header not in hdf_dict["per_prot"]:
@@ -120,10 +122,75 @@ def create_embedding(checkpoint, df, emb_types=["per_prot"], output_files=["prot
     del model, tokenizer
     torch.cuda.empty_cache()
 
-
-
-def embed(fasta_filename,metadata_csv,embedding_types = ["per_prot"]):
-    model_name = "Rostlab/prot_t5_xl_half_uniref50-enc"
+def create_embedding_esm(checkpoint, df, emb_types=["per_prot"], output_files=["protein_embeddings.h5"]):
+    from esm.models.esmc import ESMC
+    from esm.sdk.api import ESMProtein, LogitsConfig
+    client = ESMC.from_pretrained(checkpoint).to("cuda")
+    print("Generating embeddings...")
+    df = seq_preprocess(df)
+    with ExitStack() as stack:
+        files = []
+        hdf_dict = {emb_type:stack.enter_context(h5py.File(output_file, "w")) for output_file,emb_type in zip(output_files,emb_types)}
+        for _, row in tqdm(df.iterrows(), total=len(df)):
+            sequence = ESMProtein(row["sequence"])
+            
+            protein_tensor = client.encode(sequence)
+            logits_output = client.logits(
+                    protein_tensor, LogitsConfig(sequence=True, return_embeddings=True)
+                )
+            
+            header = row["header"]
+            cut_pos = row["cut_pos"]
+            embedding_per_res = logits_output.embeddings[:,1:-1,:].cpu().numpy()# is always two longer, prob padding, just remove it, but idk
+            if "per_res" in hdf_dict and header not in hdf_dict["per_res"]:
+                hdf_dict["per_res"].create_dataset(name=header, data=embedding_per_res[0])
+            if "per_prot" in hdf_dict and header not in hdf_dict["per_prot"]:
+                embedding_per_prot = embedding_per_res.mean(axis=1).flatten()
+                hdf_dict["per_prot"].create_dataset(name=header, data=embedding_per_prot)
+            if "per_exon" in hdf_dict and header not in hdf_dict["per_exon"]:
+                embedding_per_exon = generate_splits_for_embed(embedding_per_res,cut_pos)
+                hdf_dict["per_exon"].create_dataset(name=header, data=embedding_per_exon)
+            if "fixed_length_chunks" in hdf_dict and header not in hdf_dict["fixed_length_chunks"]:
+                embedding_fixed_length_chunks = generate_same_size_splits(embedding_per_res)
+                hdf_dict["fixed_length_chunks"].create_dataset(name=header, data=embedding_fixed_length_chunks)
+            if "fixed_total_chunks" in hdf_dict and header not in hdf_dict["fixed_total_chunks"]:
+                embedding_fixed_total_chunks = generate_same_total_splits(embedding_per_res)
+                hdf_dict["fixed_total_chunks"].create_dataset(name=header, data=embedding_fixed_total_chunks)
+def create_embedding_bert(checkpoint, df, emb_types=["per_prot"], output_files=["protein_embeddings.h5"]):
+    from transformers import BertModel, BertTokenizer
+    tokenizer = BertTokenizer.from_pretrained(checkpoint, do_lower_case=False)
+    model = BertModel.from_pretrained(checkpoint)
+    print("Generating embeddings...")
+    df = seq_preprocess(df,"pt")
+    with ExitStack() as stack:
+        files = []
+        hdf_dict = {emb_type:stack.enter_context(h5py.File(output_file, "w")) for output_file,emb_type in zip(output_files,emb_types)}
+        for _, row in tqdm(df.iterrows(), total=len(df)):
+            sequence = row["sequence"]
+            
+            encoded_input =  tokenizer(sequence , return_tensors='pt')
+            
+            
+            header = row["header"]
+            cut_pos = row["cut_pos"]
+            embedding_per_res = model(**encoded_input).last_hidden_state.detach().numpy()[:,1:-1,:] #is always two longer, prob padding, just remove it, but idk
+            
+            if "per_res" in hdf_dict and header not in hdf_dict["per_res"]:
+                hdf_dict["per_res"].create_dataset(name=header, data=embedding_per_res[0])
+            if "per_prot" in hdf_dict and header not in hdf_dict["per_prot"]:
+                embedding_per_prot = embedding_per_res.mean(axis=1).flatten()
+                hdf_dict["per_prot"].create_dataset(name=header, data=embedding_per_prot)
+            if "per_exon" in hdf_dict and header not in hdf_dict["per_exon"]:
+                embedding_per_exon = generate_splits_for_embed(embedding_per_res,cut_pos)
+                hdf_dict["per_exon"].create_dataset(name=header, data=embedding_per_exon)
+            if "fixed_length_chunks" in hdf_dict and header not in hdf_dict["fixed_length_chunks"]:
+                embedding_fixed_length_chunks = generate_same_size_splits(embedding_per_res)
+                hdf_dict["fixed_length_chunks"].create_dataset(name=header, data=embedding_fixed_length_chunks)
+            if "fixed_total_chunks" in hdf_dict and header not in hdf_dict["fixed_total_chunks"]:
+                embedding_fixed_total_chunks = generate_same_total_splits(embedding_per_res)
+                hdf_dict["fixed_total_chunks"].create_dataset(name=header, data=embedding_fixed_total_chunks)
+def embed(fasta_filename,metadata_csv,embedding_types = ["per_prot"],model_name = "Rostlab/prot_t5_xl_half_uniref50-enc"):
+    
     
     fasta_path = Path(fasta_filename)
     
@@ -134,12 +201,27 @@ def embed(fasta_filename,metadata_csv,embedding_types = ["per_prot"]):
     df = df.merge(metadata_df,left_on="header",right_on="identifier")
     df = df[["header","sequence","cut_pos"]]
     print(f"Processing {len(df)} sequences...")
-    create_embedding(
-        model_name,
-        df,
-        emb_types=embedding_types,
-        output_files=output_files
-    )
+    if "esmc" in model_name:
+        create_embedding_esm(
+            model_name,
+            df,
+            emb_types=embedding_types,
+            output_files=output_files
+        )
+    if "bert" in model_name:
+        create_embedding_bert(
+            model_name,
+            df,
+            emb_types=embedding_types,
+            output_files=output_files
+        )
+    else:
+        create_embedding(
+            model_name,
+            df,
+            emb_types=embedding_types,
+            output_files=output_files
+        )
     
     #print(f"\nEmbeddings saved to {output_file}")
 
@@ -154,5 +236,6 @@ def combine_h5(files, output_file ='final4\\combined6.h5' ):
 
 
 #["per_prot","per_exon","per_res","fixed_length_chunks","fixed_total_chunks"]
-embed("CYP_PA_Attempt5.fasta","CYP_PA_Attempt5.csv",embedding_types=["per_prot","per_exon","per_res","fixed_length_chunks","fixed_total_chunks"])
+#embed("CYP_PA_Attempt5_esmc.fasta","CYP_PA_Attempt5.csv",embedding_types=["per_prot","per_exon","per_res","fixed_length_chunks","fixed_total_chunks"],model_name ="esmc_600m" )
+embed("CYP_PA_Attempt5_protbert.fasta","CYP_PA_Attempt5.csv",embedding_types=["per_prot","per_exon","per_res","fixed_length_chunks","fixed_total_chunks"],model_name ="Rostlab/prot_bert")
 

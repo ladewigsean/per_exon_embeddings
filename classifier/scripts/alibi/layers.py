@@ -2,8 +2,8 @@ import torch
 from torch import nn
 from torch.nn import functional as F
 
-from alibi.attention import ALiBiMultiHeadAttention
-from alibi.config import ALiBiConfig
+from scripts.alibi.attention import ALiBiMultiHeadAttention
+from scripts.alibi.config import ALiBiConfig
 
 
 class FeedForward(nn.Module):
