@@ -1,0 +1,17 @@
+{
+  "_note": "Serine protease family definitions for fetch_serine_proteases.py. The family granularity is MEROPS (clan = superfamily, family = Sxx). Each MEROPS family maps ~1:1 to a Pfam/InterPro domain, which is the practical query handle in UniProt (xref:pfam-PFxxxxx). VERIFY each pfam<->MEROPS mapping on the MEROPS family page (https://www.ebi.ac.uk/merops/) before trusting counts. Entries with \"verify\": true have NO confirmed handle yet -- fill in pfam/interpro before running, or they are skipped. You can also override per family with a raw \"query\" string.",
+  "main_family": "serine protease",
+  "prefix": "SP",
+  "families": [
+    {"label": "S1",  "clan": "PA", "name": "chymotrypsin/trypsin",          "pfam": "PF00089", "interpro": "IPR001254"},
+    {"label": "S8",  "clan": "SB", "name": "subtilisin",                     "pfam": "PF00082", "interpro": "IPR000209"},
+    {"label": "S9",  "clan": "SC", "name": "prolyl oligopeptidase",          "pfam": "PF00326", "interpro": "IPR001375"},
+    {"label": "S10", "clan": "SC", "name": "serine carboxypeptidase",        "pfam": "PF00450", "interpro": "IPR001563"},
+    {"label": "S28", "clan": "SC", "name": "lysosomal Pro-X carboxypeptidase","pfam": "PF05577", "interpro": "IPR008758"},
+    {"label": "S14", "clan": "SK", "name": "Clp protease (ClpP)",            "pfam": "PF00574", "interpro": "IPR001907"},
+    {"label": "S49", "clan": "S49","name": "protease IV / SppA",             "pfam": "PF01343", "interpro": "IPR002142"},
+    {"label": "S33", "clan": "SC", "name": "prolyl aminopeptidase",          "pfam": null, "interpro": null, "verify": true},
+    {"label": "S26", "clan": "SF", "name": "signal peptidase I",             "pfam": null, "interpro": null, "verify": true},
+    {"label": "S16", "clan": "SJ", "name": "Lon protease",                   "pfam": null, "interpro": null, "verify": true}
+  ]
+}
