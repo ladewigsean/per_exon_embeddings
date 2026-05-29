@@ -61,7 +61,9 @@ Knobs: `--taxon 2759` (Eukaryota) · `--include-unreviewed` · `--no-reference-p
       MEROPS family pages, or drop them.
 - [ ] Spot-check the seven populated mappings — the `merops` column in
       `serine_proteases_raw.tsv` should match each row's family label
-      (e.g. S1 rows should carry `S01.*`).
+      (e.g. S1 rows should carry `S01.*`). Note S8: `PF00082` is the shared
+      subtilase domain and also pulls some MEROPS S53, so filter on the `merops`
+      column if you want pure S8.
 - [ ] Pick the clade (Metazoa vs Eukaryota) and a target N per family.
 - [ ] Feed `SP_<fam>_refseq.txt` into the `datasets`/exon step to recover exon
       structure, then reuse the existing per-exon / per-protein embedding path.

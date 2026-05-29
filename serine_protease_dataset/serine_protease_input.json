@@ -4,7 +4,7 @@
   "prefix": "SP",
   "families": [
     {"label": "S1",  "clan": "PA", "name": "chymotrypsin/trypsin",          "pfam": "PF00089", "interpro": "IPR001254"},
-    {"label": "S8",  "clan": "SB", "name": "subtilisin",                     "pfam": "PF00082", "interpro": "IPR000209"},
+    {"label": "S8",  "clan": "SB", "name": "subtilisin",                     "pfam": "PF00082", "interpro": "IPR000209", "note": "PF00082 (subtilase fold) also matches MEROPS S53; filter on the merops column if you need pure S8"},
     {"label": "S9",  "clan": "SC", "name": "prolyl oligopeptidase",          "pfam": "PF00326", "interpro": "IPR001375"},
     {"label": "S10", "clan": "SC", "name": "serine carboxypeptidase",        "pfam": "PF00450", "interpro": "IPR001563"},
     {"label": "S28", "clan": "SC", "name": "lysosomal Pro-X carboxypeptidase","pfam": "PF05577", "interpro": "IPR008758"},
