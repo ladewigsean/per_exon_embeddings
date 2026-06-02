@@ -70,6 +70,30 @@ Knobs: `--taxon 2759` (Eukaryota) · `--include-unreviewed` · `--no-reference-p
 - [ ] For the convergent-genes test, clan PA / family S1 is the strongest starting
       point (large, with independent recruitments of the same fold).
 
+## If both models saturate
+
+If a per-protein and per-exon model both reach ~99% on this dataset, the comparison
+has no headroom and the result is uninformative about either embedding. Likely
+causes and what to try:
+
+- **Sequence-redundancy leakage in the split.** Eukaryotic serine proteases are
+  dominated by tight paralog/ortholog families — thousands of near-identical
+  mammalian trypsins, kallikreins, granzymes in S1 alone — so a random or
+  by-protein split puts near-duplicates in both train and val and the model
+  memorises. Cluster the sequences with `mmseqs easy-cluster` (e.g. at 30 %
+  identity) and split **clusters**, not proteins, into train/val/test.
+- **Clan- vs family-level labels.** Labeling by MEROPS *clan* (the ~16
+  superfamilies) is catalytic-fold classification, which ProtT5 separates
+  trivially. Relabel by MEROPS *family* (`S1`, `S8`, `S9`, …) using the `merops`
+  column in `serine_proteases_raw.tsv` to force same-fold families to compete
+  (e.g. within clan SC: S9 vs S10 vs S28 vs S33). Much more diagnostic.
+- **Metric.** Accuracy hides class imbalance — report macro-F1, per-class
+  precision/recall, and the class-count distribution.
+
+For the per-exon hypothesis specifically, the convergent-genes design (similar
+sequence/structure/function, distant common ancestor) is still the cleanest probe:
+by construction, exon architecture is the only signal that could discriminate.
+
 ## Status
 
 Query construction verified for all seven populated families; a capped live fetch
