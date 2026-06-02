@@ -1,0 +1,438 @@
+Starting: EUKSBS8
+downloading : EUKSBS8
+84544 search results 
+have 84544 uniprot ids 
+Entrez Protein IDs found: 14195
+Failed elink 0 batches
+proteins traced to 10936 genes
+Failed elink2 0 batches
+proteins found 23445 from genes
+Failed 0 batches
+Starting: EUKSBS53
+downloading : EUKSBS53
+10557 search results 
+have 10557 uniprot ids 
+Entrez Protein IDs found: 2148
+Failed elink 0 batches
+proteins traced to 2111 genes
+Failed elink2 0 batches
+proteins found 4316 from genes
+Failed 0 batches
+Starting: EUKSCS9
+downloading : EUKSCS9
+48305 search results 
+have 48305 uniprot ids 
+Entrez Protein IDs found: 21902
+Failed elink 0 batches
+proteins traced to 4872 genes
+Failed elink2 0 batches
+proteins found 16316 from genes
+Failed 0 batches
+Starting: EUKSCS10
+downloading : EUKSCS10
+55664 search results 
+have 55664 uniprot ids 
+Entrez Protein IDs found: 8730
+Failed elink 0 batches
+proteins traced to 7392 genes
+Failed elink2 0 batches
+proteins found 14794 from genes
+Failed 0 batches
+Starting: EUKSCS15
+downloading : EUKSCS15
+0 search results 
+have 0 uniprot ids 
+Starting: EUKSCS28
+downloading : EUKSCS28
+17123 search results 
+have 17123 uniprot ids 
+Entrez Protein IDs found: 3100
+Failed elink 0 batches
+proteins traced to 2604 genes
+Failed elink2 0 batches
+proteins found 5049 from genes
+Failed 0 batches
+Starting: EUKSCS33
+downloading : EUKSCS33
+30653 search results 
+have 30653 uniprot ids 
+Entrez Protein IDs found: 6842
+Failed elink 0 batches
+proteins traced to 5838 genes
+Failed elink2 0 batches
+proteins found 12331 from genes
+Failed 0 batches
+Starting: EUKSES11
+downloading : EUKSES11
+156 search results 
+have 156 uniprot ids 
+Entrez Protein IDs found: 35
+Failed elink 0 batches
+proteins traced to 35 genes
+Failed elink2 0 batches
+proteins found 70 from genes
+Failed 0 batches
+Starting: EUKSES12
+downloading : EUKSES12
+4493 search results 
+have 4493 uniprot ids 
+Entrez Protein IDs found: 1091
+Failed elink 0 batches
+proteins traced to 1078 genes
+Failed elink2 0 batches
+proteins found 2270 from genes
+Failed 0 batches
+Starting: EUKSES13
+downloading : EUKSES13
+119 search results 
+have 119 uniprot ids 
+Entrez Protein IDs found: 11
+Failed elink 0 batches
+proteins traced to 11 genes
+Failed elink2 0 batches
+proteins found 22 from genes
+Failed 0 batches
+Starting: EUKSFS24
+downloading : EUKSFS24
+39 search results 
+have 39 uniprot ids 
+Entrez Protein IDs found: 2
+Failed elink 0 batches
+proteins traced to 1 genes
+Failed elink2 0 batches
+proteins found 2 from genes
+Failed 0 batches
+Starting: EUKSFS26
+downloading : EUKSFS26
+9464 search results 
+have 9464 uniprot ids 
+Entrez Protein IDs found: 3020
+Failed elink 0 batches
+proteins traced to 1756 genes
+Failed elink2 0 batches
+proteins found 4943 from genes
+Failed 0 batches
+Starting: EUKSHS21
+downloading : EUKSHS21
+6 search results 
+have 6 uniprot ids 
+Entrez Protein IDs found: 0
+Failed elink 0 batches
+proteins traced to 0 genes
+Failed elink2 0 batches
+proteins found 0 from genes
+Failed 0 batches
+Starting: EUKSHS73
+downloading : EUKSHS73
+1 search results 
+have 1 uniprot ids 
+Entrez Protein IDs found: 0
+Failed elink 0 batches
+proteins traced to 0 genes
+Failed elink2 0 batches
+proteins found 0 from genes
+Failed 0 batches
+Starting: EUKSHS77
+downloading : EUKSHS77
+0 search results 
+have 0 uniprot ids 
+Starting: EUKSHS78
+downloading : EUKSHS78
+157 search results 
+have 157 uniprot ids 
+Entrez Protein IDs found: 102
+Failed elink 0 batches
+proteins traced to 30 genes
+Failed elink2 0 batches
+proteins found 92 from genes
+Failed 0 batches
+Starting: EUKSHS80
+downloading : EUKSHS80
+3 search results 
+have 3 uniprot ids 
+Entrez Protein IDs found: 3
+Failed elink 0 batches
+proteins traced to 3 genes
+Failed elink2 0 batches
+proteins found 6 from genes
+Failed 0 batches
+Starting: EUKSJS16
+downloading : EUKSJS16
+9215 search results 
+have 9215 uniprot ids 
+Entrez Protein IDs found: 1682
+Failed elink 0 batches
+proteins traced to 1410 genes
+Failed elink2 0 batches
+proteins found 3136 from genes
+Failed 0 batches
+Starting: EUKSJS50
+downloading : EUKSJS50
+0 search results 
+have 0 uniprot ids 
+Starting: EUKSKS14
+downloading : EUKSKS14
+23866 search results 
+have 23866 uniprot ids 
+Entrez Protein IDs found: 9448
+Failed elink 0 batches
+proteins traced to 9194 genes
+Failed elink2 0 batches
+proteins found 19843 from genes
+Failed 0 batches
+Starting: EUKSKS41
+downloading : EUKSKS41
+34710 search results 
+have 34710 uniprot ids 
+Entrez Protein IDs found: 23286
+Failed elink 0 batches
+proteins traced to 1890 genes
+Failed elink2 0 batches
+proteins found 18953 from genes
+Failed 0 batches
+Starting: EUKSKS49
+downloading : EUKSKS49
+1620 search results 
+have 1620 uniprot ids 
+Entrez Protein IDs found: 188
+Failed elink 0 batches
+proteins traced to 158 genes
+Failed elink2 0 batches
+proteins found 308 from genes
+Failed 0 batches
+Starting: EUKS0S74
+downloading : EUKS0S74
+4318 search results 
+have 4318 uniprot ids 
+Entrez Protein IDs found: 1048
+Failed elink 0 batches
+proteins traced to 451 genes
+Failed elink2 0 batches
+proteins found 1564 from genes
+Failed 0 batches
+Starting: EUKSPS59
+downloading : EUKSPS59
+130 search results 
+have 130 uniprot ids 
+Entrez Protein IDs found: 65
+Failed elink 0 batches
+proteins traced to 46 genes
+Failed elink2 0 batches
+proteins found 257 from genes
+Failed 0 batches
+Starting: EUKSRS14
+downloading : EUKSRS14
+422 search results 
+have 422 uniprot ids 
+Entrez Protein IDs found: 60
+Failed elink 0 batches
+proteins traced to 50 genes
+Failed elink2 0 batches
+proteins found 423 from genes
+Failed 0 batches
+Starting: EUKSSS66
+downloading : EUKSSS66
+399 search results 
+have 399 uniprot ids 
+Entrez Protein IDs found: 100
+Failed elink 0 batches
+proteins traced to 100 genes
+Failed elink2 0 batches
+proteins found 208 from genes
+Failed 0 batches
+Starting: EUKSTS54
+downloading : EUKSTS54
+28824 search results 
+have 28824 uniprot ids 
+Entrez Protein IDs found: 7381
+Failed elink 0 batches
+proteins traced to 4433 genes
+Failed elink2 0 batches
+proteins found 11807 from genes
+Failed 0 batches
+Starting: EUKPAS1
+downloading : EUKPAS1
+65538 search results 
+have 65538 uniprot ids 
+Entrez Protein IDs found: 13937
+Failed elink 0 batches
+proteins traced to 10382 genes
+Failed elink2 0 batches
+proteins found 21932 from genes
+Failed 0 batches
+Starting: EUKPAS3
+downloading : EUKPAS3
+0 search results 
+have 0 uniprot ids 
+Starting: EUKPAS6
+downloading : EUKPAS6
+0 search results 
+have 0 uniprot ids 
+Starting: EUKPAS7
+downloading : EUKPAS7
+1630 search results 
+have 1630 uniprot ids 
+Entrez Protein IDs found: 15
+Failed elink 0 batches
+proteins traced to 15 genes
+Failed elink2 0 batches
+proteins found 104 from genes
+Failed 0 batches
+Starting: EUKPAS29
+downloading : EUKPAS29
+4742 search results 
+have 4742 uniprot ids 
+Entrez Protein IDs found: 8
+Failed elink 0 batches
+proteins traced to 8 genes
+Failed elink2 0 batches
+proteins found 73 from genes
+Failed 0 batches
+Starting: EUKPAS30
+downloading : EUKPAS30
+44 search results 
+have 44 uniprot ids 
+Entrez Protein IDs found: 3
+Failed elink 0 batches
+proteins traced to 3 genes
+Failed elink2 0 batches
+proteins found 19 from genes
+Failed 0 batches
+Starting: EUKPAS31
+downloading : EUKPAS31
+3 search results 
+have 3 uniprot ids 
+Entrez Protein IDs found: 1
+Failed elink 0 batches
+proteins traced to 1 genes
+Failed elink2 0 batches
+proteins found 6 from genes
+Failed 0 batches
+Starting: EUKPAS32
+downloading : EUKPAS32
+31 search results 
+have 31 uniprot ids 
+Entrez Protein IDs found: 1
+Failed elink 0 batches
+proteins traced to 1 genes
+Failed elink2 0 batches
+proteins found 2 from genes
+Failed 0 batches
+Starting: EUKPAS39
+downloading : EUKPAS39
+3 search results 
+have 3 uniprot ids 
+Entrez Protein IDs found: 0
+Failed elink 0 batches
+proteins traced to 0 genes
+Failed elink2 0 batches
+proteins found 0 from genes
+Failed 0 batches
+Starting: EUKPAS46
+downloading : EUKPAS46
+44 search results 
+have 44 uniprot ids 
+Entrez Protein IDs found: 3
+Failed elink 0 batches
+proteins traced to 3 genes
+Failed elink2 0 batches
+proteins found 6 from genes
+Failed 0 batches
+Starting: EUKPAS55
+downloading : EUKPAS55
+7 search results 
+have 7 uniprot ids 
+Entrez Protein IDs found: 0
+Failed elink 0 batches
+proteins traced to 0 genes
+Failed elink2 0 batches
+proteins found 0 from genes
+Failed 0 batches
+Starting: EUKPAS64
+downloading : EUKPAS64
+33 search results 
+have 33 uniprot ids 
+Entrez Protein IDs found: 11
+Failed elink 0 batches
+proteins traced to 11 genes
+Failed elink2 0 batches
+proteins found 23 from genes
+Failed 0 batches
+Starting: EUKPBS45
+downloading : EUKPBS45
+1321 search results 
+have 1321 uniprot ids 
+Entrez Protein IDs found: 960
+Failed elink 0 batches
+proteins traced to 163 genes
+Failed elink2 0 batches
+proteins found 917 from genes
+Failed 0 batches
+Starting: EUKPCS51
+downloading : EUKPCS51
+1601 search results 
+have 1601 uniprot ids 
+Entrez Protein IDs found: 247
+Failed elink 0 batches
+proteins traced to 196 genes
+Failed elink2 0 batches
+proteins found 375 from genes
+Failed 0 batches
+Starting: EUKPES58
+downloading : EUKPES58
+1087 search results 
+have 1087 uniprot ids 
+Entrez Protein IDs found: 230
+Failed elink 0 batches
+proteins traced to 229 genes
+Failed elink2 0 batches
+proteins found 475 from genes
+Failed 0 batches
+Starting: EUKOtherS48
+downloading : EUKOtherS48
+0 search results 
+have 0 uniprot ids 
+Starting: EUKOtherS68
+downloading : EUKOtherS68
+0 search results 
+have 0 uniprot ids 
+Starting: EUKOtherS71
+downloading : EUKOtherS71
+35 search results 
+have 35 uniprot ids 
+Entrez Protein IDs found: 21
+Failed elink 0 batches
+proteins traced to 2 genes
+Failed elink2 0 batches
+proteins found 163 from genes
+Failed 0 batches
+Starting: EUKOtherS72
+downloading : EUKOtherS72
+123 search results 
+have 123 uniprot ids 
+Entrez Protein IDs found: 205
+Failed elink 0 batches
+proteins traced to 32 genes
+Failed elink2 0 batches
+proteins found 357 from genes
+Failed 0 batches
+Starting: EUKOtherS79
+downloading : EUKOtherS79
+18 search results 
+have 18 uniprot ids 
+Entrez Protein IDs found: 24
+Failed elink 0 batches
+proteins traced to 6 genes
+Failed elink2 0 batches
+proteins found 151 from genes
+Failed 0 batches
+Starting: EUKOtherS81
+downloading : EUKOtherS81
+69 search results 
+have 69 uniprot ids 
+Entrez Protein IDs found: 11
+Failed elink 0 batches
+proteins traced to 11 genes
+Failed elink2 0 batches
+proteins found 38 from genes
+Failed 0 batches

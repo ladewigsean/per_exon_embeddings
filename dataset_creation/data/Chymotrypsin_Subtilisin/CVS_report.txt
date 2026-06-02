@@ -1,0 +1,32 @@
+**********
+Short Report
+**********
+
+Subtilisin	12743-->1885	85%	
+chymotrypsin	11303-->4036	85%	
+plant_Subtilisin	9217-->3293	85%	
+
+**********************
+Complete Positive Dataset Report
+**********************
+
+********
+Subtilisin
+********
+ncbi efetch proteins: 12743
+Proteins after filtering outliers: 11373
+Proteins after clustering: 1885
+
+********
+chymotrypsin
+********
+ncbi efetch proteins: 11303
+Proteins after filtering outliers: 10144
+Proteins after clustering: 4036
+
+********
+plant_Subtilisin
+********
+ncbi efetch proteins: 9217
+Proteins after filtering outliers: 7415
+Proteins after clustering: 3293

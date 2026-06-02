@@ -1,0 +1,426 @@
+Starting: SBS8
+downloading : SBS8
+20422 search results 
+have 20422 uniprot ids 
+Entrez Protein IDs found: 4775
+Failed elink 0 batches
+proteins traced to 2524 genes
+Failed elink2 0 batches
+proteins found 6557 from genes
+Failed 0 batches
+Starting: SBS53
+downloading : SBS53
+1304 search results 
+have 1304 uniprot ids 
+Entrez Protein IDs found: 198
+Failed elink 0 batches
+proteins traced to 172 genes
+Failed elink2 0 batches
+proteins found 304 from genes
+Failed 0 batches
+Starting: SCS9
+downloading : SCS9
+47667 search results 
+have 47667 uniprot ids 
+Entrez Protein IDs found: 21793
+Failed elink 0 batches
+proteins traced to 4815 genes
+Failed elink2 0 batches
+proteins found 16163 from genes
+Failed 0 batches
+Starting: SCS10
+downloading : SCS10
+9222 search results 
+have 9222 uniprot ids 
+Entrez Protein IDs found: 1534
+Failed elink 0 batches
+proteins traced to 1030 genes
+Failed elink2 0 batches
+proteins found 2000 from genes
+Failed 0 batches
+Starting: SCS15
+downloading : SCS15
+0 search results 
+have 0 uniprot ids 
+Starting: SCS28
+downloading : SCS28
+7089 search results 
+have 7089 uniprot ids 
+Entrez Protein IDs found: 1283
+Failed elink 0 batches
+proteins traced to 931 genes
+Failed elink2 0 batches
+proteins found 1699 from genes
+Failed 0 batches
+Starting: SCS33
+downloading : SCS33
+7221 search results 
+have 7221 uniprot ids 
+Entrez Protein IDs found: 1858
+Failed elink 0 batches
+proteins traced to 1026 genes
+Failed elink2 0 batches
+proteins found 2411 from genes
+Failed 0 batches
+Starting: SES11
+downloading : SES11
+29 search results 
+have 29 uniprot ids 
+Entrez Protein IDs found: 0
+Failed elink 0 batches
+proteins traced to 0 genes
+Failed elink2 0 batches
+proteins found 0 from genes
+Failed 0 batches
+Starting: SES12
+downloading : SES12
+134 search results 
+have 134 uniprot ids 
+Entrez Protein IDs found: 80
+Failed elink 0 batches
+proteins traced to 74 genes
+Failed elink2 0 batches
+proteins found 202 from genes
+Failed 0 batches
+Starting: SES13
+downloading : SES13
+90 search results 
+have 90 uniprot ids 
+Entrez Protein IDs found: 0
+Failed elink 0 batches
+proteins traced to 0 genes
+Failed elink2 0 batches
+proteins found 0 from genes
+Failed 0 batches
+Starting: SFS24
+downloading : SFS24
+23 search results 
+have 23 uniprot ids 
+Entrez Protein IDs found: 1
+Failed elink 0 batches
+proteins traced to 0 genes
+Failed elink2 0 batches
+proteins found 0 from genes
+Failed 0 batches
+Starting: SFS26
+downloading : SFS26
+2624 search results 
+have 2624 uniprot ids 
+Entrez Protein IDs found: 1516
+Failed elink 0 batches
+proteins traced to 525 genes
+Failed elink2 0 batches
+proteins found 2308 from genes
+Failed 0 batches
+Starting: SHS21
+downloading : SHS21
+6 search results 
+have 6 uniprot ids 
+Entrez Protein IDs found: 0
+Failed elink 0 batches
+proteins traced to 0 genes
+Failed elink2 0 batches
+proteins found 0 from genes
+Failed 0 batches
+Starting: SHS73
+downloading : SHS73
+0 search results 
+have 0 uniprot ids 
+Starting: SHS77
+downloading : SHS77
+0 search results 
+have 0 uniprot ids 
+Starting: SHS78
+downloading : SHS78
+157 search results 
+have 157 uniprot ids 
+Entrez Protein IDs found: 102
+Failed elink 0 batches
+proteins traced to 30 genes
+Failed elink2 0 batches
+proteins found 92 from genes
+Failed 0 batches
+Starting: SHS80
+downloading : SHS80
+3 search results 
+have 3 uniprot ids 
+Entrez Protein IDs found: 3
+Failed elink 0 batches
+proteins traced to 3 genes
+Failed elink2 0 batches
+proteins found 6 from genes
+Failed 0 batches
+Starting: SJS16
+downloading : SJS16
+3503 search results 
+have 3503 uniprot ids 
+Entrez Protein IDs found: 635
+Failed elink 0 batches
+proteins traced to 470 genes
+Failed elink2 0 batches
+proteins found 1013 from genes
+Failed 0 batches
+Starting: SJS50
+downloading : SJS50
+0 search results 
+have 0 uniprot ids 
+Starting: SKS14
+downloading : SKS14
+1435 search results 
+have 1435 uniprot ids 
+Entrez Protein IDs found: 312
+Failed elink 0 batches
+proteins traced to 252 genes
+Failed elink2 0 batches
+proteins found 392 from genes
+Failed 0 batches
+Starting: SKS41
+downloading : SKS41
+34556 search results 
+have 34556 uniprot ids 
+Entrez Protein IDs found: 23269
+Failed elink 0 batches
+proteins traced to 1873 genes
+Failed elink2 0 batches
+proteins found 18919 from genes
+Failed 0 batches
+Starting: SKS49
+downloading : SKS49
+61 search results 
+have 61 uniprot ids 
+Entrez Protein IDs found: 5
+Failed elink 0 batches
+proteins traced to 5 genes
+Failed elink2 0 batches
+proteins found 8 from genes
+Failed 0 batches
+Starting: S0S74
+downloading : S0S74
+3146 search results 
+have 3146 uniprot ids 
+Entrez Protein IDs found: 894
+Failed elink 0 batches
+proteins traced to 297 genes
+Failed elink2 0 batches
+proteins found 1256 from genes
+Failed 0 batches
+Starting: SPS59
+downloading : SPS59
+121 search results 
+have 121 uniprot ids 
+Entrez Protein IDs found: 63
+Failed elink 0 batches
+proteins traced to 44 genes
+Failed elink2 0 batches
+proteins found 241 from genes
+Failed 0 batches
+Starting: SRS14
+downloading : SRS14
+422 search results 
+have 422 uniprot ids 
+Entrez Protein IDs found: 60
+Failed elink 0 batches
+proteins traced to 50 genes
+Failed elink2 0 batches
+proteins found 423 from genes
+Failed 0 batches
+Starting: SSS66
+downloading : SSS66
+30 search results 
+have 30 uniprot ids 
+Entrez Protein IDs found: 1
+Failed elink 0 batches
+proteins traced to 1 genes
+Failed elink2 0 batches
+proteins found 9 from genes
+Failed 0 batches
+Starting: STS54
+downloading : STS54
+11956 search results 
+have 11956 uniprot ids 
+Entrez Protein IDs found: 4194
+Failed elink 0 batches
+proteins traced to 1717 genes
+Failed elink2 0 batches
+proteins found 6037 from genes
+Failed 0 batches
+Starting: PAS1
+downloading : PAS1
+61976 search results 
+have 61976 uniprot ids 
+Entrez Protein IDs found: 13443
+Failed elink 0 batches
+proteins traced to 9891 genes
+Failed elink2 0 batches
+proteins found 20934 from genes
+Failed 0 batches
+Starting: PAS3
+downloading : PAS3
+0 search results 
+have 0 uniprot ids 
+Starting: PAS6
+downloading : PAS6
+0 search results 
+have 0 uniprot ids 
+Starting: PAS7
+downloading : PAS7
+1630 search results 
+have 1630 uniprot ids 
+Entrez Protein IDs found: 15
+Failed elink 0 batches
+proteins traced to 15 genes
+Failed elink2 0 batches
+proteins found 104 from genes
+Failed 0 batches
+Starting: PAS29
+downloading : PAS29
+4742 search results 
+have 4742 uniprot ids 
+Entrez Protein IDs found: 8
+Failed elink 0 batches
+proteins traced to 8 genes
+Failed elink2 0 batches
+proteins found 73 from genes
+Failed 0 batches
+Starting: PAS30
+downloading : PAS30
+44 search results 
+have 44 uniprot ids 
+Entrez Protein IDs found: 3
+Failed elink 0 batches
+proteins traced to 3 genes
+Failed elink2 0 batches
+proteins found 19 from genes
+Failed 0 batches
+Starting: PAS31
+downloading : PAS31
+3 search results 
+have 3 uniprot ids 
+Entrez Protein IDs found: 1
+Failed elink 0 batches
+proteins traced to 1 genes
+Failed elink2 0 batches
+proteins found 6 from genes
+Failed 0 batches
+Starting: PAS32
+downloading : PAS32
+31 search results 
+have 31 uniprot ids 
+Entrez Protein IDs found: 1
+Failed elink 0 batches
+proteins traced to 1 genes
+Failed elink2 0 batches
+proteins found 2 from genes
+Failed 0 batches
+Starting: PAS39
+downloading : PAS39
+1 search results 
+have 1 uniprot ids 
+Entrez Protein IDs found: 0
+Failed elink 0 batches
+proteins traced to 0 genes
+Failed elink2 0 batches
+proteins found 0 from genes
+Failed 0 batches
+Starting: PAS46
+downloading : PAS46
+2 search results 
+have 2 uniprot ids 
+Entrez Protein IDs found: 0
+Failed elink 0 batches
+proteins traced to 0 genes
+Failed elink2 0 batches
+proteins found 0 from genes
+Failed 0 batches
+Starting: PAS55
+downloading : PAS55
+5 search results 
+have 5 uniprot ids 
+Entrez Protein IDs found: 0
+Failed elink 0 batches
+proteins traced to 0 genes
+Failed elink2 0 batches
+proteins found 0 from genes
+Failed 0 batches
+Starting: PAS64
+downloading : PAS64
+0 search results 
+have 0 uniprot ids 
+Starting: PBS45
+downloading : PBS45
+1321 search results 
+have 1321 uniprot ids 
+Entrez Protein IDs found: 960
+Failed elink 0 batches
+proteins traced to 163 genes
+Failed elink2 0 batches
+proteins found 917 from genes
+Failed 0 batches
+Starting: PCS51
+downloading : PCS51
+1166 search results 
+have 1166 uniprot ids 
+Entrez Protein IDs found: 172
+Failed elink 0 batches
+proteins traced to 124 genes
+Failed elink2 0 batches
+proteins found 218 from genes
+Failed 0 batches
+Starting: PES58
+downloading : PES58
+150 search results 
+have 150 uniprot ids 
+Entrez Protein IDs found: 0
+Failed elink 0 batches
+proteins traced to 0 genes
+Failed elink2 0 batches
+proteins found 0 from genes
+Failed 0 batches
+Starting: OtherS48
+downloading : OtherS48
+0 search results 
+have 0 uniprot ids 
+Starting: OtherS68
+downloading : OtherS68
+0 search results 
+have 0 uniprot ids 
+Starting: OtherS71
+downloading : OtherS71
+35 search results 
+have 35 uniprot ids 
+Entrez Protein IDs found: 21
+Failed elink 0 batches
+proteins traced to 2 genes
+Failed elink2 0 batches
+proteins found 163 from genes
+Failed 0 batches
+Starting: OtherS72
+downloading : OtherS72
+123 search results 
+have 123 uniprot ids 
+Entrez Protein IDs found: 205
+Failed elink 0 batches
+proteins traced to 32 genes
+Failed elink2 0 batches
+proteins found 357 from genes
+Failed 0 batches
+Starting: OtherS79
+downloading : OtherS79
+18 search results 
+have 18 uniprot ids 
+Entrez Protein IDs found: 24
+Failed elink 0 batches
+proteins traced to 6 genes
+Failed elink2 0 batches
+proteins found 151 from genes
+Failed 0 batches
+Starting: OtherS81
+downloading : OtherS81
+69 search results 
+have 69 uniprot ids 
+Entrez Protein IDs found: 11
+Failed elink 0 batches
+proteins traced to 11 genes
+Failed elink2 0 batches
+proteins found 38 from genes
+Failed 0 batches

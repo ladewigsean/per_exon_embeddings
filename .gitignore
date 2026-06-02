@@ -4,14 +4,16 @@ wandb/
 *.yaml
 *.png
 *.fai
+*.h5
 !.github/issue-assets/*.png
 dataset_creation/json_folder/
+dataset_creation/data/old_outputs/
 dataset_creation/output_entrez/
 dataset_creation/output_entrez_rna/
 dataset_creation/temp/
 *per_res.h5
 dataset_creation/temp*
-classifier/CYP_PA_Attempt5_per_res.h5
+*ncbi_exon_data.json
 __pycache__/
 *.pyc
 *.pyo

@@ -1,0 +1,248 @@
+**********
+Short Report
+**********
+
+OtherS71	22-->10    	85%	X
+OtherS72	270-->5    	85%	X
+OtherS79	36-->12    	85%	X
+OtherS81	14-->8     	85%	X
+PAS1	15099-->7018	85%	
+PAS29	3-->3      	85%	X
+PAS30	2-->2      	85%	X
+PAS31	2-->2      	85%	X
+PAS7	1-->1      	85%	X
+PBS45	26-->24    	85%	X
+PCS51	176-->52   	85%	X
+S0S74	1146-->115 	85%	
+SBS53	209-->31   	85%	X
+SBS8	5533-->1067	85%	
+SCS10	1615-->474 	85%	
+SCS28	1371-->500 	85%	
+SCS33	2014-->486 	85%	
+SCS9	7116-->1960	85%	
+SES12	160-->14   	85%	X
+SFS26	2100-->182 	85%	
+SJS16	743-->114  	85%	
+SKS14	314-->64   	85%	
+SKS41	457-->146  	85%	
+SKS49	5-->5      	85%	X
+SPS59	131-->39   	85%	X
+SRS14	85-->28    	85%	X
+SSS66	5-->1      	85%	X
+STS54	5356-->711 	85%	
+
+**********************
+Complete Positive Dataset Report
+**********************
+
+********
+OtherS71
+********
+ncbi efetch proteins: 22
+Proteins after filtering outliers: 20
+Proteins after clustering: 10
+Not enough data in class, the entire class will be removed from final data(10 < 60)
+
+********
+OtherS72
+********
+ncbi efetch proteins: 270
+Proteins after filtering outliers: 230
+Proteins after clustering: 5
+Not enough data in class, the entire class will be removed from final data(5 < 60)
+
+********
+OtherS79
+********
+ncbi efetch proteins: 36
+Proteins after filtering outliers: 36
+Proteins after clustering: 12
+Not enough data in class, the entire class will be removed from final data(12 < 60)
+
+********
+OtherS81
+********
+ncbi efetch proteins: 14
+Proteins after filtering outliers: 13
+Proteins after clustering: 8
+Not enough data in class, the entire class will be removed from final data(8 < 60)
+
+********
+PAS1
+********
+ncbi efetch proteins: 15099
+Proteins after filtering outliers: 14988
+Proteins after clustering: 7018
+
+********
+PAS29
+********
+ncbi efetch proteins: 3
+Proteins after filtering outliers: 3
+Proteins after clustering: 3
+Not enough data in class, the entire class will be removed from final data(3 < 60)
+
+********
+PAS30
+********
+ncbi efetch proteins: 2
+Proteins after filtering outliers: 2
+Proteins after clustering: 2
+Not enough data in class, the entire class will be removed from final data(2 < 60)
+
+********
+PAS31
+********
+ncbi efetch proteins: 2
+Proteins after filtering outliers: 2
+Proteins after clustering: 2
+Not enough data in class, the entire class will be removed from final data(2 < 60)
+
+********
+PAS7
+********
+ncbi efetch proteins: 1
+Proteins after filtering outliers: 1
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 60)
+
+********
+PBS45
+********
+ncbi efetch proteins: 26
+Proteins after filtering outliers: 25
+Proteins after clustering: 24
+Not enough data in class, the entire class will be removed from final data(24 < 60)
+
+********
+PCS51
+********
+ncbi efetch proteins: 176
+Proteins after filtering outliers: 144
+Proteins after clustering: 52
+Not enough data in class, the entire class will be removed from final data(52 < 60)
+
+********
+S0S74
+********
+ncbi efetch proteins: 1146
+Proteins after filtering outliers: 1085
+Proteins after clustering: 115
+
+********
+SBS53
+********
+ncbi efetch proteins: 209
+Proteins after filtering outliers: 190
+Proteins after clustering: 31
+Not enough data in class, the entire class will be removed from final data(31 < 60)
+
+********
+SBS8
+********
+ncbi efetch proteins: 5533
+Proteins after filtering outliers: 5528
+Proteins after clustering: 1067
+
+********
+SCS10
+********
+ncbi efetch proteins: 1615
+Proteins after filtering outliers: 1518
+Proteins after clustering: 474
+
+********
+SCS28
+********
+ncbi efetch proteins: 1371
+Proteins after filtering outliers: 1256
+Proteins after clustering: 500
+
+********
+SCS33
+********
+ncbi efetch proteins: 2014
+Proteins after filtering outliers: 2009
+Proteins after clustering: 486
+
+********
+SCS9
+********
+ncbi efetch proteins: 7116
+Proteins after filtering outliers: 6993
+Proteins after clustering: 1960
+
+********
+SES12
+********
+ncbi efetch proteins: 160
+Proteins after filtering outliers: 160
+Proteins after clustering: 14
+Not enough data in class, the entire class will be removed from final data(14 < 60)
+
+********
+SFS26
+********
+ncbi efetch proteins: 2100
+Proteins after filtering outliers: 1704
+Proteins after clustering: 182
+
+********
+SJS16
+********
+ncbi efetch proteins: 743
+Proteins after filtering outliers: 728
+Proteins after clustering: 114
+
+********
+SKS14
+********
+ncbi efetch proteins: 314
+Proteins after filtering outliers: 305
+Proteins after clustering: 64
+
+********
+SKS41
+********
+ncbi efetch proteins: 457
+Proteins after filtering outliers: 368
+Proteins after clustering: 146
+
+********
+SKS49
+********
+ncbi efetch proteins: 5
+Proteins after filtering outliers: 5
+Proteins after clustering: 5
+Not enough data in class, the entire class will be removed from final data(5 < 60)
+
+********
+SPS59
+********
+ncbi efetch proteins: 131
+Proteins after filtering outliers: 131
+Proteins after clustering: 39
+Not enough data in class, the entire class will be removed from final data(39 < 60)
+
+********
+SRS14
+********
+ncbi efetch proteins: 85
+Proteins after filtering outliers: 73
+Proteins after clustering: 28
+Not enough data in class, the entire class will be removed from final data(28 < 60)
+
+********
+SSS66
+********
+ncbi efetch proteins: 5
+Proteins after filtering outliers: 5
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 60)
+
+********
+STS54
+********
+ncbi efetch proteins: 5356
+Proteins after filtering outliers: 5356
+Proteins after clustering: 711

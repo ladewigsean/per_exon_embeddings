@@ -40,7 +40,7 @@ default_args = {
     "pe_factor": 0.0,
     "nhead": 4,
     "num_layers_transformer":2,
-    'batch_size': 16,
+    'batch_size': 64,
     "pe_mode": "pe",#"pe","learned_pe"
     "dc": 8,
 } 

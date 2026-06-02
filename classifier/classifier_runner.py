@@ -7,7 +7,7 @@ YAML_FOLDER = "yaml"
 MODEL_WEIGHTS_FOLDER = "model_weights"
 
 if __name__ == '__main__':
-    #python classifier_runner.py --h5 CYP_PA_Attempt5_per_exon.h5 --csv CYP_PA_Attempt5_train_val_test.csv --entity cel_weightless_e --nn_model Transformer
+    #python classifier_runner.py --entity SPE_per_exon --nn_model Transformer --h5 input_data/SPE/SerProtEuk_per_exon.h5 --csv input_data/SPE/SerProtEuk.csv
     parser = argparse.ArgumentParser(description="Train or optimize a multi-class SCPP classifier.")
     parser.add_argument("--h5", required=True, help="Path to embeddings HDF5 file")
     parser.add_argument("--csv", required=True, help="Path to metadata CSV")

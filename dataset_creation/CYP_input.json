@@ -1,5 +1,7 @@
 {
-	"main_family":"cytochrome P450", "prefix":"CYP",
+	"main_family":"cytochrome P450",
+	"query":"f\"(({main_family} {family_name}{subfamily}*[Gene/Protein Name]) OR (({main_family}[Gene/Protein Name]) AND (subfamily {subfamily}[Gene/Protein Name] AND family {family_name}[Gene/Protein Name]) ) ) AND animals[porgn]\"", 
+	"prefix":"CYP",
 	"families":
 	[
 		{"family":"1", "subfamily":["A","B","C","D"]},

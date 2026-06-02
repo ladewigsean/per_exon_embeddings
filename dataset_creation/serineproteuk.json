@@ -1,0 +1,152 @@
+{
+	"main_family":"Serine protease","prefix":"EUK","query":"f\"(family:\\\"peptidase {subfamily} family\\\")\"",  "additional":" AND (taxonomy_id:2759)",
+	"families":
+	[
+		{
+            "family":"SB", "subfamily":
+            {
+                "S8": "(family:\"peptidase S8 family\") NOT IPR030400",
+                "S53":"IPR030400"
+            }
+        },
+        {
+            "family":"SC", "subfamily":
+            {
+                "S9":"(family:\"peptidase S9a family\") OR (family:\"peptidase S9b family\") OR (family:\"peptidase S9c family\") OR (family:\"peptidase S9d family\")",
+                "S10": null,
+                "S15": null,
+                "S28": null,
+                "S33": null
+                
+
+            }
+        },
+        {
+            "family":"SE", "subfamily":
+            {
+                "S11": null,
+                "S12": null,
+                "S13": null
+            }
+        },
+        {
+            "family":"SF", "subfamily":
+            {
+                "S24": null,
+                "S26": null
+                
+            }
+        },
+        {
+            "family":"SH", "subfamily":
+            {
+                "S21": "PF00716",
+                "S73": "S73.001",
+                "S77": "S77.001",
+                "S78": "S78.001 OR S78.002",
+                "S80": "S80.001 OR S80.002"
+            }
+        },
+        {
+            "family":"SJ", "subfamily":
+            {
+                "S16": null,
+                "S50":"S50.001 Or S50.002 OR S50.003 or S50.004"
+                
+            }
+        },
+        {
+            "family":"SK", "subfamily":
+            {
+                "S14": null,
+                "S41": "(family:\"peptidase S41a family\") OR (family:\"peptidase S41b family\")",
+                "S49": null
+            }
+        },
+        {
+            "family":"S0", "subfamily":
+            {
+                "S74": "IPR030392"
+            }
+        },
+        {
+            "family":"SP", "subfamily":
+            {
+                "S59": "S59.001 OR S59.002 OR S59.951 OR S59.952"
+            }
+        },
+        {
+            "family":"SR", "subfamily":
+            {
+                "S14": "S60.001 OR S60.970 OR S60.971 OR S60.972 OR S60.973 OR S60.974 OR S60.975 OR S60.976 OR S60.977 OR S60.978"
+            }
+        },
+        {
+            "family":"SS", "subfamily":
+            {
+                "S66": null
+            }
+        },
+        {
+            "family":"ST", "subfamily":
+            {
+                "S54": null
+            }
+        },
+        {
+            "family":"PA", "subfamily":
+            {
+                "S1": null,
+                "S3": "S03.001",
+                "S6":"IPR000710",
+                "S7":"S07.001 OR S07.003",
+                "S29": "S29.001 OR S29.002",
+                "S30":"S30.001 OR S30.002",
+                "S31": "S31.001",
+                "S32":"S32.001 OR S32.002",
+                "S39":"PF02122",
+                "S46": null,
+                "S55":"IPR008763",
+                "S64":null
+
+            }
+        },
+        {
+            "family":"PB", "subfamily":
+            {
+                "S45": "S45.001 OR S45.002 OR S45.003 OR S45.004"
+            }
+        },
+        {
+            "family":"PC", "subfamily":
+            {
+                "S51": null
+            }
+        },
+        {
+            "family":"PE", "subfamily":
+            {
+                "S58": null
+            }
+        },
+        {
+            "family":"Other", "subfamily":
+            {
+                "S48": null,
+                "S68":null,
+                "S71":"S71.001 OR S71.002",
+                "S72":"S72.001 OR S72.A01",
+                "S79":"S79.001 OR S79.002 OR S79.A01 OR S79.A02 OR S79.A03 OR S79.A04 OR S79.A05",
+                "S81":"S81.001"
+
+
+            }
+        }
+        
+
+
+
+		
+	],
+    "missing":["SCS37","SHS73","SHS77","SHS78","SHS80","way more but they were mostly virus/bacteria only"]
+}
