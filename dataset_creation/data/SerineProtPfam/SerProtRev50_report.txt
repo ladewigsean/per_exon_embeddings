@@ -1,0 +1,65 @@
+**********
+Short Report
+**********
+
+REVPAS1	1379-->249 	50%	
+REVSBS8	485-->86   	50%	
+REVSCS10	269-->61   	50%	
+REVSCS28	45-->12    	50%	
+REVSCS9	349-->34   	50%	
+REVSKS14	18-->10    	50%	
+REVSKS49	2-->1      	50%	X
+
+**********************
+Complete Positive Dataset Report
+**********************
+
+********
+REVPAS1
+********
+ncbi efetch proteins: 1379
+Proteins after filtering outliers: 1375
+Proteins after clustering: 249
+
+********
+REVSBS8
+********
+ncbi efetch proteins: 485
+Proteins after filtering outliers: 461
+Proteins after clustering: 86
+
+********
+REVSCS10
+********
+ncbi efetch proteins: 269
+Proteins after filtering outliers: 268
+Proteins after clustering: 61
+
+********
+REVSCS28
+********
+ncbi efetch proteins: 45
+Proteins after filtering outliers: 45
+Proteins after clustering: 12
+
+********
+REVSCS9
+********
+ncbi efetch proteins: 349
+Proteins after filtering outliers: 345
+Proteins after clustering: 34
+
+********
+REVSKS14
+********
+ncbi efetch proteins: 18
+Proteins after filtering outliers: 17
+Proteins after clustering: 10
+
+********
+REVSKS49
+********
+ncbi efetch proteins: 2
+Proteins after filtering outliers: 2
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 10)

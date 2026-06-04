@@ -571,6 +571,8 @@ def train_model(train_dataset,val_dataset, wandb_project,wandb_entity,yaml_file,
     weights = weights / weights.sum() * len(weights)  # Normalize weights
     best_acc = 0
     best_checkpoint = None
+    seed_accs = []
+    seed_macro_f1 = []
     for random_seed in random_seeds:
         print(f"starting random seed: {random_seed}")
         torch.manual_seed(random_seed)
@@ -603,6 +605,8 @@ def train_model(train_dataset,val_dataset, wandb_project,wandb_entity,yaml_file,
             "report": val_metrics,  
         })
         current_acc = val_metrics["accuracy"]
+        seed_accs.append(current_acc)
+        seed_macro_f1.append(val_metrics["macro avg"]["f1-score"])
         if current_acc > best_acc:
             best_acc = current_acc
             if best_checkpoint:
@@ -613,6 +617,10 @@ def train_model(train_dataset,val_dataset, wandb_project,wandb_entity,yaml_file,
             if os.path.exists(checkpoint):
                 os.remove(checkpoint)
         run.finish()
+    seed_accs = np.array(seed_accs)
+    seed_macro_f1 = np.array(seed_macro_f1)
+    print(f"average acc: {seed_accs.mean():.2f} ± {1.96 * seed_accs.std():.2f}")
+    print(f"average macro f1: {seed_macro_f1.mean():.2f} ± {1.96 * seed_macro_f1.std():.2f}")
     return best_checkpoint
 def plot_multiclass_confusion_matrix(y_true, y_pred, class_names, save_path):
     from sklearn.metrics import confusion_matrix

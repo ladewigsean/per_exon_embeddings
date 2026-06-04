@@ -1,0 +1,7 @@
+Starting: PFAMSBS8
+Starting: PFAMSCS9
+Starting: PFAMSCS10
+Starting: PFAMSCS28
+Starting: PFAMSKS14
+Starting: PFAMSKS49
+Starting: PFAMPAS1

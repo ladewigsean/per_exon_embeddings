@@ -1,0 +1,48 @@
+{
+	"main_family":"Serine protease","prefix":"REV","query":"f\"(family:\\\"peptidase {subfamily} family\\\")\"",  "additional":" AND (reviewed:true) AND (keyword:KW-1185) AND (taxonomy_id:2759)",
+	"families":
+	[
+		{
+            "family":"SB", "subfamily":
+            {
+                "S8": "(xref:pfam-PF00082)"
+                
+            }
+        },
+        {
+            "family":"SC", "subfamily":
+            {
+                "S9":"(xref:pfam-PF00326)",
+                "S10": "(xref:pfam-PF00450)",
+                
+                "S28": "(xref:pfam-PF05577)"
+                
+                
+
+            }
+        },
+        
+        {    
+            "family":"SK", "subfamily":
+            {
+                "S14": "(xref:pfam-PF00574)",
+                "S49": "(xref:pfam-PF01343)"
+            }
+        },
+        {
+            "family":"PA", "subfamily":
+            {
+                "S1": "(xref:pfam-PF00089)"
+                
+
+            }
+        }
+        
+        
+
+
+
+		
+	],
+    "missing":["SCS37","SHS73","SHS77","SHS78","SHS80","way more but they were mostly virus/bacteria only"]
+}

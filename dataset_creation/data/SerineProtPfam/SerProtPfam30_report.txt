@@ -1,0 +1,65 @@
+**********
+Short Report
+**********
+
+PFAMPAS1	39170-->3517	30%	
+PFAMSBS8	15518-->1443	30%	
+PFAMSCS10	8394-->317 	30%	
+PFAMSCS28	3075-->113 	30%	
+PFAMSCS9	10361-->381	30%	
+PFAMSKS14	1596-->128 	30%	
+PFAMSKS49	180-->49   	30%	X
+
+**********************
+Complete Positive Dataset Report
+**********************
+
+********
+PFAMPAS1
+********
+ncbi efetch proteins: 39170
+Proteins after filtering outliers: 38606
+Proteins after clustering: 3517
+
+********
+PFAMSBS8
+********
+ncbi efetch proteins: 15518
+Proteins after filtering outliers: 15159
+Proteins after clustering: 1443
+
+********
+PFAMSCS10
+********
+ncbi efetch proteins: 8394
+Proteins after filtering outliers: 8051
+Proteins after clustering: 317
+
+********
+PFAMSCS28
+********
+ncbi efetch proteins: 3075
+Proteins after filtering outliers: 2891
+Proteins after clustering: 113
+
+********
+PFAMSCS9
+********
+ncbi efetch proteins: 10361
+Proteins after filtering outliers: 9990
+Proteins after clustering: 381
+
+********
+PFAMSKS14
+********
+ncbi efetch proteins: 1596
+Proteins after filtering outliers: 1568
+Proteins after clustering: 128
+
+********
+PFAMSKS49
+********
+ncbi efetch proteins: 180
+Proteins after filtering outliers: 177
+Proteins after clustering: 49
+Not enough data in class, the entire class will be removed from final data(49 < 60)

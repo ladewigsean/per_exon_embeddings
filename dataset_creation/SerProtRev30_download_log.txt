@@ -1,0 +1,70 @@
+Starting: REVSBS8
+downloading : REVSBS8
+221 search results 
+have 221 uniprot ids 
+Entrez Protein IDs found: 271
+Failed elink 0 batches
+proteins traced to 197 genes
+Failed elink2 0 batches
+proteins found 1797 from genes
+Failed 0 batches
+Starting: REVSCS9
+downloading : REVSCS9
+123 search results 
+have 123 uniprot ids 
+Entrez Protein IDs found: 154
+Failed elink 0 batches
+proteins traced to 92 genes
+Failed elink2 0 batches
+proteins found 1081 from genes
+Failed 0 batches
+Starting: REVSCS10
+downloading : REVSCS10
+182 search results 
+have 182 uniprot ids 
+Entrez Protein IDs found: 189
+Failed elink 0 batches
+proteins traced to 155 genes
+Failed elink2 0 batches
+proteins found 882 from genes
+Failed 0 batches
+Starting: REVSCS28
+downloading : REVSCS28
+17 search results 
+have 17 uniprot ids 
+Entrez Protein IDs found: 19
+Failed elink 0 batches
+proteins traced to 17 genes
+Failed elink2 0 batches
+proteins found 137 from genes
+Failed 0 batches
+Starting: REVSKS14
+downloading : REVSKS14
+34 search results 
+have 34 uniprot ids 
+Entrez Protein IDs found: 35
+Failed elink 0 batches
+proteins traced to 32 genes
+Failed elink2 0 batches
+proteins found 234 from genes
+Failed 0 batches
+Starting: REVSKS49
+downloading : REVSKS49
+1 search results 
+have 1 uniprot ids 
+Entrez Protein IDs found: 1
+Failed elink 0 batches
+proteins traced to 1 genes
+Failed elink2 0 batches
+proteins found 11 from genes
+Failed 0 batches
+Starting: REVPAS1
+downloading : REVPAS1
+556 search results 
+have 556 uniprot ids 
+Entrez Protein IDs found: 700
+Failed elink 0 batches
+proteins traced to 430 genes
+Failed elink2 0 batches
+proteins found 5015 from genes
+Failed 0 batches

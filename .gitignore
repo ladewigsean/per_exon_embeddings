@@ -5,6 +5,7 @@ wandb/
 *.png
 *.fai
 *.h5
+*_no_filter*
 !.github/issue-assets/*.png
 dataset_creation/json_folder/
 dataset_creation/data/old_outputs/

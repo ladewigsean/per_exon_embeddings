@@ -21,10 +21,10 @@ def make_csv_h5(df,embedding_file,prefix):
     df.to_csv(prefix+".csv",index = False)
             
         
-def split_train_val_test(csv):
+def split_train_val_test(csv,min_per_class=60):
     df = pd.read_csv(csv)
     counts = df["gene"].value_counts()
-    to_keep = list(counts[counts >=60].index)
+    to_keep = list(counts[counts >= min_per_class].index)
     df = df[df["gene"].isin(to_keep)].reset_index(drop=True)
     print(df)
     labels = df["gene"]

@@ -18,6 +18,8 @@ if __name__ == '__main__':
     parser.add_argument("--uniprot", action="store_true")
     parser.add_argument("--download", action="store_true")
     parser.add_argument("--filter", action="store_true")
+    parser.add_argument("--thresh",default="30", help="percent identity theshold" )
+    parser.add_argument("--min_per_class",type = int, default=60, help="min amount in a class" )
     parser.add_argument("--embed", action="store_true")
     parser.add_argument("--embed_prefix_addon", help="adds addon to prefix for embed incase multiple models, include\"_\" ", default="")
     parser.add_argument("--embed_model", help="model used for embedding, not all supported", default="Rostlab/prot_t5_xl_half_uniref50-enc")
@@ -55,10 +57,10 @@ if __name__ == '__main__':
         whisk = 3
         scripts.filter_data.filter_outliers_all_graphic(parsed_data,args.output_folder,prefix=args.prefix,whisk=whisk)
         
-        combined_all_filtered = scripts.filter_data.splice_aware_filter_attmept1(parsed_data,args.prefix,args.output_folder, ident_threshold="85",mode="mmseqs",whisk=whisk)
+        combined_all_filtered = scripts.filter_data.splice_aware_filter_attmept1(parsed_data,args.prefix,args.output_folder, ident_threshold=args.thresh,mode="mmseqs",whisk=whisk,min_nummer=args.min_per_class)
         scripts.grab_data.save_fasta(combined_all_filtered,fasta)
         scripts.grab_data.save_csv_splits(combined_all_filtered,csv )
-        scripts.train_val_test_splits.split_train_val_test(csv)
+        scripts.train_val_test_splits.split_train_val_test(csv,min_per_class=args.min_per_class)
     if args.embed:
         print("Embedding...")
         scripts.embed_pers.embed(fasta,csv,args.embed_prefix_addon,embedding_types=["per_prot","per_exon","per_res","fixed_length_chunks","fixed_total_chunks"],model_name = args.embed_model)
