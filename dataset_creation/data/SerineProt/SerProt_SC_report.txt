@@ -1,0 +1,40 @@
+**********
+Short Report
+**********
+
+EUKSCS10	1615-->195 	60%	
+EUKSCS28	1371-->167 	60%	
+EUKSCS33	2014-->190 	60%	
+EUKSCS9	7116-->883 	60%	
+
+**********************
+Complete Positive Dataset Report
+**********************
+
+********
+EUKSCS10
+********
+ncbi efetch proteins: 1615
+Proteins after filtering outliers: 1518
+Proteins after clustering: 195
+
+********
+EUKSCS28
+********
+ncbi efetch proteins: 1371
+Proteins after filtering outliers: 1256
+Proteins after clustering: 167
+
+********
+EUKSCS33
+********
+ncbi efetch proteins: 2014
+Proteins after filtering outliers: 2009
+Proteins after clustering: 190
+
+********
+EUKSCS9
+********
+ncbi efetch proteins: 7116
+Proteins after filtering outliers: 6993
+Proteins after clustering: 883

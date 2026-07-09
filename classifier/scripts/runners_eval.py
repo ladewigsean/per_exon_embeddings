@@ -28,7 +28,7 @@ from scripts.modules import NominalClassifier,PoolingClassifier,TransformerClass
 from torch.amp import GradScaler, autocast
 default_args = {
     
-    "dropout_rate": 0.2,
+    "dropout_rate": 0.20,
     'learning_rate': 1e-4,
     'weight_decay':1e-4,
     'hidden_dim1': 512,
@@ -294,9 +294,9 @@ class MultiClassTrainer:
         #
         return report,  all_preds, all_ids, all_labels
 
-def run_hpo_mode(train_dataset,wandb_project,wandb_entity,hpo_metric="weighted avg",n_trials = 50,
+def run_hpo_mode(train_dataset,wandb_project,wandb_entity,hpo_metric="macro avg",n_trials = 50,
                  num_epochs = 100 ,wandb_disable=False,k_folds = 5,max_length = 5000,nn_model = "Transformer",random_seed = 42,embed_size=1024,
-                 patience = 10,yaml_folder = "yaml",chekcpoint_folder="model_weights"):
+                 patience = 10,yaml_folder = "yaml",checkpoint_folder="model_weights"):
 
     #to give wandb params, maybe there is easier way, also gives defualts
     args = default_args.copy()
@@ -331,7 +331,7 @@ def run_hpo_mode(train_dataset,wandb_project,wandb_entity,hpo_metric="weighted a
         trial_params = {
             'learning_rate': trial.suggest_float('learning_rate', 1e-7, 1e-4, log=True),
             'weight_decay': trial.suggest_float('weight_decay', 1e-6, 1e-3, log=True),
-            'dropout_rate': trial.suggest_float('dropout_rate', 0.0, 0.6),
+            'dropout_rate': trial.suggest_float('dropout_rate', 0.05, 0.8),
             #'hidden_dim1': trial.suggest_categorical('hidden_dim1', [256, 512, 768]),
             #'batch_size': trial.suggest_categorical('batch_size', [16, 32, 64]),
             #"optimizer": trial.suggest_categorical("optimizer", ["Adam", "AdamW", "Lion"]),
@@ -412,7 +412,7 @@ def run_hpo_mode(train_dataset,wandb_project,wandb_entity,hpo_metric="weighted a
             #
             # Train model
             trainer = MultiClassTrainer(model_config, cfg.learning_rate, cfg.weight_decay, weights,model=nn_model,optimizer=cfg.optimizer,criterion=cfg.criterion,scheduler=cfg.scheduler)
-            checkpoint = os.path.join(chekcpoint_folder, f"temp_trial_{trial.number}_{wandb_project}_fold_{fold}.pt")
+            checkpoint = os.path.join(checkpoint_folder, f"temp_trial_{trial.number}_{wandb_project}_fold_{fold}.pt")
 
             # Pass step_offset and update it
             val_metrics, epochs_ran = trainer.train_and_validate(
@@ -437,7 +437,7 @@ def run_hpo_mode(train_dataset,wandb_project,wandb_entity,hpo_metric="weighted a
                 # fallback if the specified metric doesn't exist
                 print(f"WARNING: HPO metric '{metric_key}' not found. Defaulting to weighted avg f1-score.")
                 metric_value = val_metrics['weighted avg']['f1-score']
-
+            
             fold_metrics.append(metric_value)
             val_accuracy_metrics.append(val_metrics["accuracy"])
             # Clean up checkpoint
@@ -447,7 +447,9 @@ def run_hpo_mode(train_dataset,wandb_project,wandb_entity,hpo_metric="weighted a
             if trial.should_prune():
                 raise optuna.TrialPruned()
         # Calculate average metric across folds
+        
         avg_metric = np.mean(fold_metrics)
+        
         val_avg_acc = np.mean(val_accuracy_metrics)
         std_metric = np.std(fold_metrics)
         
@@ -480,7 +482,11 @@ def run_hpo_mode(train_dataset,wandb_project,wandb_entity,hpo_metric="weighted a
     # Save best hyperparameters
     best_params_path = os.path.join(yaml_folder, wandb_project+".yaml")
     with open(best_params_path, 'w') as f:
-        yaml.dump(study.best_trial.params, f, default_flow_style=False)
+        params = default_args.copy()
+        params.update(study.best_trial.params)
+        
+        
+        yaml.dump(params, f, default_flow_style=False)
     
     print(f"\n💾 Best hyperparameters saved to '{best_params_path}':")
     for key, value in study.best_trial.params.items():
@@ -508,12 +514,12 @@ def run(test_dataset,wandb_project,wandb_entity,nn_model = "Transformer",
         num_epochs=num_epochs, patience=patience,
         wandb_disable=wandb_disable, k_folds=kfolds,
         embed_size=embed_size,yaml_folder=yaml_folder,
-        chekcpoint_folder=checkpoint_folder
+        checkpoint_folder=checkpoint_folder
     )
     return yaml_path
     #torch.backends.cudnn.deterministic = True
     #torch.backends.cudnn.benchmark = False
-def train_model(train_dataset,val_dataset, wandb_project,wandb_entity,yaml_file,wandb_disable=False,embed_size = 1024,max_length=500,num_epochs=200, nn_model="Transformer",patience = 20,checkpoints_folder="model_weights"):
+def train_model(train_dataset,val_dataset, wandb_project,wandb_entity,yaml_file,wandb_disable=False,embed_size = 1024,max_length=500,num_epochs=100, nn_model="Transformer",patience = 10,checkpoints_folder="model_weights"):
     random_seeds = [42,121,1023,4398,5000]
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = False
@@ -621,7 +627,7 @@ def train_model(train_dataset,val_dataset, wandb_project,wandb_entity,yaml_file,
     seed_macro_f1 = np.array(seed_macro_f1)
     print(f"average acc: {seed_accs.mean():.2f} ± {1.96 * seed_accs.std():.2f}")
     print(f"average macro f1: {seed_macro_f1.mean():.2f} ± {1.96 * seed_macro_f1.std():.2f}")
-    return best_checkpoint
+    return best_checkpoint, [seed_accs.mean(),seed_accs.std(),seed_macro_f1.mean(),seed_macro_f1.std()]
 def plot_multiclass_confusion_matrix(y_true, y_pred, class_names, save_path):
     from sklearn.metrics import confusion_matrix
     import seaborn as sns
@@ -632,14 +638,11 @@ def plot_multiclass_confusion_matrix(y_true, y_pred, class_names, save_path):
     plt.figure(figsize=(fig_size, fig_size))
     
     # Use percentage if many classes
-    if len(class_names) > 20:
-        cm_normalized = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis] * 100
-        fmt = '.1f'
-        cbar_label = 'Percentage (%)'
-    else:
-        cm_normalized = cm
-        fmt = 'd'
-        cbar_label = 'Count'
+    
+    cm_normalized = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis] * 100
+    fmt = '.1f'
+    cbar_label = 'Percentage (%)'
+    
     
     sns.heatmap(cm_normalized, annot=True, fmt=fmt, cmap='Blues', 
                 xticklabels=class_names, yticklabels=class_names,

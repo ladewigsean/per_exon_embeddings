@@ -5,7 +5,13 @@ import scripts.filter_data
 import json
 import scripts.embed_pers
 import scripts.train_val_test_splits
+import scripts.cluster_split
+import scripts.exon_architecture
 import sys
+#to make personal args namespaces for Ivan scripts
+class Namespace:
+    def __init__(self, kwargs):
+        self.__dict__.update(**kwargs)
 
 if __name__ == '__main__':
     #python download_unfiltered.py --prefix "SerProt" --output_folder data/SerineProt/ --fam_input_json serineprot.json --uniprot --download --filter --embed
@@ -18,7 +24,9 @@ if __name__ == '__main__':
     parser.add_argument("--uniprot", action="store_true")
     parser.add_argument("--download", action="store_true")
     parser.add_argument("--filter", action="store_true")
-    parser.add_argument("--thresh",default="30", help="percent identity theshold" )
+    parser.add_argument("--thresh",type=str,default="50", help="percent identity theshold" )
+    parser.add_argument("--cluster_thresh",type=float,default=30, help="percent identity theshold for clustering" )
+
     parser.add_argument("--min_per_class",type = int, default=60, help="min amount in a class" )
     parser.add_argument("--embed", action="store_true")
     parser.add_argument("--embed_prefix_addon", help="adds addon to prefix for embed incase multiple models, include\"_\" ", default="")
@@ -30,6 +38,7 @@ if __name__ == '__main__':
     fasta =os.path.join(args.output_folder ,f"{args.prefix}.fasta")
     csv =  os.path.join(args.output_folder ,f"{args.prefix}.csv")
     
+        
     if args.download:
         print("Downloading...")
         if args.fam_input_json is None:
@@ -60,7 +69,33 @@ if __name__ == '__main__':
         combined_all_filtered = scripts.filter_data.splice_aware_filter_attmept1(parsed_data,args.prefix,args.output_folder, ident_threshold=args.thresh,mode="mmseqs",whisk=whisk,min_nummer=args.min_per_class)
         scripts.grab_data.save_fasta(combined_all_filtered,fasta)
         scripts.grab_data.save_csv_splits(combined_all_filtered,csv )
-        scripts.train_val_test_splits.split_train_val_test(csv,min_per_class=args.min_per_class)
+        #ivan script, prob should just restructure those/ integrate directly instead of writing files, but this is simple
+        args_cluster_split = Namespace({"fasta":fasta,"csv":csv,"out":csv,"min_seq_id": args.cluster_thresh/100,"id_col":"identifier","label_col":"gene","split_col":"test_split","cov":0.8,"mmseqs_cmd":"mmseqs","train":0.8,"val":0.1,"test":0.1})
+        scripts.cluster_split.main(args=args_cluster_split)
+        #scripts.train_val_test_splits.split_train_val_test(csv,min_per_class=args.min_per_class)
     if args.embed:
         print("Embedding...")
         scripts.embed_pers.embed(fasta,csv,args.embed_prefix_addon,embedding_types=["per_prot","per_exon","per_res","fixed_length_chunks","fixed_total_chunks"],model_name = args.embed_model)
+        print("Architecture...")
+        #base
+        prot_h5_base  =os.path.join(args.output_folder ,f"{args.prefix}_per_prot.h5")
+        meta_only  =os.path.join(args.output_folder ,f"{args.prefix}_meta_only.h5")
+        per_prot_meta  =os.path.join(args.output_folder ,f"{args.prefix}_per_prot_meta.h5")
+        args_arch= Namespace({"fasta":fasta,"csv":csv,"out_h5":meta_only,"scaler": None,"id_col":"identifier","cut_col":"cut_pos","feature_set":"full","concat":prot_h5_base,"concat_out":per_prot_meta,"shuffle":None})
+        scripts.exon_architecture.main(args_arch)
+        #shuffle
+        meta_only_shuffle  =os.path.join(args.output_folder ,f"{args.prefix}_meta_only_shuffle.h5")
+        per_prot_meta_shuffle  =os.path.join(args.output_folder ,f"{args.prefix}_per_prot_meta_shuffle.h5")
+        args_arch= Namespace({"fasta":fasta,"csv":csv,"out_h5":meta_only_shuffle,"scaler": None,"id_col":"identifier","cut_col":"cut_pos","feature_set":"full","concat":prot_h5_base,"concat_out":per_prot_meta_shuffle,"shuffle":42})
+        scripts.exon_architecture.main(args_arch)
+        
+        #length only
+        length_only  =os.path.join(args.output_folder ,f"{args.prefix}_length_only.h5")
+        
+        args_arch= Namespace({"fasta":fasta,"csv":csv,"out_h5":length_only,"scaler": None,"id_col":"identifier","cut_col":"cut_pos","feature_set":"length_only","concat":None,"concat_out":None,"shuffle":None})
+        scripts.exon_architecture.main(args_arch)
+        #phase only
+        phase_only  =os.path.join(args.output_folder ,f"{args.prefix}_phase_only.h5")
+        
+        args_arch= Namespace({"fasta":fasta,"csv":csv,"out_h5":phase_only,"scaler": None,"id_col":"identifier","cut_col":"cut_pos","feature_set":"length_only","concat":None,"concat_out":None,"shuffle":None})
+        scripts.exon_architecture.main(args_arch)

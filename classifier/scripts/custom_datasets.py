@@ -49,6 +49,8 @@ class MultiClassDataset(Dataset):
             sample_key = list(h5f.keys())[0]
             self.embedding_dim = h5f[sample_key].shape[-1]
         self._compute_max_length()
+        self.random_perm= None
+        #self.random_perm = np.random.permutation(len(self.metadata_df))
     
         
 
@@ -72,8 +74,10 @@ class MultiClassDataset(Dataset):
         else:
             seq_len = 1
             embedding = embedding.unsqueeze(0)
-
-        label = torch.tensor(row["label"], dtype=torch.float32)
+        if not self.random_perm is None:
+            label = torch.tensor(self.metadata_df.iloc[self.random_perm[index]]["label"], dtype=torch.float32)
+        else:
+            label = torch.tensor(row["label"], dtype=torch.float32)
         return embedding, label, str(row[self.id_column]), seq_len
 
     def __len__(self):

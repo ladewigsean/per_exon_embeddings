@@ -1,9 +1,9 @@
 {
-	"main_family":"Serine protease","prefix":"","query":"f\"(family:\\\"peptidase {subfamily} family\\\")\"",  "additional":" AND (taxonomy_id:33208)",
+	"main_family":"homeobox genes","prefix":"HOX","query":"f\"(gene:HOX{family}{subfamily})\"",  "additional":" AND (taxonomy_id:33208)",
 	"families":
 	[
 		{
-            "family":"SB", "subfamily":
+            "family":"A", "subfamily":
             {
                 "S8": "(family:\"peptidase S8 family\") NOT IPR030400",
                 "S53":"IPR030400"

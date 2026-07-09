@@ -1,0 +1,390 @@
+Starting: HOXA1
+downloading : HOXA1
+515 search results 
+have 515 uniprot ids 
+Entrez Protein IDs found: 201
+Failed elink 0 batches
+proteins traced to 127 genes
+Failed elink2 0 batches
+proteins found 317 from genes
+Failed 0 batches
+Starting: HOXA2
+downloading : HOXA2
+410 search results 
+have 410 uniprot ids 
+Entrez Protein IDs found: 135
+Failed elink 0 batches
+proteins traced to 124 genes
+Failed elink2 0 batches
+proteins found 212 from genes
+Failed 0 batches
+Starting: HOXA3
+downloading : HOXA3
+486 search results 
+have 486 uniprot ids 
+Entrez Protein IDs found: 586
+Failed elink 0 batches
+proteins traced to 137 genes
+Failed elink2 0 batches
+proteins found 652 from genes
+Failed 0 batches
+Starting: HOXA4
+downloading : HOXA4
+355 search results 
+have 355 uniprot ids 
+Entrez Protein IDs found: 107
+Failed elink 0 batches
+proteins traced to 99 genes
+Failed elink2 0 batches
+proteins found 151 from genes
+Failed 0 batches
+Starting: HOXA5
+downloading : HOXA5
+468 search results 
+have 468 uniprot ids 
+Entrez Protein IDs found: 122
+Failed elink 0 batches
+proteins traced to 111 genes
+Failed elink2 0 batches
+proteins found 172 from genes
+Failed 0 batches
+Starting: HOXA6
+downloading : HOXA6
+414 search results 
+have 414 uniprot ids 
+Entrez Protein IDs found: 156
+Failed elink 0 batches
+proteins traced to 130 genes
+Failed elink2 0 batches
+proteins found 235 from genes
+Failed 0 batches
+Starting: HOXA7
+downloading : HOXA7
+500 search results 
+have 500 uniprot ids 
+Entrez Protein IDs found: 184
+Failed elink 0 batches
+proteins traced to 124 genes
+Failed elink2 0 batches
+proteins found 273 from genes
+Failed 0 batches
+Starting: HOXA9
+downloading : HOXA9
+461 search results 
+have 461 uniprot ids 
+Entrez Protein IDs found: 134
+Failed elink 0 batches
+proteins traced to 120 genes
+Failed elink2 0 batches
+proteins found 190 from genes
+Failed 0 batches
+Starting: HOXA10
+downloading : HOXA10
+495 search results 
+have 495 uniprot ids 
+Entrez Protein IDs found: 132
+Failed elink 0 batches
+proteins traced to 96 genes
+Failed elink2 0 batches
+proteins found 197 from genes
+Failed 0 batches
+Starting: HOXA11
+downloading : HOXA11
+470 search results 
+have 470 uniprot ids 
+Entrez Protein IDs found: 125
+Failed elink 0 batches
+proteins traced to 116 genes
+Failed elink2 0 batches
+proteins found 188 from genes
+Failed 0 batches
+Starting: HOXA13
+downloading : HOXA13
+648 search results 
+have 648 uniprot ids 
+Entrez Protein IDs found: 98
+Failed elink 0 batches
+proteins traced to 96 genes
+Failed elink2 0 batches
+proteins found 148 from genes
+Failed 0 batches
+Starting: HOXB1
+downloading : HOXB1
+406 search results 
+have 406 uniprot ids 
+Entrez Protein IDs found: 133
+Failed elink 0 batches
+proteins traced to 122 genes
+Failed elink2 0 batches
+proteins found 187 from genes
+Failed 0 batches
+Starting: HOXB2
+downloading : HOXB2
+338 search results 
+have 338 uniprot ids 
+Entrez Protein IDs found: 119
+Failed elink 0 batches
+proteins traced to 112 genes
+Failed elink2 0 batches
+proteins found 168 from genes
+Failed 0 batches
+Starting: HOXB3
+downloading : HOXB3
+442 search results 
+have 442 uniprot ids 
+Entrez Protein IDs found: 437
+Failed elink 0 batches
+proteins traced to 102 genes
+Failed elink2 0 batches
+proteins found 654 from genes
+Failed 0 batches
+Starting: HOXB4
+downloading : HOXB4
+462 search results 
+have 462 uniprot ids 
+Entrez Protein IDs found: 114
+Failed elink 0 batches
+proteins traced to 102 genes
+Failed elink2 0 batches
+proteins found 171 from genes
+Failed 0 batches
+Starting: HOXB5
+downloading : HOXB5
+245 search results 
+have 245 uniprot ids 
+Entrez Protein IDs found: 135
+Failed elink 0 batches
+proteins traced to 126 genes
+Failed elink2 0 batches
+proteins found 196 from genes
+Failed 0 batches
+Starting: HOXB6
+downloading : HOXB6
+374 search results 
+have 374 uniprot ids 
+Entrez Protein IDs found: 184
+Failed elink 0 batches
+proteins traced to 119 genes
+Failed elink2 0 batches
+proteins found 263 from genes
+Failed 0 batches
+Starting: HOXB7
+downloading : HOXB7
+414 search results 
+have 414 uniprot ids 
+Entrez Protein IDs found: 143
+Failed elink 0 batches
+proteins traced to 118 genes
+Failed elink2 0 batches
+proteins found 245 from genes
+Failed 0 batches
+Starting: HOXB8
+downloading : HOXB8
+469 search results 
+have 469 uniprot ids 
+Entrez Protein IDs found: 230
+Failed elink 0 batches
+proteins traced to 122 genes
+Failed elink2 0 batches
+proteins found 339 from genes
+Failed 0 batches
+Starting: HOXB9
+downloading : HOXB9
+408 search results 
+have 408 uniprot ids 
+Entrez Protein IDs found: 164
+Failed elink 0 batches
+proteins traced to 123 genes
+Failed elink2 0 batches
+proteins found 224 from genes
+Failed 0 batches
+Starting: HOXB13
+downloading : HOXB13
+264 search results 
+have 264 uniprot ids 
+Entrez Protein IDs found: 122
+Failed elink 0 batches
+proteins traced to 109 genes
+Failed elink2 0 batches
+proteins found 156 from genes
+Failed 0 batches
+Starting: HOXC4
+downloading : HOXC4
+290 search results 
+have 290 uniprot ids 
+Entrez Protein IDs found: 304
+Failed elink 0 batches
+proteins traced to 108 genes
+Failed elink2 0 batches
+proteins found 369 from genes
+Failed 0 batches
+Starting: HOXC5
+downloading : HOXC5
+214 search results 
+have 214 uniprot ids 
+Entrez Protein IDs found: 123
+Failed elink 0 batches
+proteins traced to 111 genes
+Failed elink2 0 batches
+proteins found 169 from genes
+Failed 0 batches
+Starting: HOXC6
+downloading : HOXC6
+381 search results 
+have 381 uniprot ids 
+Entrez Protein IDs found: 233
+Failed elink 0 batches
+proteins traced to 120 genes
+Failed elink2 0 batches
+proteins found 423 from genes
+Failed 0 batches
+Starting: HOXC8
+downloading : HOXC8
+377 search results 
+have 377 uniprot ids 
+Entrez Protein IDs found: 128
+Failed elink 0 batches
+proteins traced to 117 genes
+Failed elink2 0 batches
+proteins found 187 from genes
+Failed 0 batches
+Starting: HOXC9
+downloading : HOXC9
+375 search results 
+have 375 uniprot ids 
+Entrez Protein IDs found: 140
+Failed elink 0 batches
+proteins traced to 122 genes
+Failed elink2 0 batches
+proteins found 186 from genes
+Failed 0 batches
+Starting: HOXC10
+downloading : HOXC10
+362 search results 
+have 362 uniprot ids 
+Entrez Protein IDs found: 132
+Failed elink 0 batches
+proteins traced to 116 genes
+Failed elink2 0 batches
+proteins found 197 from genes
+Failed 0 batches
+Starting: HOXC11
+downloading : HOXC11
+233 search results 
+have 233 uniprot ids 
+Entrez Protein IDs found: 109
+Failed elink 0 batches
+proteins traced to 99 genes
+Failed elink2 0 batches
+proteins found 147 from genes
+Failed 0 batches
+Starting: HOXC12
+downloading : HOXC12
+385 search results 
+have 385 uniprot ids 
+Entrez Protein IDs found: 124
+Failed elink 0 batches
+proteins traced to 119 genes
+Failed elink2 0 batches
+proteins found 156 from genes
+Failed 0 batches
+Starting: HOXC13
+downloading : HOXC13
+181 search results 
+have 181 uniprot ids 
+Entrez Protein IDs found: 109
+Failed elink 0 batches
+proteins traced to 105 genes
+Failed elink2 0 batches
+proteins found 140 from genes
+Failed 0 batches
+Starting: HOXD1
+downloading : HOXD1
+150 search results 
+have 150 uniprot ids 
+Entrez Protein IDs found: 91
+Failed elink 0 batches
+proteins traced to 82 genes
+Failed elink2 0 batches
+proteins found 125 from genes
+Failed 0 batches
+Starting: HOXD3
+downloading : HOXD3
+372 search results 
+have 372 uniprot ids 
+Entrez Protein IDs found: 270
+Failed elink 0 batches
+proteins traced to 117 genes
+Failed elink2 0 batches
+proteins found 341 from genes
+Failed 0 batches
+Starting: HOXD4
+downloading : HOXD4
+490 search results 
+have 490 uniprot ids 
+Entrez Protein IDs found: 195
+Failed elink 0 batches
+proteins traced to 132 genes
+Failed elink2 0 batches
+proteins found 273 from genes
+Failed 0 batches
+Starting: HOXD8
+downloading : HOXD8
+506 search results 
+have 506 uniprot ids 
+Entrez Protein IDs found: 167
+Failed elink 0 batches
+proteins traced to 93 genes
+Failed elink2 0 batches
+proteins found 237 from genes
+Failed 0 batches
+Starting: HOXD9
+downloading : HOXD9
+403 search results 
+have 403 uniprot ids 
+Entrez Protein IDs found: 107
+Failed elink 0 batches
+proteins traced to 94 genes
+Failed elink2 0 batches
+proteins found 153 from genes
+Failed 0 batches
+Starting: HOXD10
+downloading : HOXD10
+485 search results 
+have 485 uniprot ids 
+Entrez Protein IDs found: 136
+Failed elink 0 batches
+proteins traced to 128 genes
+Failed elink2 0 batches
+proteins found 185 from genes
+Failed 0 batches
+Starting: HOXD11
+downloading : HOXD11
+437 search results 
+have 437 uniprot ids 
+Entrez Protein IDs found: 121
+Failed elink 0 batches
+proteins traced to 112 genes
+Failed elink2 0 batches
+proteins found 163 from genes
+Failed 0 batches
+Starting: HOXD12
+downloading : HOXD12
+441 search results 
+have 441 uniprot ids 
+Entrez Protein IDs found: 134
+Failed elink 0 batches
+proteins traced to 124 genes
+Failed elink2 0 batches
+proteins found 178 from genes
+Failed 0 batches
+Starting: HOXD13
+downloading : HOXD13
+460 search results 
+have 460 uniprot ids 
+Entrez Protein IDs found: 98
+Failed elink 0 batches
+proteins traced to 96 genes
+Failed elink2 0 batches
+proteins found 142 from genes
+Failed 0 batches

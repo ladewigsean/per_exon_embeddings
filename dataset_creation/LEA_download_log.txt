@@ -1,0 +1,90 @@
+Starting: LAE_Dehydrin
+downloading : LAE_Dehydrin
+2803 search results 
+have 2803 uniprot ids 
+Entrez Protein IDs found: 340
+Failed elink 0 batches
+proteins traced to 321 genes
+Failed elink2 0 batches
+proteins found 627 from genes
+Failed 0 batches
+Starting: LAE_SMP
+downloading : LAE_SMP
+2380 search results 
+have 2380 uniprot ids 
+Entrez Protein IDs found: 406
+Failed elink 0 batches
+proteins traced to 345 genes
+Failed elink2 0 batches
+proteins found 580 from genes
+Failed 0 batches
+Starting: LAE_1
+downloading : LAE_1
+1728 search results 
+have 1728 uniprot ids 
+Entrez Protein IDs found: 270
+Failed elink 0 batches
+proteins traced to 253 genes
+Failed elink2 0 batches
+proteins found 358 from genes
+Failed 0 batches
+Starting: LAE_2
+downloading : LAE_2
+20706 search results 
+have 20706 uniprot ids 
+Entrez Protein IDs found: 4930
+Failed elink 0 batches
+proteins traced to 2712 genes
+Failed elink2 0 batches
+proteins found 7048 from genes
+Failed 0 batches
+Starting: LAE_3
+downloading : LAE_3
+1890 search results 
+have 1890 uniprot ids 
+Entrez Protein IDs found: 249
+Failed elink 0 batches
+proteins traced to 229 genes
+Failed elink2 0 batches
+proteins found 442 from genes
+Failed 0 batches
+Starting: LAE_4
+downloading : LAE_4
+457 search results 
+have 457 uniprot ids 
+Entrez Protein IDs found: 71
+Failed elink 0 batches
+proteins traced to 61 genes
+Failed elink2 0 batches
+proteins found 102 from genes
+Failed 0 batches
+Starting: LAE_5
+downloading : LAE_5
+1134 search results 
+have 1134 uniprot ids 
+Entrez Protein IDs found: 179
+Failed elink 0 batches
+proteins traced to 143 genes
+Failed elink2 0 batches
+proteins found 238 from genes
+Failed 0 batches
+Starting: LAE_6
+downloading : LAE_6
+544 search results 
+have 544 uniprot ids 
+Entrez Protein IDs found: 57
+Failed elink 0 batches
+proteins traced to 57 genes
+Failed elink2 0 batches
+proteins found 64 from genes
+Failed 0 batches
+Starting: LAE_AWA_WDS
+downloading : LAE_AWA_WDS
+1707 search results 
+have 1707 uniprot ids 
+Entrez Protein IDs found: 196
+Failed elink 0 batches
+proteins traced to 183 genes
+Failed elink2 0 batches
+proteins found 281 from genes
+Failed 0 batches

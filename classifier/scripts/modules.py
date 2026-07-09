@@ -82,8 +82,9 @@ class NominalClassifier(nn.Module):
             num_classes: output_dim
         """
         super().__init__()
-
+        print(dropout_rate)
         self.network = nn.Sequential(
+            #nn.Dropout(dropout_rate),
             nn.Linear(embed_size, hidden_dim1),
             nn.ReLU(),
             nn.Dropout(dropout_rate),
@@ -194,6 +195,7 @@ class TransformerClassifier(nn.Module):
                 max_length = 5000, dim_feedforward = 2048 ,nhead=4,num_layers_transformer = 1,
                 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu"),use_alibi = False,pe_factor=1,pe_mode = "pe"):
         super().__init__()
+        print(dropout_rate)
         self.max_len = max_length
         self.device = device
         self.embed_size = embed_size

@@ -1,0 +1,581 @@
+**********
+Short Report
+**********
+
+NCBIPCDH1	1967-->30  	90%	
+NCBIPCDH10	1613-->22  	90%	
+NCBIPCDH11	755-->23   	90%	
+NCBIPCDH12	1163-->216 	90%	
+NCBIPCDH15	3317-->191 	90%	
+NCBIPCDH17	2556-->71  	90%	
+NCBIPCDH18	1209-->32  	90%	
+NCBIPCDH19	2713-->68  	90%	
+NCBIPCDH20	1038-->187 	90%	
+NCBIPCDH7	3162-->38  	90%	
+NCBIPCDH8	1220-->187 	90%	
+NCBIPCDH9	3151-->26  	90%	
+NCBIPCDHA1	112-->56   	90%	
+NCBIPCDHA10	45-->22    	90%	
+NCBIPCDHA11	39-->16    	90%	X
+NCBIPCDHA12	22-->13    	90%	X
+NCBIPCDHA13	67-->34    	90%	
+NCBIPCDHA2	36-->25    	90%	
+NCBIPCDHA3	16-->11    	90%	X
+NCBIPCDHA4	39-->25    	90%	
+NCBIPCDHA5	51-->30    	90%	
+NCBIPCDHA6	14-->10    	90%	X
+NCBIPCDHA7	12-->9     	90%	X
+NCBIPCDHA8	10-->6     	90%	X
+NCBIPCDHA9	11-->7     	90%	X
+NCBIPCDHAc1	170-->47   	90%	
+NCBIPCDHAc2	168-->46   	90%	
+NCBIPCDHB1	267-->8    	90%	X
+NCBIPCDHB10	57-->15    	90%	X
+NCBIPCDHB11	31-->6     	90%	X
+NCBIPCDHB12	32-->1     	90%	X
+NCBIPCDHB13	24-->3     	90%	X
+NCBIPCDHB14	79-->16    	90%	X
+NCBIPCDHB15	171-->18   	90%	X
+NCBIPCDHB16	83-->26    	90%	
+NCBIPCDHB17	3-->3      	90%	X
+NCBIPCDHB18	1-->1      	90%	X
+NCBIPCDHB2	136-->22   	90%	
+NCBIPCDHB3	105-->27   	90%	
+NCBIPCDHB4	124-->23   	90%	
+NCBIPCDHB5	117-->11   	90%	X
+NCBIPCDHB6	117-->28   	90%	
+NCBIPCDHB7	118-->26   	90%	
+NCBIPCDHB8	62-->13    	90%	X
+NCBIPCDHB9	11-->2     	90%	X
+NCBIPCDHGA1	436-->138  	90%	
+NCBIPCDHGA10	98-->50    	90%	
+NCBIPCDHGA11	66-->34    	90%	
+NCBIPCDHGA12	31-->13    	90%	X
+NCBIPCDHGA2	18-->12    	90%	X
+NCBIPCDHGA3	24-->18    	90%	X
+NCBIPCDHGA4	21-->13    	90%	X
+NCBIPCDHGA5	21-->10    	90%	X
+NCBIPCDHGA6	13-->7     	90%	X
+NCBIPCDHGA7	13-->7     	90%	X
+NCBIPCDHGA8	16-->8     	90%	X
+NCBIPCDHGA9	14-->7     	90%	X
+NCBIPCDHGB1	23-->17    	90%	X
+NCBIPCDHGB2	60-->28    	90%	
+NCBIPCDHGB3	25-->7     	90%	X
+NCBIPCDHGB4	18-->5     	90%	X
+NCBIPCDHGB5	17-->7     	90%	X
+NCBIPCDHGB6	11-->5     	90%	X
+NCBIPCDHGB7	25-->10    	90%	X
+NCBIPCDHGC3	50-->11    	90%	X
+NCBIPCDHGC4	51-->2     	90%	X
+NCBIPCDHGC5	44-->11    	90%	X
+
+**********************
+Complete Positive Dataset Report
+**********************
+
+********
+NCBIPCDH1
+********
+ncbi efetch proteins: 1967
+Proteins after filtering outliers: 1943
+Proteins after clustering: 30
+
+********
+NCBIPCDH10
+********
+ncbi efetch proteins: 1613
+Proteins after filtering outliers: 1447
+Proteins after clustering: 22
+
+********
+NCBIPCDH11
+********
+ncbi efetch proteins: 755
+Proteins after filtering outliers: 755
+Proteins after clustering: 23
+
+********
+NCBIPCDH12
+********
+ncbi efetch proteins: 1163
+Proteins after filtering outliers: 1021
+Proteins after clustering: 216
+
+********
+NCBIPCDH15
+********
+ncbi efetch proteins: 3317
+Proteins after filtering outliers: 3287
+Proteins after clustering: 191
+
+********
+NCBIPCDH17
+********
+ncbi efetch proteins: 2556
+Proteins after filtering outliers: 2547
+Proteins after clustering: 71
+
+********
+NCBIPCDH18
+********
+ncbi efetch proteins: 1209
+Proteins after filtering outliers: 1002
+Proteins after clustering: 32
+
+********
+NCBIPCDH19
+********
+ncbi efetch proteins: 2713
+Proteins after filtering outliers: 2591
+Proteins after clustering: 68
+
+********
+NCBIPCDH20
+********
+ncbi efetch proteins: 1038
+Proteins after filtering outliers: 1022
+Proteins after clustering: 187
+
+********
+NCBIPCDH7
+********
+ncbi efetch proteins: 3162
+Proteins after filtering outliers: 3162
+Proteins after clustering: 38
+
+********
+NCBIPCDH8
+********
+ncbi efetch proteins: 1220
+Proteins after filtering outliers: 1144
+Proteins after clustering: 187
+
+********
+NCBIPCDH9
+********
+ncbi efetch proteins: 3151
+Proteins after filtering outliers: 3119
+Proteins after clustering: 26
+
+********
+NCBIPCDHA1
+********
+ncbi efetch proteins: 112
+Proteins after filtering outliers: 87
+Proteins after clustering: 56
+
+********
+NCBIPCDHA10
+********
+ncbi efetch proteins: 45
+Proteins after filtering outliers: 45
+Proteins after clustering: 22
+
+********
+NCBIPCDHA11
+********
+ncbi efetch proteins: 39
+Proteins after filtering outliers: 39
+Proteins after clustering: 16
+Not enough data in class, the entire class will be removed from final data(16 < 20)
+
+********
+NCBIPCDHA12
+********
+ncbi efetch proteins: 22
+Proteins after filtering outliers: 21
+Proteins after clustering: 13
+Not enough data in class, the entire class will be removed from final data(13 < 20)
+
+********
+NCBIPCDHA13
+********
+ncbi efetch proteins: 67
+Proteins after filtering outliers: 67
+Proteins after clustering: 34
+
+********
+NCBIPCDHA2
+********
+ncbi efetch proteins: 36
+Proteins after filtering outliers: 35
+Proteins after clustering: 25
+
+********
+NCBIPCDHA3
+********
+ncbi efetch proteins: 16
+Proteins after filtering outliers: 15
+Proteins after clustering: 11
+Not enough data in class, the entire class will be removed from final data(11 < 20)
+
+********
+NCBIPCDHA4
+********
+ncbi efetch proteins: 39
+Proteins after filtering outliers: 39
+Proteins after clustering: 25
+
+********
+NCBIPCDHA5
+********
+ncbi efetch proteins: 51
+Proteins after filtering outliers: 51
+Proteins after clustering: 30
+
+********
+NCBIPCDHA6
+********
+ncbi efetch proteins: 14
+Proteins after filtering outliers: 14
+Proteins after clustering: 10
+Not enough data in class, the entire class will be removed from final data(10 < 20)
+
+********
+NCBIPCDHA7
+********
+ncbi efetch proteins: 12
+Proteins after filtering outliers: 12
+Proteins after clustering: 9
+Not enough data in class, the entire class will be removed from final data(9 < 20)
+
+********
+NCBIPCDHA8
+********
+ncbi efetch proteins: 10
+Proteins after filtering outliers: 10
+Proteins after clustering: 6
+Not enough data in class, the entire class will be removed from final data(6 < 20)
+
+********
+NCBIPCDHA9
+********
+ncbi efetch proteins: 11
+Proteins after filtering outliers: 11
+Proteins after clustering: 7
+Not enough data in class, the entire class will be removed from final data(7 < 20)
+
+********
+NCBIPCDHAc1
+********
+ncbi efetch proteins: 170
+Proteins after filtering outliers: 138
+Proteins after clustering: 47
+
+********
+NCBIPCDHAc2
+********
+ncbi efetch proteins: 168
+Proteins after filtering outliers: 166
+Proteins after clustering: 46
+
+********
+NCBIPCDHB1
+********
+ncbi efetch proteins: 267
+Proteins after filtering outliers: 206
+Proteins after clustering: 8
+Not enough data in class, the entire class will be removed from final data(8 < 20)
+
+********
+NCBIPCDHB10
+********
+ncbi efetch proteins: 57
+Proteins after filtering outliers: 42
+Proteins after clustering: 15
+Not enough data in class, the entire class will be removed from final data(15 < 20)
+
+********
+NCBIPCDHB11
+********
+ncbi efetch proteins: 31
+Proteins after filtering outliers: 25
+Proteins after clustering: 6
+Not enough data in class, the entire class will be removed from final data(6 < 20)
+
+********
+NCBIPCDHB12
+********
+ncbi efetch proteins: 32
+Proteins after filtering outliers: 18
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+NCBIPCDHB13
+********
+ncbi efetch proteins: 24
+Proteins after filtering outliers: 20
+Proteins after clustering: 3
+Not enough data in class, the entire class will be removed from final data(3 < 20)
+
+********
+NCBIPCDHB14
+********
+ncbi efetch proteins: 79
+Proteins after filtering outliers: 58
+Proteins after clustering: 16
+Not enough data in class, the entire class will be removed from final data(16 < 20)
+
+********
+NCBIPCDHB15
+********
+ncbi efetch proteins: 171
+Proteins after filtering outliers: 145
+Proteins after clustering: 18
+Not enough data in class, the entire class will be removed from final data(18 < 20)
+
+********
+NCBIPCDHB16
+********
+ncbi efetch proteins: 83
+Proteins after filtering outliers: 79
+Proteins after clustering: 26
+
+********
+NCBIPCDHB17
+********
+ncbi efetch proteins: 3
+Proteins after filtering outliers: 3
+Proteins after clustering: 3
+Not enough data in class, the entire class will be removed from final data(3 < 20)
+
+********
+NCBIPCDHB18
+********
+ncbi efetch proteins: 1
+Proteins after filtering outliers: 1
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+NCBIPCDHB2
+********
+ncbi efetch proteins: 136
+Proteins after filtering outliers: 99
+Proteins after clustering: 22
+
+********
+NCBIPCDHB3
+********
+ncbi efetch proteins: 105
+Proteins after filtering outliers: 95
+Proteins after clustering: 27
+
+********
+NCBIPCDHB4
+********
+ncbi efetch proteins: 124
+Proteins after filtering outliers: 99
+Proteins after clustering: 23
+
+********
+NCBIPCDHB5
+********
+ncbi efetch proteins: 117
+Proteins after filtering outliers: 82
+Proteins after clustering: 11
+Not enough data in class, the entire class will be removed from final data(11 < 20)
+
+********
+NCBIPCDHB6
+********
+ncbi efetch proteins: 117
+Proteins after filtering outliers: 103
+Proteins after clustering: 28
+
+********
+NCBIPCDHB7
+********
+ncbi efetch proteins: 118
+Proteins after filtering outliers: 91
+Proteins after clustering: 26
+
+********
+NCBIPCDHB8
+********
+ncbi efetch proteins: 62
+Proteins after filtering outliers: 58
+Proteins after clustering: 13
+Not enough data in class, the entire class will be removed from final data(13 < 20)
+
+********
+NCBIPCDHB9
+********
+ncbi efetch proteins: 11
+Proteins after filtering outliers: 8
+Proteins after clustering: 2
+Not enough data in class, the entire class will be removed from final data(2 < 20)
+
+********
+NCBIPCDHGA1
+********
+ncbi efetch proteins: 436
+Proteins after filtering outliers: 314
+Proteins after clustering: 138
+
+********
+NCBIPCDHGA10
+********
+ncbi efetch proteins: 98
+Proteins after filtering outliers: 70
+Proteins after clustering: 50
+
+********
+NCBIPCDHGA11
+********
+ncbi efetch proteins: 66
+Proteins after filtering outliers: 65
+Proteins after clustering: 34
+
+********
+NCBIPCDHGA12
+********
+ncbi efetch proteins: 31
+Proteins after filtering outliers: 29
+Proteins after clustering: 13
+Not enough data in class, the entire class will be removed from final data(13 < 20)
+
+********
+NCBIPCDHGA2
+********
+ncbi efetch proteins: 18
+Proteins after filtering outliers: 16
+Proteins after clustering: 12
+Not enough data in class, the entire class will be removed from final data(12 < 20)
+
+********
+NCBIPCDHGA3
+********
+ncbi efetch proteins: 24
+Proteins after filtering outliers: 24
+Proteins after clustering: 18
+Not enough data in class, the entire class will be removed from final data(18 < 20)
+
+********
+NCBIPCDHGA4
+********
+ncbi efetch proteins: 21
+Proteins after filtering outliers: 20
+Proteins after clustering: 13
+Not enough data in class, the entire class will be removed from final data(13 < 20)
+
+********
+NCBIPCDHGA5
+********
+ncbi efetch proteins: 21
+Proteins after filtering outliers: 16
+Proteins after clustering: 10
+Not enough data in class, the entire class will be removed from final data(10 < 20)
+
+********
+NCBIPCDHGA6
+********
+ncbi efetch proteins: 13
+Proteins after filtering outliers: 9
+Proteins after clustering: 7
+Not enough data in class, the entire class will be removed from final data(7 < 20)
+
+********
+NCBIPCDHGA7
+********
+ncbi efetch proteins: 13
+Proteins after filtering outliers: 13
+Proteins after clustering: 7
+Not enough data in class, the entire class will be removed from final data(7 < 20)
+
+********
+NCBIPCDHGA8
+********
+ncbi efetch proteins: 16
+Proteins after filtering outliers: 16
+Proteins after clustering: 8
+Not enough data in class, the entire class will be removed from final data(8 < 20)
+
+********
+NCBIPCDHGA9
+********
+ncbi efetch proteins: 14
+Proteins after filtering outliers: 13
+Proteins after clustering: 7
+Not enough data in class, the entire class will be removed from final data(7 < 20)
+
+********
+NCBIPCDHGB1
+********
+ncbi efetch proteins: 23
+Proteins after filtering outliers: 23
+Proteins after clustering: 17
+Not enough data in class, the entire class will be removed from final data(17 < 20)
+
+********
+NCBIPCDHGB2
+********
+ncbi efetch proteins: 60
+Proteins after filtering outliers: 45
+Proteins after clustering: 28
+
+********
+NCBIPCDHGB3
+********
+ncbi efetch proteins: 25
+Proteins after filtering outliers: 18
+Proteins after clustering: 7
+Not enough data in class, the entire class will be removed from final data(7 < 20)
+
+********
+NCBIPCDHGB4
+********
+ncbi efetch proteins: 18
+Proteins after filtering outliers: 11
+Proteins after clustering: 5
+Not enough data in class, the entire class will be removed from final data(5 < 20)
+
+********
+NCBIPCDHGB5
+********
+ncbi efetch proteins: 17
+Proteins after filtering outliers: 15
+Proteins after clustering: 7
+Not enough data in class, the entire class will be removed from final data(7 < 20)
+
+********
+NCBIPCDHGB6
+********
+ncbi efetch proteins: 11
+Proteins after filtering outliers: 11
+Proteins after clustering: 5
+Not enough data in class, the entire class will be removed from final data(5 < 20)
+
+********
+NCBIPCDHGB7
+********
+ncbi efetch proteins: 25
+Proteins after filtering outliers: 20
+Proteins after clustering: 10
+Not enough data in class, the entire class will be removed from final data(10 < 20)
+
+********
+NCBIPCDHGC3
+********
+ncbi efetch proteins: 50
+Proteins after filtering outliers: 38
+Proteins after clustering: 11
+Not enough data in class, the entire class will be removed from final data(11 < 20)
+
+********
+NCBIPCDHGC4
+********
+ncbi efetch proteins: 51
+Proteins after filtering outliers: 39
+Proteins after clustering: 2
+Not enough data in class, the entire class will be removed from final data(2 < 20)
+
+********
+NCBIPCDHGC5
+********
+ncbi efetch proteins: 44
+Proteins after filtering outliers: 41
+Proteins after clustering: 11
+Not enough data in class, the entire class will be removed from final data(11 < 20)

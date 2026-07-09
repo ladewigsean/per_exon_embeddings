@@ -1,0 +1,64 @@
+{
+	"main_family":"Zinc finger","prefix":"ZNF","query":"None",  "additional":" AND (taxonomy_id:2759)",
+	"families":
+	[
+        {
+            "family":"","query":"f\"((gene:znf{subfamily}) OR (gene:zfp{subfamily})) AND zinc finger\"", "subfamily":
+            {
+                "3":null,
+                "7":null,
+                "10":null,
+                "19":null,
+                "22":null,
+                "24":null,
+                "33b":null,
+                "34":null,
+                "35":null,
+                "41":null,
+                "43":null,
+                "74":null,
+                "143":null,
+                "146":null,
+                "148":null,
+                "165":null,
+                "202":null,
+                "217":null,
+                "219":null,
+                "239":null,
+                "259":"(family:\"ZPR1 family\") AND Zinc Finger",
+                "267":null,
+                "268":null,
+                "281":null,
+                "300":null,
+                "318":null,
+                "330":null,
+                "346":null,
+                "350":null,
+                "365":null,
+                "366":null,
+                "384":null,
+                "423":null,
+                "451":null,
+                "452":"(gene:SCAND3) AND zinc finger",
+                "471":null,
+                "593":"(family:\"ZNF593/BUD20 C2H2-type zinc-finger protein family\")",
+                "638": null,
+                "644": null,
+                "649": null,
+                "655": null,
+                "804a": null
+                
+                
+
+            }
+        }
+        
+        
+
+
+
+		
+	],
+    "missing":["9","44","51","238"]
+    
+}

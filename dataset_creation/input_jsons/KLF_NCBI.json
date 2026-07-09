@@ -1,0 +1,45 @@
+{
+	"main_family":"Kruppel-like factors","prefix":"NCBI","query":null,  "additional":" AND animals[porgn]",
+	"families":
+	[
+		{
+            "family":"KLF","query":"f\"KLF{subfamily}[Preferred Symbol] OR (KLF transcription factor {subfamily}[Gene/Protein Name])\"", "subfamily":
+            {
+                "1":null,
+                "2":null,
+                "3":null,
+                "4":null,
+                "5":null,
+                "6":null,
+                "7":null,
+                "8":null,
+                "9":null,
+                "10":null,
+                "11":null,
+                "12":null,
+                "13":null,
+                "14":null,
+                "15":null,
+                "16":null,
+                "17":null
+            }
+        },
+        {
+        "family":"SP","query":"f\"SP{subfamily}[Preferred Symbol] and (transcription factor[Protein Name]) \"", "subfamily":
+            {
+                "1":null,
+                "2":null,
+                "3":null,
+                "4":null,
+                "5":null,
+                "6":null,
+                "7":null,
+                "8":null,
+                "9":null
+            }
+        }
+
+		
+	]
+    
+}

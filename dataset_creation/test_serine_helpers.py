@@ -5,8 +5,8 @@ These need no mmseqs, no h5, no GPU -- they check the parts that decide correctn
 the cluster-aware assignment (no leakage, label-stratified) and the architecture-
 feature maths (exon lengths, intron phase). Run: python -m pytest test_serine_helpers.py
 """
-from cluster_split import assign_clusters_stratified
-from exon_architecture import architecture_features, FEATURE_NAMES
+from dataset_creation.scripts.cluster_split import assign_clusters_stratified
+from dataset_creation.scripts.exon_architecture import architecture_features, FEATURE_NAMES
 
 
 def test_no_cluster_is_split_across_partitions():

@@ -1,0 +1,80 @@
+**********
+Short Report
+**********
+
+LAE_1	270-->142  	80%	
+LAE_2	2638-->1194	80%	
+LAE_3	248-->125  	80%	
+LAE_4	77-->43    	80%	
+LAE_5	149-->38   	80%	
+LAE_6	56-->37    	80%	
+LAE_AWA_WDS	193-->92   	80%	
+LAE_Dehydrin	351-->181  	80%	
+LAE_SMP	373-->199  	80%	
+
+**********************
+Complete Positive Dataset Report
+**********************
+
+********
+LAE_1
+********
+ncbi efetch proteins: 270
+Proteins after filtering outliers: 270
+Proteins after clustering: 142
+
+********
+LAE_2
+********
+ncbi efetch proteins: 2638
+Proteins after filtering outliers: 2602
+Proteins after clustering: 1194
+
+********
+LAE_3
+********
+ncbi efetch proteins: 248
+Proteins after filtering outliers: 237
+Proteins after clustering: 125
+
+********
+LAE_4
+********
+ncbi efetch proteins: 77
+Proteins after filtering outliers: 76
+Proteins after clustering: 43
+
+********
+LAE_5
+********
+ncbi efetch proteins: 149
+Proteins after filtering outliers: 143
+Proteins after clustering: 38
+
+********
+LAE_6
+********
+ncbi efetch proteins: 56
+Proteins after filtering outliers: 55
+Proteins after clustering: 37
+
+********
+LAE_AWA_WDS
+********
+ncbi efetch proteins: 193
+Proteins after filtering outliers: 188
+Proteins after clustering: 92
+
+********
+LAE_Dehydrin
+********
+ncbi efetch proteins: 351
+Proteins after filtering outliers: 329
+Proteins after clustering: 181
+
+********
+LAE_SMP
+********
+ncbi efetch proteins: 373
+Proteins after filtering outliers: 373
+Proteins after clustering: 199

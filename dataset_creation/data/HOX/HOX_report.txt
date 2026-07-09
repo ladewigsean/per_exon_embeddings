@@ -1,0 +1,351 @@
+**********
+Short Report
+**********
+
+HOXA1	232-->25   	90%	
+HOXA10	144-->30   	90%	
+HOXA11	136-->16   	90%	X
+HOXA13	99-->17    	90%	X
+HOXA2	145-->8    	90%	X
+HOXA3	587-->13   	90%	X
+HOXA4	107-->29   	90%	
+HOXA5	128-->15   	90%	X
+HOXA6	198-->8    	90%	X
+HOXA7	201-->19   	90%	X
+HOXA9	142-->15   	90%	X
+HOXB1	133-->29   	90%	
+HOXB13	124-->9    	90%	X
+HOXB2	124-->46   	90%	
+HOXB3	584-->18   	90%	X
+HOXB4	123-->16   	90%	X
+HOXB5	138-->5    	90%	X
+HOXB6	204-->5    	90%	X
+HOXB7	174-->8    	90%	X
+HOXB8	293-->6    	90%	X
+HOXB9	174-->9    	90%	X
+HOXC10	132-->10   	90%	X
+HOXC11	113-->6    	90%	X
+HOXC12	129-->12   	90%	X
+HOXC13	110-->13   	90%	X
+HOXC4	315-->3    	90%	X
+HOXC5	123-->3    	90%	X
+HOXC6	334-->18   	90%	X
+HOXC8	126-->3    	90%	X
+HOXC9	129-->5    	90%	X
+HOXD1	87-->26    	90%	
+HOXD10	139-->12   	90%	X
+HOXD11	121-->19   	90%	X
+HOXD12	132-->12   	90%	X
+HOXD13	98-->13    	90%	X
+HOXD3	283-->16   	90%	X
+HOXD4	220-->20   	90%	
+HOXD8	197-->19   	90%	X
+HOXD9	115-->25   	90%	
+
+**********************
+Complete Positive Dataset Report
+**********************
+
+********
+HOXA1
+********
+ncbi efetch proteins: 232
+Proteins after filtering outliers: 231
+Proteins after clustering: 25
+
+********
+HOXA10
+********
+ncbi efetch proteins: 144
+Proteins after filtering outliers: 142
+Proteins after clustering: 30
+
+********
+HOXA11
+********
+ncbi efetch proteins: 136
+Proteins after filtering outliers: 128
+Proteins after clustering: 16
+Not enough data in class, the entire class will be removed from final data(16 < 20)
+
+********
+HOXA13
+********
+ncbi efetch proteins: 99
+Proteins after filtering outliers: 94
+Proteins after clustering: 17
+Not enough data in class, the entire class will be removed from final data(17 < 20)
+
+********
+HOXA2
+********
+ncbi efetch proteins: 145
+Proteins after filtering outliers: 122
+Proteins after clustering: 8
+Not enough data in class, the entire class will be removed from final data(8 < 20)
+
+********
+HOXA3
+********
+ncbi efetch proteins: 587
+Proteins after filtering outliers: 580
+Proteins after clustering: 13
+Not enough data in class, the entire class will be removed from final data(13 < 20)
+
+********
+HOXA4
+********
+ncbi efetch proteins: 107
+Proteins after filtering outliers: 102
+Proteins after clustering: 29
+
+********
+HOXA5
+********
+ncbi efetch proteins: 128
+Proteins after filtering outliers: 127
+Proteins after clustering: 15
+Not enough data in class, the entire class will be removed from final data(15 < 20)
+
+********
+HOXA6
+********
+ncbi efetch proteins: 198
+Proteins after filtering outliers: 136
+Proteins after clustering: 8
+Not enough data in class, the entire class will be removed from final data(8 < 20)
+
+********
+HOXA7
+********
+ncbi efetch proteins: 201
+Proteins after filtering outliers: 183
+Proteins after clustering: 19
+Not enough data in class, the entire class will be removed from final data(19 < 20)
+
+********
+HOXA9
+********
+ncbi efetch proteins: 142
+Proteins after filtering outliers: 130
+Proteins after clustering: 15
+Not enough data in class, the entire class will be removed from final data(15 < 20)
+
+********
+HOXB1
+********
+ncbi efetch proteins: 133
+Proteins after filtering outliers: 119
+Proteins after clustering: 29
+
+********
+HOXB13
+********
+ncbi efetch proteins: 124
+Proteins after filtering outliers: 92
+Proteins after clustering: 9
+Not enough data in class, the entire class will be removed from final data(9 < 20)
+
+********
+HOXB2
+********
+ncbi efetch proteins: 124
+Proteins after filtering outliers: 119
+Proteins after clustering: 46
+
+********
+HOXB3
+********
+ncbi efetch proteins: 584
+Proteins after filtering outliers: 567
+Proteins after clustering: 18
+Not enough data in class, the entire class will be removed from final data(18 < 20)
+
+********
+HOXB4
+********
+ncbi efetch proteins: 123
+Proteins after filtering outliers: 109
+Proteins after clustering: 16
+Not enough data in class, the entire class will be removed from final data(16 < 20)
+
+********
+HOXB5
+********
+ncbi efetch proteins: 138
+Proteins after filtering outliers: 124
+Proteins after clustering: 5
+Not enough data in class, the entire class will be removed from final data(5 < 20)
+
+********
+HOXB6
+********
+ncbi efetch proteins: 204
+Proteins after filtering outliers: 136
+Proteins after clustering: 5
+Not enough data in class, the entire class will be removed from final data(5 < 20)
+
+********
+HOXB7
+********
+ncbi efetch proteins: 174
+Proteins after filtering outliers: 125
+Proteins after clustering: 8
+Not enough data in class, the entire class will be removed from final data(8 < 20)
+
+********
+HOXB8
+********
+ncbi efetch proteins: 293
+Proteins after filtering outliers: 285
+Proteins after clustering: 6
+Not enough data in class, the entire class will be removed from final data(6 < 20)
+
+********
+HOXB9
+********
+ncbi efetch proteins: 174
+Proteins after filtering outliers: 146
+Proteins after clustering: 9
+Not enough data in class, the entire class will be removed from final data(9 < 20)
+
+********
+HOXC10
+********
+ncbi efetch proteins: 132
+Proteins after filtering outliers: 96
+Proteins after clustering: 10
+Not enough data in class, the entire class will be removed from final data(10 < 20)
+
+********
+HOXC11
+********
+ncbi efetch proteins: 113
+Proteins after filtering outliers: 92
+Proteins after clustering: 6
+Not enough data in class, the entire class will be removed from final data(6 < 20)
+
+********
+HOXC12
+********
+ncbi efetch proteins: 129
+Proteins after filtering outliers: 127
+Proteins after clustering: 12
+Not enough data in class, the entire class will be removed from final data(12 < 20)
+
+********
+HOXC13
+********
+ncbi efetch proteins: 110
+Proteins after filtering outliers: 107
+Proteins after clustering: 13
+Not enough data in class, the entire class will be removed from final data(13 < 20)
+
+********
+HOXC4
+********
+ncbi efetch proteins: 315
+Proteins after filtering outliers: 244
+Proteins after clustering: 3
+Not enough data in class, the entire class will be removed from final data(3 < 20)
+
+********
+HOXC5
+********
+ncbi efetch proteins: 123
+Proteins after filtering outliers: 106
+Proteins after clustering: 3
+Not enough data in class, the entire class will be removed from final data(3 < 20)
+
+********
+HOXC6
+********
+ncbi efetch proteins: 334
+Proteins after filtering outliers: 331
+Proteins after clustering: 18
+Not enough data in class, the entire class will be removed from final data(18 < 20)
+
+********
+HOXC8
+********
+ncbi efetch proteins: 126
+Proteins after filtering outliers: 118
+Proteins after clustering: 3
+Not enough data in class, the entire class will be removed from final data(3 < 20)
+
+********
+HOXC9
+********
+ncbi efetch proteins: 129
+Proteins after filtering outliers: 99
+Proteins after clustering: 5
+Not enough data in class, the entire class will be removed from final data(5 < 20)
+
+********
+HOXD1
+********
+ncbi efetch proteins: 87
+Proteins after filtering outliers: 79
+Proteins after clustering: 26
+
+********
+HOXD10
+********
+ncbi efetch proteins: 139
+Proteins after filtering outliers: 134
+Proteins after clustering: 12
+Not enough data in class, the entire class will be removed from final data(12 < 20)
+
+********
+HOXD11
+********
+ncbi efetch proteins: 121
+Proteins after filtering outliers: 121
+Proteins after clustering: 19
+Not enough data in class, the entire class will be removed from final data(19 < 20)
+
+********
+HOXD12
+********
+ncbi efetch proteins: 132
+Proteins after filtering outliers: 128
+Proteins after clustering: 12
+Not enough data in class, the entire class will be removed from final data(12 < 20)
+
+********
+HOXD13
+********
+ncbi efetch proteins: 98
+Proteins after filtering outliers: 88
+Proteins after clustering: 13
+Not enough data in class, the entire class will be removed from final data(13 < 20)
+
+********
+HOXD3
+********
+ncbi efetch proteins: 283
+Proteins after filtering outliers: 271
+Proteins after clustering: 16
+Not enough data in class, the entire class will be removed from final data(16 < 20)
+
+********
+HOXD4
+********
+ncbi efetch proteins: 220
+Proteins after filtering outliers: 201
+Proteins after clustering: 20
+
+********
+HOXD8
+********
+ncbi efetch proteins: 197
+Proteins after filtering outliers: 171
+Proteins after clustering: 19
+Not enough data in class, the entire class will be removed from final data(19 < 20)
+
+********
+HOXD9
+********
+ncbi efetch proteins: 115
+Proteins after filtering outliers: 113
+Proteins after clustering: 25

@@ -1,0 +1,68 @@
+{
+	"main_family":"homeobox genes","prefix":"NCBIHOX","query":"f\"homeobox {family_name}{subfamily}[Gene/Protein Name]\"",  "additional":" AND animals[porgn]",
+	"families":
+	[
+		{
+            "family":"A", "subfamily":
+            {
+                "1":null,
+                "2":null,
+                "3":null,
+                "4":null,
+                "5":null,
+                "6":null,
+                "7":null,
+                "9":null,
+                "10":null,
+                "11":null,
+                "13":null
+            }
+        },
+        {
+            "family":"B", "subfamily":
+            {
+                "1":null,
+                "2":null,
+                "3":null,
+                "4":null,
+                "5":null,
+                "6":null,
+                "7":null,
+                "8":null,
+                "9":null,
+                "13":null
+            }
+        },
+        {
+            "family":"C", "subfamily":
+            {
+                
+                "4":null,
+                "5":null,
+                "6":null,
+                "8":null,
+                "9":null,
+                "10":null,
+                "11":null,
+                "12":null,
+                "13":null
+            }
+        },
+        {
+            "family":"D", "subfamily":
+            {
+                "1":null,
+                "3":null,
+                "4":null,
+                "8":null,
+                "9":null,
+                "10":null,
+                "11":null,
+                "12":null,
+                "13":null
+            }
+        }
+		
+	]
+    
+}

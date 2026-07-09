@@ -1,0 +1,412 @@
+**********
+Short Report
+**********
+
+CYP11A	324-->12   	70%	X
+CYP11B	1041-->85  	70%	
+CYP17A	491-->18   	70%	X
+CYP19A	642-->11   	70%	X
+CYP1A	3121-->92  	70%	
+CYP1B	1519-->55  	70%	X
+CYP1C	84-->10    	70%	X
+CYP1D	108-->5    	70%	X
+CYP20A	1856-->185 	70%	
+CYP21A	385-->39   	70%	X
+CYP24A	1207-->70  	70%	
+CYP26A	1202-->16  	70%	X
+CYP26B	1572-->45  	70%	X
+CYP26C	721-->26   	70%	X
+CYP27A	559-->40   	70%	X
+CYP27B	326-->5    	70%	X
+CYP27C	1491-->111 	70%	
+CYP2A	1397-->83  	70%	
+CYP2AB	1-->1      	70%	X
+CYP2AC	1-->1      	70%	X
+CYP2B	1753-->195 	70%	
+CYP2C	4230-->398 	70%	
+CYP2D	1495-->154 	70%	
+CYP2E	405-->9    	70%	X
+CYP2F	1784-->116 	70%	
+CYP2G	2090-->135 	70%	
+CYP2J	5416-->500 	70%	
+CYP2R	692-->35   	70%	X
+CYP2S	249-->3    	70%	X
+CYP2T	7-->3      	70%	X
+CYP2U	1971-->632 	70%	
+CYP2W	695-->20   	70%	X
+CYP39A	691-->28   	70%	X
+CYP3A	4771-->808 	70%	
+CYP46A	286-->13   	70%	X
+CYP4A	1445-->119 	70%	
+CYP4B	1963-->81  	70%	
+CYP4F	4237-->238 	70%	
+CYP4V	2782-->389 	70%	
+CYP4X	410-->13   	70%	X
+CYP4Z	30-->12    	70%	X
+CYP51A	314-->5    	70%	X
+CYP5A	68-->7     	70%	X
+CYP7A	977-->24   	70%	X
+CYP7B	1226-->85  	70%	
+CYP8A	5-->2      	70%	X
+CYP8B	191-->13   	70%	X
+
+**********************
+Complete Positive Dataset Report
+**********************
+
+********
+CYP11A
+********
+ncbi efetch proteins: 324
+Proteins after filtering outliers: 276
+Proteins after clustering: 12
+Not enough data in class, the entire class will be removed from final data(12 < 60)
+
+********
+CYP11B
+********
+ncbi efetch proteins: 1041
+Proteins after filtering outliers: 955
+Proteins after clustering: 85
+
+********
+CYP17A
+********
+ncbi efetch proteins: 491
+Proteins after filtering outliers: 395
+Proteins after clustering: 18
+Not enough data in class, the entire class will be removed from final data(18 < 60)
+
+********
+CYP19A
+********
+ncbi efetch proteins: 642
+Proteins after filtering outliers: 588
+Proteins after clustering: 11
+Not enough data in class, the entire class will be removed from final data(11 < 60)
+
+********
+CYP1A
+********
+ncbi efetch proteins: 3121
+Proteins after filtering outliers: 2121
+Proteins after clustering: 92
+
+********
+CYP1B
+********
+ncbi efetch proteins: 1519
+Proteins after filtering outliers: 1439
+Proteins after clustering: 55
+Not enough data in class, the entire class will be removed from final data(55 < 60)
+
+********
+CYP1C
+********
+ncbi efetch proteins: 84
+Proteins after filtering outliers: 84
+Proteins after clustering: 10
+Not enough data in class, the entire class will be removed from final data(10 < 60)
+
+********
+CYP1D
+********
+ncbi efetch proteins: 108
+Proteins after filtering outliers: 101
+Proteins after clustering: 5
+Not enough data in class, the entire class will be removed from final data(5 < 60)
+
+********
+CYP20A
+********
+ncbi efetch proteins: 1856
+Proteins after filtering outliers: 1851
+Proteins after clustering: 185
+
+********
+CYP21A
+********
+ncbi efetch proteins: 385
+Proteins after filtering outliers: 383
+Proteins after clustering: 39
+Not enough data in class, the entire class will be removed from final data(39 < 60)
+
+********
+CYP24A
+********
+ncbi efetch proteins: 1207
+Proteins after filtering outliers: 1145
+Proteins after clustering: 70
+
+********
+CYP26A
+********
+ncbi efetch proteins: 1202
+Proteins after filtering outliers: 871
+Proteins after clustering: 16
+Not enough data in class, the entire class will be removed from final data(16 < 60)
+
+********
+CYP26B
+********
+ncbi efetch proteins: 1572
+Proteins after filtering outliers: 1427
+Proteins after clustering: 45
+Not enough data in class, the entire class will be removed from final data(45 < 60)
+
+********
+CYP26C
+********
+ncbi efetch proteins: 721
+Proteins after filtering outliers: 695
+Proteins after clustering: 26
+Not enough data in class, the entire class will be removed from final data(26 < 60)
+
+********
+CYP27A
+********
+ncbi efetch proteins: 559
+Proteins after filtering outliers: 485
+Proteins after clustering: 40
+Not enough data in class, the entire class will be removed from final data(40 < 60)
+
+********
+CYP27B
+********
+ncbi efetch proteins: 326
+Proteins after filtering outliers: 256
+Proteins after clustering: 5
+Not enough data in class, the entire class will be removed from final data(5 < 60)
+
+********
+CYP27C
+********
+ncbi efetch proteins: 1491
+Proteins after filtering outliers: 1447
+Proteins after clustering: 111
+
+********
+CYP2A
+********
+ncbi efetch proteins: 1397
+Proteins after filtering outliers: 1003
+Proteins after clustering: 83
+
+********
+CYP2AB
+********
+ncbi efetch proteins: 1
+Proteins after filtering outliers: 1
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 60)
+
+********
+CYP2AC
+********
+ncbi efetch proteins: 1
+Proteins after filtering outliers: 1
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 60)
+
+********
+CYP2B
+********
+ncbi efetch proteins: 1753
+Proteins after filtering outliers: 1230
+Proteins after clustering: 195
+
+********
+CYP2C
+********
+ncbi efetch proteins: 4230
+Proteins after filtering outliers: 3940
+Proteins after clustering: 398
+
+********
+CYP2D
+********
+ncbi efetch proteins: 1495
+Proteins after filtering outliers: 1300
+Proteins after clustering: 154
+
+********
+CYP2E
+********
+ncbi efetch proteins: 405
+Proteins after filtering outliers: 266
+Proteins after clustering: 9
+Not enough data in class, the entire class will be removed from final data(9 < 60)
+
+********
+CYP2F
+********
+ncbi efetch proteins: 1784
+Proteins after filtering outliers: 1313
+Proteins after clustering: 116
+
+********
+CYP2G
+********
+ncbi efetch proteins: 2090
+Proteins after filtering outliers: 1520
+Proteins after clustering: 135
+
+********
+CYP2J
+********
+ncbi efetch proteins: 5416
+Proteins after filtering outliers: 4964
+Proteins after clustering: 500
+
+********
+CYP2R
+********
+ncbi efetch proteins: 692
+Proteins after filtering outliers: 692
+Proteins after clustering: 35
+Not enough data in class, the entire class will be removed from final data(35 < 60)
+
+********
+CYP2S
+********
+ncbi efetch proteins: 249
+Proteins after filtering outliers: 175
+Proteins after clustering: 3
+Not enough data in class, the entire class will be removed from final data(3 < 60)
+
+********
+CYP2T
+********
+ncbi efetch proteins: 7
+Proteins after filtering outliers: 7
+Proteins after clustering: 3
+Not enough data in class, the entire class will be removed from final data(3 < 60)
+
+********
+CYP2U
+********
+ncbi efetch proteins: 1971
+Proteins after filtering outliers: 1877
+Proteins after clustering: 632
+
+********
+CYP2W
+********
+ncbi efetch proteins: 695
+Proteins after filtering outliers: 489
+Proteins after clustering: 20
+Not enough data in class, the entire class will be removed from final data(20 < 60)
+
+********
+CYP39A
+********
+ncbi efetch proteins: 691
+Proteins after filtering outliers: 687
+Proteins after clustering: 28
+Not enough data in class, the entire class will be removed from final data(28 < 60)
+
+********
+CYP3A
+********
+ncbi efetch proteins: 4771
+Proteins after filtering outliers: 4379
+Proteins after clustering: 808
+
+********
+CYP46A
+********
+ncbi efetch proteins: 286
+Proteins after filtering outliers: 277
+Proteins after clustering: 13
+Not enough data in class, the entire class will be removed from final data(13 < 60)
+
+********
+CYP4A
+********
+ncbi efetch proteins: 1445
+Proteins after filtering outliers: 1357
+Proteins after clustering: 119
+
+********
+CYP4B
+********
+ncbi efetch proteins: 1963
+Proteins after filtering outliers: 1703
+Proteins after clustering: 81
+
+********
+CYP4F
+********
+ncbi efetch proteins: 4237
+Proteins after filtering outliers: 3863
+Proteins after clustering: 238
+
+********
+CYP4V
+********
+ncbi efetch proteins: 2782
+Proteins after filtering outliers: 2317
+Proteins after clustering: 389
+
+********
+CYP4X
+********
+ncbi efetch proteins: 410
+Proteins after filtering outliers: 354
+Proteins after clustering: 13
+Not enough data in class, the entire class will be removed from final data(13 < 60)
+
+********
+CYP4Z
+********
+ncbi efetch proteins: 30
+Proteins after filtering outliers: 30
+Proteins after clustering: 12
+Not enough data in class, the entire class will be removed from final data(12 < 60)
+
+********
+CYP51A
+********
+ncbi efetch proteins: 314
+Proteins after filtering outliers: 297
+Proteins after clustering: 5
+Not enough data in class, the entire class will be removed from final data(5 < 60)
+
+********
+CYP5A
+********
+ncbi efetch proteins: 68
+Proteins after filtering outliers: 67
+Proteins after clustering: 7
+Not enough data in class, the entire class will be removed from final data(7 < 60)
+
+********
+CYP7A
+********
+ncbi efetch proteins: 977
+Proteins after filtering outliers: 677
+Proteins after clustering: 24
+Not enough data in class, the entire class will be removed from final data(24 < 60)
+
+********
+CYP7B
+********
+ncbi efetch proteins: 1226
+Proteins after filtering outliers: 1220
+Proteins after clustering: 85
+
+********
+CYP8A
+********
+ncbi efetch proteins: 5
+Proteins after filtering outliers: 5
+Proteins after clustering: 2
+Not enough data in class, the entire class will be removed from final data(2 < 60)
+
+********
+CYP8B
+********
+ncbi efetch proteins: 191
+Proteins after filtering outliers: 179
+Proteins after clustering: 13
+Not enough data in class, the entire class will be removed from final data(13 < 60)

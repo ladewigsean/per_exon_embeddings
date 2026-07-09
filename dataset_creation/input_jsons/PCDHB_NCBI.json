@@ -1,0 +1,103 @@
+{
+	"main_family":"Protocadherin","prefix":"NCBIPCDH","query":null,  "additional":" AND animals[porgn]",
+	"families":
+	[
+		{
+            "family":"", "query":"f\"(PCDH{subfamily}[Preferred Symbol]) or ((protocadherin {subfamily}[Protein Full Name]) AND (PCDH{subfamily}[Gene Name]))\"","subfamily":
+            {
+                "1":null,
+                "7":null,
+                "8":null,
+                "9":null,
+                "10":null,
+                "11":null,
+                "12":null,
+                "15":null,
+                "17":null,
+                "18":null,
+                "19":null,
+                "20":null
+            }
+        },
+        {
+            "family":"A", "query":"f\"(PCDHA{subfamily}[Preferred Symbol]) or ((protocadherin Alpha {subfamily}[Protein Full Name]) AND (PCDHA{subfamily}[Gene Name]))\"","subfamily":
+            {
+                
+                "1":null,
+                "2":null,
+                "3":null,
+                "4":null,
+                "5":null,
+                "6":null,
+                "7":null,
+                "8":null,
+                "9":null,
+                "10":null,
+                "11":null,
+                "12":null,
+                "13":null,
+                "c1":null,
+                "c2":null
+                
+            }
+        },
+        {
+            "family":"B", "query":"f\"(PCDHB{subfamily}[Preferred Symbol]) or ((protocadherin Beta {subfamily}[Protein Full Name]) AND (PCDHB{subfamily}[Gene Name]))\"","subfamily":
+            {
+                
+                "1":null,
+                "2":null,
+                "3":null,
+                "4":null,
+                "5":null,
+                "6":null,
+                "7":null,
+                "8":null,
+                "9":null,
+                "10":null,
+                "11":null,
+                "12":null,
+                "13":null,
+                "14":null,
+                "15":null,
+                "16":null,
+                "17":null,
+                "18":null
+                
+            }
+        },
+        {
+            "family":"G", "query":"f\"(PCDHG{subfamily}[Preferred Symbol]) or ((protocadherin Gamma {subfamily}[Protein Full Name]) AND (PCDHG{subfamily}[Gene Name]))\"","subfamily":
+            {
+                
+                "A1":null,
+                "A2":null,
+                "A3":null,
+                "A4":null,
+                "A5":null,
+                "A6":null,
+                "A7":null,
+                "A8":null,
+                "A9":null,
+                "A10":null,
+                "A11":null,
+                "A12":null,
+                "B1":null,
+                "B2":null,
+                "B3":null,
+                "B4":null,
+                "B5":null,
+                "B6":null,
+                "B7":null,
+                "C3":null,
+                "C4":null,
+                "C5":null
+
+                
+                
+            }
+        }
+		
+	]
+    
+}

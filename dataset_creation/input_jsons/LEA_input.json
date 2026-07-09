@@ -1,0 +1,31 @@
+{
+	"main_family":"Late embryogenesis abundant proteins","prefix":"LAE","query":"None",  "additional":null,
+	"families":
+	[
+        {
+            "family":"_","query":"None", "subfamily":
+            {
+                "Dehydrin":"PF00257",
+                "SMP":"PF04927",
+                "1":"PF03760",
+                "2":"PF03168",
+                "3":"PF03242",
+                "4":"PF02987",
+                "5":"PF00477",
+                "6":"PF10714",
+                "AWA_WDS": "PF02496"
+                
+                
+
+            }
+        }
+        
+        
+
+
+
+		
+	],
+    "missing":["9","44","51","238"]
+    
+}

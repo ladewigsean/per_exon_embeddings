@@ -1,0 +1,25 @@
+{
+	"main_family":"Serine protease","prefix":"EUK","query":"f\"(family:\\\"peptidase {subfamily} family\\\")\"",  "additional":" AND (taxonomy_id:2759)",
+	"families":
+	[
+        {
+            "family":"SC", "subfamily":
+            {
+                "S9":"(family:\"peptidase S9a family\") OR (family:\"peptidase S9b family\") OR (family:\"peptidase S9c family\") OR (family:\"peptidase S9d family\")",
+                "S10": null,
+                "S15": null,
+                "S28": null,
+                "S33": null
+                
+
+            }
+        }
+        
+        
+
+
+
+		
+	]
+    
+}

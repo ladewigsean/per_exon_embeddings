@@ -37,24 +37,28 @@ def download_entrez_from_fam_dict_uniprot(main_family_dict,output_folder="output
     for family in families:
         family_name = family["family"]
         subfamilies = family["subfamily"]
+        fam_query = query_format
+        
+        if "query" in family and not family["query"] is None:
+            fam_query = family["query"]
         for subfamily,custom_query in subfamilies.items():
             
             symbol = prefix + family_name + subfamily
             
             protein_file = os.path.join(output_folder,(symbol+".fasta"))
-            map_csv = os.path.join(output_folder,(symbol+".csv"))
-            acc_txt = os.path.join(output_folder,(symbol+".txt"))
             print("Starting: " + symbol )
             log.append("Starting: " + symbol)
             if not os.path.isfile(protein_file):
                 print("downloading : " + symbol )
                 log.append("downloading : " + symbol )
+                
                 if not custom_query is None:
                     query = custom_query
                 else:
-                    query = eval(query_format)#:)
+                    query = eval(fam_query)#:)
                 if additional:
                     query = f"{query}{additional}"
+                print(f"query: {query}" )
                 uniprot_search = UniProt.search(query,["accession"])
                 print(f"{len(uniprot_search)} search results ")
                 log.append(f"{len(uniprot_search)} search results ")
@@ -64,13 +68,12 @@ def download_entrez_from_fam_dict_uniprot(main_family_dict,output_folder="output
                 log.append(f"have {len(uniprot_ids)} uniprot ids ")
                 if len(uniprot_ids)==0:
                     continue
-                with open(acc_txt,"w") as f:
-                    f.write("\n".join(uniprot_ids))
+                
                 
                 result,leftover = mapper.get(uniprot_ids,from_db ="UniProtKB_AC-ID", to_db="RefSeq_Protein")
                 protein_list = list(set(result["To"]))
                 count = len(protein_list)
-                result.to_csv(map_csv)
+                
                 print(f"Entrez Protein IDs found: {count}")
                 log.append(f"Entrez Protein IDs found: {count}")
                 
@@ -200,20 +203,34 @@ def download_entrez_from_fam_dict(main_family_dict,output_folder="output_entrez"
     query_format = main_family_dict["query"]
     main_family = main_family_dict["main_family"]
     prefix = main_family_dict["prefix"]
+    additional = main_family_dict["additional"]
     families = main_family_dict["families"]
+    log = []
     for family in families:
         family_name = family["family"]
         subfamilies = family["subfamily"]
-        for subfamily in subfamilies:
+        fam_query = query_format
+        
+        if "query" in family and not family["query"] is None:
+            fam_query = family["query"]
+        for subfamily,custom_query in subfamilies.items():
+            
             symbol = prefix + family_name + subfamily
+            
             protein_file = os.path.join(output_folder,(symbol+".fasta"))
             print("Starting: " + symbol )
+            log.append("Starting: " + symbol)
             if not os.path.isfile(protein_file):
-                print("downloading Entrez: " + symbol )
-                if "custom_query" in family:
-                    query = eval(family["custom_query"])#:)
+                print("downloading : " + symbol )
+                log.append("downloading : " + symbol )
+                
+                if not custom_query is None:
+                    query = custom_query
                 else:
-                    query = eval(query_format)#:)
+                    query = eval(fam_query)#:)
+                if additional:
+                    query = f"{query}{additional}"
+                print(f"query: {query}" )
                 handle = Entrez.esearch(db="gene",retmax = 1000, term=query,usehistory="y", idtype="acc")
                 search_results = Entrez.read(handle)
                 handle.close()
