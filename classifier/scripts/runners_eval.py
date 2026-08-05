@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import sys
+import csv
 import random
 import os
 
@@ -136,7 +137,7 @@ class MultiClassTrainer:
             # Validation phase: get loss and full report
             self.model.eval()
             with torch.no_grad():
-                val_report, _, _, _ = self.evaluate_on_loader(val_loader, label_encoder)
+                val_report, _, _, _, _ = self.evaluate_on_loader(val_loader, label_encoder)
             
             # extract the F1 score
             current_val_f1 = val_report['macro avg']['f1-score'] 
@@ -194,7 +195,7 @@ class MultiClassTrainer:
             checkpoint= self.load_checkpoint(checkpoint_path)
             print(f"INFO: Loaded best model from checkpoint (val_f1: {checkpoint.get('val_f1_macro', 0):.4f})")
 
-        val_metrics, _, _,_ = self.evaluate_on_loader(val_loader, label_encoder)
+        val_metrics, _, _,_,_ = self.evaluate_on_loader(val_loader, label_encoder)
         
         return val_metrics, last_epoch + 1
     #default _run_epoch function, still includes training = false as option but isnt used
@@ -292,7 +293,7 @@ class MultiClassTrainer:
         except Exception:
             report["entropy"]= None
         #
-        return report,  all_preds, all_ids, all_labels
+        return report,  all_preds, all_ids, all_labels, all_preds_raw
 
 def run_hpo_mode(train_dataset,wandb_project,wandb_entity,hpo_metric="macro avg",n_trials = 50,
                  num_epochs = 100 ,wandb_disable=False,k_folds = 5,max_length = 5000,nn_model = "Transformer",random_seed = 42,embed_size=1024,
@@ -658,8 +659,46 @@ def plot_multiclass_confusion_matrix(y_true, y_pred, class_names, save_path):
     plt.savefig(save_path, dpi=100, bbox_inches='tight')
     plt.close()
     print(f"INFO: Confusion matrix saved to {save_path}")
-#prob should add test to train_model function but i like them being callable seperate 
-def test_model(test_dataset, wandb_project,wandb_entity,yaml_file,checkpoint_path,wandb_disable=False,embed_size = 1024,max_length=500,num_epochs=200, nn_model="Transformer",patience = 20):
+
+
+def write_per_example_predictions(path, ids, true_idx, pred_idx, raw_outputs, class_names):
+    """One row per TEST protein: identifier, true/pred label, margin, nll.
+
+    Aggregate metrics cannot answer "where does this arm fail" -- that needs the
+    per-example rows, joined by identifier to each protein's identity to train
+    (dataset_creation/scripts/stratified_analysis.py consumes exactly this schema).
+
+    margin = logit(true class) - best competing logit. Pre-softmax, so it needs no
+    calibration assumption, and it keeps the information that collapsing to 0/1 throws
+    away. Positive means correct; how positive means how comfortably.
+    nll    = -log softmax(true class), the usual per-example loss.
+    """
+    raw = raw_outputs.detach().float().cpu()
+    true_t = torch.as_tensor(np.asarray(true_idx), dtype=torch.long)
+    rows_ix = torch.arange(len(true_t))
+    log_probs = torch.log_softmax(raw, dim=1)
+    nll = (-log_probs[rows_ix, true_t]).numpy()
+    true_logit = raw[rows_ix, true_t]
+    competitors = raw.clone()
+    competitors[rows_ix, true_t] = float("-inf")
+    margin = (true_logit - competitors.max(dim=1).values).numpy()
+
+    parent = os.path.dirname(path)
+    if parent:
+        os.makedirs(parent, exist_ok=True)
+    with open(path, "w", newline="") as fh:
+        writer = csv.writer(fh)
+        writer.writerow(["identifier", "true_label", "pred_label", "correct",
+                         "margin", "nll"])
+        for i, ident in enumerate(ids):
+            t, p = int(true_idx[i]), int(pred_idx[i])
+            writer.writerow([ident, class_names[t], class_names[p], int(t == p),
+                             f"{margin[i]:.6f}", f"{nll[i]:.6f}"])
+    print(f"INFO: per-example test predictions saved to {path}")
+
+
+#prob should add test to train_model function but i like them being callable seperate
+def test_model(test_dataset, wandb_project,wandb_entity,yaml_file,checkpoint_path,wandb_disable=False,embed_size = 1024,max_length=500,num_epochs=200, nn_model="Transformer",patience = 20,pred_out=None,cm_path=None):
     #default args
     args = default_args.copy()
     args.update({
@@ -715,10 +754,16 @@ def test_model(test_dataset, wandb_project,wandb_entity,yaml_file,checkpoint_pat
     trainer = MultiClassTrainer(model_config, cfg.learning_rate, cfg.weight_decay, None,model=nn_model,optimizer=cfg.optimizer,criterion=cfg.criterion,scheduler=cfg.scheduler)
     trainer.load_checkpoint(checkpoint_path)
     label_encoder = test_dataset.label_encoder
-    report, pred_labels, all_ids, true_labels = trainer.evaluate_on_loader(test_loader,label_encoder)
+    report, pred_labels, all_ids, true_labels, raw_outputs = trainer.evaluate_on_loader(test_loader,label_encoder)
     wandb.log({"report": report})
+    if pred_out:
+        write_per_example_predictions(pred_out, all_ids, true_labels, pred_labels,
+                                      raw_outputs, label_encoder.categories_[0])
     #make confusion matrix
-    cm_path = "final_model_confusion_matrix.png"
+    # Default name kept for backwards compatibility, but pass cm_path when sweeping arms
+    # or every arm overwrites the previous one's matrix.
+    cm_path = cm_path or "final_model_confusion_matrix.png"
     plot_multiclass_confusion_matrix(true_labels, pred_labels, label_encoder.categories_[0], cm_path)
     wandb.log({"final_confusion_matrix": wandb.Image(cm_path)})
     run.finish()
+    return report

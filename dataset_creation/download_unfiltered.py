@@ -97,5 +97,5 @@ if __name__ == '__main__':
         #phase only
         phase_only  =os.path.join(args.output_folder ,f"{args.prefix}_phase_only.h5")
         
-        args_arch= Namespace({"fasta":fasta,"csv":csv,"out_h5":phase_only,"scaler": None,"id_col":"identifier","cut_col":"cut_pos","feature_set":"length_only","concat":None,"concat_out":None,"shuffle":None})
+        args_arch= Namespace({"fasta":fasta,"csv":csv,"out_h5":phase_only,"scaler": None,"id_col":"identifier","cut_col":"cut_pos","feature_set":"phase_only","concat":None,"concat_out":None,"shuffle":None})
         scripts.exon_architecture.main(args_arch)
