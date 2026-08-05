@@ -47,7 +47,7 @@ All commands are run **from the repository root** unless marked otherwise.
 **0. Add the cluster column** (one-off; the committed metadata CSVs do not have one).
 Test proteins from the same cluster are not independent draws, so the confidence
 intervals resample clusters. `--annotate-only` adds the column and leaves `test_split`
-exactly as it is — a full re-split would reassign train/val/test and invalidate every
+exactly as it is; a full re-split would reassign train/val/test and invalidate every
 model you have already trained.
 
 ```bash
@@ -68,7 +68,7 @@ python dataset_creation/scripts/identity_to_train.py \
     --out   results/NCBIHOX_ident.csv
 ```
 
-Write the output **outside** `classifier/input_data/<dataset>/` —
+Write the output **outside** `classifier/input_data/<dataset>/`:
 `classifier_runner_whole_dir.py` requires exactly one CSV in that directory and refuses
 to start if it finds two.
 
@@ -83,7 +83,7 @@ Two details that matter:
   valuable test cases; dropping them deletes exactly the regime the experiment is about.
   The script prints how many there are.
 
-On Windows with `--mmseqs-cmd "wsl --exec mmseqs"`, also pass `--workdir` — the default
+On Windows with `--mmseqs-cmd "wsl --exec mmseqs"`, also pass `--workdir`, because the default
 scratch path is a Windows temp directory that mmseqs inside WSL cannot open.
 
 **2. Get per-example test predictions.** From `classifier/`:
@@ -144,7 +144,7 @@ them:
    arm find hard relative to its own test set". Accuracy stays the primary endpoint.
 
 The printed table also gives a bin-free **slope comparison**: negative means that arm's
-accuracy rises less steeply with identity. Beware both ends — an arm near the ceiling
+accuracy rises less steeply with identity. Beware both ends. An arm near the ceiling
 *and* an arm near chance both have slope ≈ 0 for reasons that have nothing to do with
 homology. The script suppresses the significance star when an arm's overall accuracy is
 more than `--slope-acc-tolerance` below the baseline's, and says so; `meta_only` at
@@ -223,7 +223,7 @@ not nothing, and it is the positive result the write-up should state plainly.
 phase arm has never actually run. The committed numbers are *consistent with* that (
 `phase_only` and `length_only` agree within noise on all five families) but do not prove
 it, since phase features could independently be uninformative. The definitive check is
-one line — `h5py.File("X_phase_only.h5")[key].shape` is 2 for the length features and 3
+one line: `h5py.File("X_phase_only.h5")[key].shape` is 2 for the length features and 3
 for the phase fractions. Worth re-running either way: intron phase is the one
 architecture feature that mean-pooled per-exon embeddings *cannot* carry, which is why
 `exon_architecture.py` calls it "the actual genealogical signal".
