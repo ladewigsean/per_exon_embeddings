@@ -268,12 +268,18 @@ class MultiClassTrainer:
                 all_preds_raw = torch.vstack([all_preds_raw,outputs.cpu()])
                 all_lengths.extend(lengths.cpu().numpy())
 
+        # labels= is required, not optional: without it sklearn infers the class set from
+        # the data and raises when a class is absent from this split ("Number of classes
+        # does not match size of target_names"). A cluster-aware split routinely leaves a
+        # small class out of val/test, and that would kill the run at the last step.
+        class_names = list(label_encoder.categories_[0])
         report = classification_report(
-            all_labels, all_preds, 
-            target_names=label_encoder.categories_[0], 
-            output_dict=True, 
+            all_labels, all_preds,
+            labels=list(range(len(class_names))),
+            target_names=class_names,
+            output_dict=True,
             zero_division=0
-        ) 
+        )
         all_labels = np.array(all_labels)
         all_preds = np.array(all_preds)
         all_lengths = np.array(all_lengths)
@@ -632,15 +638,20 @@ def train_model(train_dataset,val_dataset, wandb_project,wandb_entity,yaml_file,
 def plot_multiclass_confusion_matrix(y_true, y_pred, class_names, save_path):
     from sklearn.metrics import confusion_matrix
     import seaborn as sns
-    cm = confusion_matrix(y_true, y_pred)
-    
+    # labels= keeps the matrix square against class_names even when a class is absent
+    # from this split, which a cluster-aware split makes routine for small classes.
+    cm = confusion_matrix(y_true, y_pred, labels=list(range(len(class_names))))
+
     # Dynamic figure size based on number of classes
     fig_size = max(10, len(class_names) * 0.5)
     plt.figure(figsize=(fig_size, fig_size))
-    
+
     # Use percentage if many classes
-    
-    cm_normalized = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis] * 100
+
+    row_totals = cm.sum(axis=1)[:, np.newaxis]
+    # An absent class has an all-zero row; guard the divide so it shows as 0 rather than
+    # filling the figure with NaNs.
+    cm_normalized = np.divide(cm.astype('float'), np.where(row_totals == 0, 1, row_totals)) * 100
     fmt = '.1f'
     cbar_label = 'Percentage (%)'
     
@@ -761,9 +772,13 @@ def test_model(test_dataset, wandb_project,wandb_entity,yaml_file,checkpoint_pat
                                       raw_outputs, label_encoder.categories_[0])
     #make confusion matrix
     # Default name kept for backwards compatibility, but pass cm_path when sweeping arms
-    # or every arm overwrites the previous one's matrix.
+    # or every arm overwrites the previous one's matrix. The plot is cosmetic and runs
+    # last, so a failure here must not discard an evaluation that already succeeded.
     cm_path = cm_path or "final_model_confusion_matrix.png"
-    plot_multiclass_confusion_matrix(true_labels, pred_labels, label_encoder.categories_[0], cm_path)
-    wandb.log({"final_confusion_matrix": wandb.Image(cm_path)})
+    try:
+        plot_multiclass_confusion_matrix(true_labels, pred_labels, label_encoder.categories_[0], cm_path)
+        wandb.log({"final_confusion_matrix": wandb.Image(cm_path)})
+    except Exception as exc:
+        print(f"WARNING: confusion matrix failed ({exc}); metrics are unaffected")
     run.finish()
     return report

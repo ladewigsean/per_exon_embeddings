@@ -38,13 +38,18 @@ Queries with NO hit at all are the HARDEST and most valuable test cases. They ar
 with identity 0.0 and `train_n_hits` 0, never dropped -- dropping them would silently
 delete exactly the regime the experiment is about.
 
-    python identity_to_train.py --fasta all.fasta --csv split.csv --out split_ident.csv \
-        --mmseqs-cmd "wsl --exec mmseqs"
+    python identity_to_train.py --fasta all.fasta --csv split.csv --out split_ident.csv
+
+If you call mmseqs through WSL from native Windows (--mmseqs-cmd "wsl --exec mmseqs"),
+pass --workdir too: the default scratch directory is a Windows temp path that mmseqs
+inside WSL cannot open, and it fails with an opaque error. Point --workdir at something
+both sides can see.
 
 `aggregate_best_hits()` and `write_split_fastas()` are pure (no mmseqs, no pandas) and
 unit-tested in test_stratified_helpers.py.
 """
 import argparse
+import contextlib
 import os
 import subprocess
 import tempfile
@@ -172,6 +177,21 @@ def summarise(agg, label="query"):
         print(f"  above {thr:.0%} identity to train: {over} ({100.0 * over / n:.1f} %)")
 
 
+@contextlib.contextmanager
+def _scratch_dir(workdir):
+    """Yield a scratch directory: `workdir` if given, else a self-cleaning temp dir.
+
+    An explicit one is needed when mmseqs runs behind `wsl --exec`, because the default
+    temp path is a Windows path that mmseqs inside WSL cannot open.
+    """
+    if workdir:
+        os.makedirs(workdir, exist_ok=True)
+        yield workdir
+    else:
+        with tempfile.TemporaryDirectory() as tmp:
+            yield tmp
+
+
 def main(args):
     import pandas as pd
     df = pd.read_csv(args.csv, dtype={args.id_col: str})
@@ -186,7 +206,7 @@ def main(args):
         print(f"WARNING: {len(missing)} ids in the CSV have no sequence in the FASTA "
               f"(e.g. {missing[:3]}); they get no identity value.")
 
-    with tempfile.TemporaryDirectory() as workdir:
+    with _scratch_dir(args.workdir) as workdir:
         train_fa, query_fa, n_train, n_query = write_split_fastas(
             seqs, id_to_split, workdir, query_splits=tuple(args.query_splits))
         print(f"{n_train} train sequences, {n_query} query sequences "
@@ -208,12 +228,15 @@ def main(args):
     for col in ("train_max_pident", "train_max_pident_cov", "train_best_hit",
                 "train_n_hits"):
         default = "" if col == "train_best_hit" else 0
-        df[col] = [agg.get(i, {}).get(col, default) for i in df[args.id_col]]
+        values = [agg.get(i, {}).get(col, default) for i in df[args.id_col]]
+        # float, not int, so the blanking below does not trip pandas' incompatible-dtype
+        # warning (an error from pandas 3).
+        df[col] = values if col == "train_best_hit" else [float(v) for v in values]
     # Train rows have no meaningful identity-to-train; blank them so they cannot be
     # silently plotted as if they were held-out points.
     is_query = df[args.split_col].isin(args.query_splits)
     for col in ("train_max_pident", "train_max_pident_cov", "train_n_hits"):
-        df.loc[~is_query, col] = None
+        df.loc[~is_query, col] = float("nan")
 
     df.to_csv(args.out, index=False)
     print(f"\nwrote {args.out}  (+ train_max_pident, train_max_pident_cov, "
@@ -232,6 +255,9 @@ if __name__ == "__main__":
                    help="Splits to measure against train (default: 1 2 = val and test).")
     p.add_argument("--mmseqs-cmd", default="mmseqs",
                    help='How to invoke mmseqs, e.g. "wsl --exec mmseqs".')
+    p.add_argument("--workdir", default=None,
+                   help="Scratch directory. Required with a WSL --mmseqs-cmd, where the "
+                        "default Windows temp path is unreadable from inside WSL.")
     p.add_argument("--sensitivity", type=float, default=7.5, help="mmseqs -s (default 7.5).")
     p.add_argument("--evalue", type=float, default=10000.0, help="mmseqs -e (default 10000).")
     p.add_argument("--max-seqs", type=int, default=300, help="mmseqs --max-seqs (default 300).")

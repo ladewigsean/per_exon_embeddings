@@ -3,7 +3,7 @@
 import argparse
 import pandas as pd
 import pathlib
-import os 
+import os
 import sys
 from scripts.custom_datasets import split_dataset_into_subsets, MultiClassDataset
 from scripts.runners_eval import run, test_model, train_model
@@ -11,22 +11,40 @@ YAML_FOLDER = "yaml"
 MODEL_WEIGHTS_FOLDER = "model_weights"
 OUTPUT_CSVS_FOLDER = "output_csvs"
 PREDICTIONS_FOLDER = "predictions"
+# mean_*/std_* are VALIDATION metrics over 5 seeds; test_* is a single held-out
+# evaluation of the val-best checkpoint (see the note next to the test_model call).
 COLUMNS = ["method", "mean_acc", "std_acc", "mean_macro_f1", "std_macro_f1",
-           "test_acc", "test_macro_f1"]
+           "test_acc", "test_macro_f1", "test_status"]
+
+
+def find_surviving_checkpoint(entity):
+    """The one checkpoint train_model kept for `entity`, or None.
+
+    train_model names them f"val_seed_{seed}_{wandb_project}.pt" and deletes all but the
+    val-best, so a completed arm leaves exactly one file behind. Finding it is what lets
+    --force_test evaluate an already-trained arm without repeating the sweep.
+    """
+    matches = sorted(pathlib.Path(MODEL_WEIGHTS_FOLDER).glob(f"val_seed_*_{entity}_test.pt"))
+    return str(matches[0]) if matches else None
+
 
 if __name__ == '__main__':
     #python classifier_runner.py --entity SPE_per_exon --nn_model Transformer --h5 input_data/SPE/SerProtEuk_per_exon.h5 --csv input_data/SPE/SerProtEuk.csv
     parser = argparse.ArgumentParser(description="Train or optimize a multi-class SCPP classifier.")
     parser.add_argument("--dir", required=True, help="Path to dataset directory")
-    
+
     parser.add_argument("--project", default="per-exon-testing")
     parser.add_argument("--wandb_disable", action="store_true")
-    
+
     parser.add_argument("--hpo_trials",type=int, default=30,help="number of hpo trials. default 30")
     parser.add_argument("--skip_per_res", action="store_true", help="if flag given, skips over per_res.h5")
     parser.add_argument("--skip_test", action="store_true",
                         help="skip held-out test evaluation (the run then reports VALIDATION "
                              "numbers only, which is what this script used to do)")
+    parser.add_argument("--force_test", action="store_true",
+                        help="for arms already in the output CSV but with no test_acc, re-run "
+                             "ONLY the test stage on the surviving checkpoint. Skips HPO and "
+                             "training, so it costs a forward pass rather than a whole sweep.")
     args = parser.parse_args()
     dir_name = pathlib.Path(args.dir).stem
     print(dir_name)
@@ -39,27 +57,50 @@ if __name__ == '__main__':
     else:
         csv_file = str(csvlist[0])
     h5s = pathlib.Path(args.dir).rglob('*.h5')
-    results = {}
     output = os.path.join(OUTPUT_CSVS_FOLDER,f"{dir_name}.csv")
-    old_data = None
+
+    # Results are held in memory and the CSV is REWRITTEN after every arm, rather than
+    # appended to. Appending a wider row onto a narrower existing file produced a ragged
+    # CSV that pd.read_csv then refused to open on the next resume, destroying results
+    # that cost hours; four of the committed output_csvs also lack a trailing newline, so
+    # an append would have concatenated onto the last result row. Rewriting removes both
+    # failure modes and costs nothing at this size.
+    rows = {}
     if os.path.isfile(output):
         old_data = pd.read_csv(output)
-    if old_data is None:
-        with open(output,"w") as file:
-            file.write(",".join(COLUMNS))
-            file.write("\n")
-    # Resume by first column whatever it is called: some existing output_csvs were written
-    # with an empty first header, and old_data["method"] raises KeyError on those.
-    done = set()
-    if old_data is not None and len(old_data.columns):
-        done = set(old_data[old_data.columns[0]].astype(str))
-    for h5 in h5s:
-        entity = h5.stem
+        # Older files were written with a 5-column header, and two of them with an EMPTY
+        # first header; normalise both shapes onto COLUMNS without losing a row.
+        old_data.columns = [COLUMNS[0]] + list(old_data.columns[1:])
+        for col in COLUMNS:
+            if col not in old_data.columns:
+                old_data[col] = ""
+        old_data = old_data[COLUMNS].fillna("")
+        for _, r in old_data.iterrows():
+            rows[str(r[COLUMNS[0]])] = [r[c] for c in COLUMNS[1:]]
+        print(f"resuming from {output}: {len(rows)} arms already recorded")
 
-        if str(entity) in done:
-            continue
+    def flush():
+        os.makedirs(OUTPUT_CSVS_FOLDER, exist_ok=True)
+        pd.DataFrame([[k] + v for k, v in rows.items()],
+                     columns=COLUMNS).to_csv(output, index=False)
+
+    flush()
+    for h5 in h5s:
+        entity = str(h5.stem)
+
+        # --force_test re-runs ONLY the cheap test stage for arms trained before the
+        # runner evaluated split 2, so held-out numbers do not cost a repeat of the
+        # HPO + 5-seed sweep.
+        test_only = False
+        if entity in rows:
+            already_tested = str(rows[entity][COLUMNS[1:].index("test_acc")]).strip() != ""
+            if args.force_test and not args.skip_test and not already_tested:
+                test_only = True
+                print(f"--force_test: evaluating {entity} on split 2 without retraining")
+            else:
+                continue
         h5 = str(h5)
-        if "per_res" in str(entity) and args.skip_per_res:
+        if "per_res" in entity and args.skip_per_res:
             print(f"Skip_per_res flag given, Skipping {h5}\n")
             continue
         train_dataset, val_dataset, test_dataset, max_length =split_dataset_into_subsets(MultiClassDataset(embeddings_path=h5,csv_path=csv_file))
@@ -67,15 +108,33 @@ if __name__ == '__main__':
         print(f"Max Length: {max_length}")
         if max_length>1:
             nn_model = "Transformer"
-        else: 
+        else:
             nn_model = "Basic"
-        yaml_path = run(train_dataset,entity+"_HPO",args.project,nn_model=nn_model,n_trials=args.hpo_trials,num_epochs=35,patience=5,wandb_disable=args.wandb_disable,max_length=max_length,embed_size=embed_size,yaml_folder=YAML_FOLDER, checkpoint_folder=MODEL_WEIGHTS_FOLDER,)
-        best_model, data= train_model(train_dataset,val_dataset,entity+"_test",args.project,yaml_path,nn_model = nn_model,wandb_disable=args.wandb_disable,max_length=max_length,embed_size=embed_size,checkpoints_folder=MODEL_WEIGHTS_FOLDER)
-        # `data` is VALIDATION metrics: HPO tuned on train, early stopping and best-seed
-        # selection both used val, so those numbers are optimistically biased and are not
-        # a held-out result. Split 2 has never been touched -- evaluate on it here, and
-        # write the per-example rows the stratified analysis needs.
+
+        if test_only:
+            yaml_path = os.path.join(YAML_FOLDER, f"{entity}_HPO.yaml")
+            best_model = find_surviving_checkpoint(entity)
+            data = rows[entity][:4]
+            if not os.path.isfile(yaml_path) or best_model is None:
+                print(f"WARNING: cannot --force_test {entity}: "
+                      f"{'missing ' + yaml_path if not os.path.isfile(yaml_path) else 'no checkpoint in ' + MODEL_WEIGHTS_FOLDER}",
+                      file=sys.stderr)
+                rows[entity] = list(data) + ["", "", "no_checkpoint"]
+                flush()
+                continue
+        else:
+            yaml_path = run(train_dataset,entity+"_HPO",args.project,nn_model=nn_model,n_trials=args.hpo_trials,num_epochs=35,patience=5,wandb_disable=args.wandb_disable,max_length=max_length,embed_size=embed_size,yaml_folder=YAML_FOLDER, checkpoint_folder=MODEL_WEIGHTS_FOLDER,)
+            best_model, data= train_model(train_dataset,val_dataset,entity+"_test",args.project,yaml_path,nn_model = nn_model,wandb_disable=args.wandb_disable,max_length=max_length,embed_size=embed_size,checkpoints_folder=MODEL_WEIGHTS_FOLDER)
+
+        # `data` is VALIDATION: train_and_validate checkpoints on the best val macro-F1
+        # over ~35 epochs and then reports that same checkpoint's val metrics, so it is a
+        # maximum over epochs on the set it is scored against. Split 2 has never been
+        # touched -- evaluate it here, and write the per-example rows the stratified
+        # analysis needs. NOTE this test number comes from ONE seed (train_model keeps
+        # only the val-best checkpoint), so it has no error bar, unlike the 5-seed val
+        # columns next to it.
         test_acc = test_f1 = ""
+        test_status = "skipped" if args.skip_test else "ok"
         if not args.skip_test:
             try:
                 if len(test_dataset) == 0:
@@ -90,16 +149,16 @@ if __name__ == '__main__':
                 test_acc = test_report["accuracy"]
                 test_f1 = test_report["macro avg"]["f1-score"]
             except Exception as exc:
-                # Never let one arm's test failure kill a multi-hour sweep, but say so
-                # loudly -- a silently blank test column would read as "not run yet".
+                # Never let one arm's failure kill a multi-hour sweep, but record it as
+                # "failed" rather than leaving a blank that reads as "not run yet" --
+                # and --force_test will then retry it on the next pass.
                 print(f"WARNING: test evaluation FAILED for {entity}: {exc}", file=sys.stderr)
-        with open(output,"a") as file:
-            data = [str(d) for d in data] + [str(test_acc), str(test_f1)]
-            file.write(",".join([entity]+data))
-            file.write("\n")
-        
-    
+                test_status = f"failed: {type(exc).__name__}"
+        rows[entity] = [str(d) for d in data] + [str(test_acc), str(test_f1), test_status]
+        flush()
 
-
-
-    
+    failed = [k for k, v in rows.items() if str(v[-1]).startswith("failed")]
+    if failed:
+        print(f"\n{len(failed)} arm(s) have no test result: {', '.join(failed)}\n"
+              f"re-run with --force_test to retry just those.", file=sys.stderr)
+    print(f"wrote {output}")

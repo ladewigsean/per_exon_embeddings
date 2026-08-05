@@ -11,9 +11,16 @@ per-protein comparison needs.
 
 This instead clusters the sequences at low identity (default 30 %) with the same
 `mmseqs easy-cluster` you already call in filter_data.py, then assigns *whole clusters*
-to train/val/test, stratified by label. No sequence in val/test shares > min-seq-id
-identity with any train sequence, so the metric measures generalisation to unseen
-families, not memorised duplicates.
+to train/val/test, stratified by label, so the metric measures generalisation rather than
+memorised duplicates.
+
+Do NOT read this as a guarantee that no val/test sequence exceeds min-seq-id against
+every train sequence. `--min-seq-id` bounds identity between a member and ITS OWN
+representative, not between members of two different clusters: clustering is greedy
+set-cover, the k-mer prefilter can miss a distant pair outright, and `-c 0.8` refuses to
+join a pair without mutual coverage however identical the shared region. This is a good
+first pass; to know what the split actually achieved, measure it with
+identity_to_train.py (see README_stratified_experiment.md).
 
 Output: writes a `test_split` column (0 = train, 1 = val, 2 = test) into the metadata
 CSV -- exactly what classifier/scripts/custom_datasets.split_dataset_into_subsets reads.
@@ -67,8 +74,9 @@ def assign_clusters_stratified(cluster_to_items, labels_by_id, fracs=(0.8, 0.1, 
 
     cluster_to_items : {cluster_id: [identifier, ...]}
     labels_by_id     : {identifier: label}
-    Returns {identifier: split_index 0/1/2}. By construction no cluster is split, so
-    there is zero train<->val/test sequence overlap above the clustering threshold.
+    Returns {identifier: split_index 0/1/2}. By construction no cluster is split across
+    partitions -- which is a guarantee about CLUSTERS, not about pairwise identity
+    between splits (see the module docstring).
 
     Each cluster is assigned under its majority ("primary") label, and within a label
     the clusters are placed -- largest first -- into whichever split is currently most
@@ -160,10 +168,31 @@ def main(args):
     print(f"{len(df)} sequences -> {len(cluster_to_items)} clusters "
           f"(min-seq-id {args.min_seq_id}, cov {args.cov})")
 
+    if args.annotate_only:
+        # Add the cluster column to an EXISTING split without touching it. Needed because
+        # re-running the full split to obtain cluster ids would reassign train/val/test
+        # and silently invalidate every model already trained against the old split.
+        if args.split_col not in df.columns:
+            raise SystemExit(f"--annotate-only needs an existing '{args.split_col}' column "
+                             f"in {args.csv}; run without it to create one.")
+        id_to_cluster = {i: c for c, items in cluster_to_items.items() for i in items}
+        df[args.cluster_col] = df[args.id_col].map(id_to_cluster)
+        print(f"\n--annotate-only: wrote '{args.cluster_col}' only; "
+              f"'{args.split_col}' left exactly as it was.")
+        df.to_csv(args.out, index=False)
+        print(f"wrote {args.out}")
+        return
+
     id_to_split = assign_clusters_stratified(
         cluster_to_items, labels_by_id, fracs=(args.train, args.val, args.test))
 
     df[args.split_col] = df[args.id_col].map(id_to_split)
+    # Keep the cluster id. Test proteins from one cluster are not independent draws, so
+    # the stratified analysis resamples clusters rather than proteins when computing its
+    # confidence intervals (stratified_analysis.py --cluster-col); without this column
+    # it silently falls back to a protein bootstrap and every CI comes out too narrow.
+    id_to_cluster = {i: c for c, items in cluster_to_items.items() for i in items}
+    df[args.cluster_col] = df[args.id_col].map(id_to_cluster)
     missing = int(df[args.split_col].isna().sum())
     if missing:
         print(f"WARNING: {missing} rows got no split (no label?) -- dropping them.")
@@ -189,6 +218,13 @@ if __name__ == "__main__":
     p.add_argument("--id-col", default="identifier")
     p.add_argument("--label-col", default="gene", help="Class label column (e.g. MEROPS family).")
     p.add_argument("--split-col", default="test_split")
+    p.add_argument("--cluster-col", default="cluster",
+                   help="Column to record each sequence's cluster id in (the bootstrap "
+                        "unit for stratified_analysis.py).")
+    p.add_argument("--annotate-only", action="store_true",
+                   help="Only add the cluster column, leaving an existing test_split "
+                        "untouched. Use this on datasets whose models are already "
+                        "trained -- a full re-split would invalidate them.")
     p.add_argument("--min-seq-id", type=float, default=0.3, help="mmseqs --min-seq-id (default 0.3).")
     p.add_argument("--cov", type=float, default=0.8, help="mmseqs -c coverage (default 0.8).")
     p.add_argument("--mmseqs-cmd", default="mmseqs",

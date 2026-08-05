@@ -37,13 +37,20 @@ order you should trust them:
      per-example score does not, and it has a genuine spread inside a bin, so a box plot
      per bin per arm works and has much more power than 1/0.
 
-     On distrusting softmax: right for calibration claims ("the model is 90 % sure"),
-     wrong here. You are not making an absolute confidence claim; you are ranking the
-     SAME proteins under DIFFERENT arms, and any monotone miscalibration shared by the
-     arms cancels in that comparison. Use the margin (logit of the true class minus the
-     best competing logit -- pre-softmax, so no calibration assumption at all) or the
-     per-example NLL. Report accuracy as primary and the score as the higher-power
-     secondary; if they disagree, believe accuracy and investigate.
+     On distrusting softmax: your caution is right for CALIBRATION claims ("the model is
+     90 % sure"), and it is not what this plot does. The score used here is the margin
+     (true-class output minus the best competing output), which is taken before any
+     softmax, so no calibration assumption enters.
+
+     But raw margins are NOT comparable ACROSS arms: each arm is a separately trained
+     network with its own output scale, and these models are trained with MSE against
+     one-hot targets (runners_eval default criterion), so the outputs are not logits in
+     the cross-entropy sense either. `--score-normalise rank` (the default) therefore
+     converts each arm's margins to within-arm percentile ranks before plotting, which
+     is scale-free and keeps the comparison honest. Pass `--score-normalise none` to see
+     the raw values for a single arm. Read the score plot as "which proteins does this
+     arm find hard, relative to the rest of its own test set", and keep ACCURACY as the
+     primary endpoint; if the two disagree, believe accuracy and find out why.
 
 Metric note: this reports ACCURACY per bin, not macro-F1. Macro-F1 within a bin is
 unstable, because a bin routinely contains 0-2 examples of some class and the per-class
@@ -188,8 +195,17 @@ def slope_difference(identity, correct_a, correct_b, groups=None, n_boot=2000, s
 
     Fits a linear probability model (OLS on a 0/1 outcome), which is crude in absolute
     terms but adequate for comparing two slopes on identical x values; the binned paired
-    delta above is the assumption-free version and stays primary. Both slopes compress if
-    the arms are near ceiling, so read this alongside the accuracy plot, never alone.
+    delta above is the assumption-free version and stays primary.
+
+    TWO ways this misleads if read alone, which is why the caller suppresses the
+    significance star unless the two arms have comparable overall accuracy:
+      - CEILING: an arm that is right almost everywhere has slope ~0 because it cannot
+        rise, not because it is identity-independent.
+      - FLOOR: an arm near chance ALSO has slope ~0, for the same non-reason. A weak arm
+        (meta_only sits at 0.18-0.27 macro-F1 against per_prot's 0.53-0.82) will show a
+        strongly negative slope delta purely because it is bad everywhere. That is not
+        robustness to low identity.
+    Always read this next to the accuracy plot.
     """
     sa = _ols_slope(identity, correct_a)
     sb = _ols_slope(identity, correct_b)
@@ -300,12 +316,27 @@ def main(args):
 
     identity = [float(identity_by_id[i]) for i in common]
     groups = [cluster_by_id[i] for i in common] if cluster_by_id else None
+    if groups is None:
+        print("NOTE: no --cluster-col, so the bootstrap resamples PROTEINS. Proteins in "
+              "one cluster are not independent draws, so the CIs below are too narrow. "
+              "Re-run cluster_split.py to get a 'cluster' column.")
     idx_by_bin = defaultdict(list)
-    for pos, b in enumerate(assign_bins(identity, edges)):
+    binned = assign_bins(identity, edges)
+    for pos, b in enumerate(binned):
         if b is not None:
             idx_by_bin[b].append(pos)
+    outside = sum(1 for b in binned if b is None)
+    if outside:
+        print(f"NOTE: {outside} of {len(binned)} proteins fall outside --bins "
+              f"[{edges[0]}, {edges[-1]}]; they are excluded from the per-bin table but "
+              f"still included in the slope comparison.")
+    if not idx_by_bin:
+        raise SystemExit(f"no protein falls inside --bins [{edges[0]}, {edges[-1]}]. "
+                         f"Is '{args.identity_col}' a fraction (0-1) rather than a "
+                         f"percentage (0-100)?")
 
     correct = {name: [arms[name][i]["correct"] for i in common] for name in arms}
+    overall_acc = {name: sum(v) / len(v) for name, v in correct.items()}
 
     # ---- table ----------------------------------------------------------------
     records = []
@@ -345,10 +376,29 @@ def main(args):
             continue
         pt, lo, hi = slope_difference(identity, correct[name], correct[args.baseline],
                                       groups=groups, n_boot=args.n_boot, seed=args.seed)
+        # An arm far below the baseline overall has slope ~0 because it is bad
+        # everywhere, not because it is identity-independent -- exactly the reading this
+        # number invites. Withhold the star and say why rather than let it be misread.
+        gap = overall_acc[args.baseline] - overall_acc[name]
+        floored = gap > args.slope_acc_tolerance
         sig = "" if (lo <= 0 <= hi or math.isnan(lo)) else "  *"
-        print(f"  {name:<24} slope delta {pt:+.3f} [{lo:+.3f},{hi:+.3f}]{sig}")
+        note = ""
+        if floored:
+            sig = ""
+            note = (f"   [no star: overall accuracy {overall_acc[name]:.3f} vs baseline "
+                    f"{overall_acc[args.baseline]:.3f}; a weak arm has a flat slope "
+                    f"regardless]")
+        print(f"  {name:<24} slope delta {pt:+.3f} [{lo:+.3f},{hi:+.3f}]{sig}{note}")
         slope_records.append({"arm": name, "slope_delta_vs_baseline": pt,
-                              "slope_lo": lo, "slope_hi": hi})
+                              "slope_lo": lo, "slope_hi": hi,
+                              "overall_accuracy": overall_acc[name],
+                              "baseline_overall_accuracy": overall_acc[args.baseline],
+                              "accuracy_gap_suppresses_star": floored})
+    n_tests = sum(1 for r in records if r.get("delta_vs_baseline") is not None) + len(slope_records)
+    print(f"\n* = 95 % CI excludes 0, UNCORRECTED for multiplicity ({n_tests} comparisons "
+          f"here, so ~{max(1, round(0.05 * n_tests))} spurious star(s) expected). Treat a "
+          f"lone star as a lead, not a result; the shape of the delta curve across bins "
+          f"is the evidence.")
 
     out_csv = f"{args.out_prefix}_stratified.csv"
     pd.DataFrame(records).to_csv(out_csv, index=False)
@@ -404,6 +454,18 @@ def main(args):
 
     # Per-example score: the one plot where a box plot is the right choice.
     score = args.score
+    if args.score_normalise == "rank":
+        # Each arm is a separately trained net with its own output scale (and these are
+        # MSE-trained, so the outputs are not logits), which makes raw margins
+        # incomparable BETWEEN arms. Percentile-rank within each arm first.
+        for name in arms:
+            vals = [(i, arms[name][i][score]) for i in common if score in arms[name][i]]
+            if not vals:
+                continue
+            order = sorted(range(len(vals)), key=lambda k: vals[k][1])
+            denom = max(1, len(vals) - 1)
+            for rank, k in enumerate(order):
+                arms[name][vals[k][0]][score] = rank / denom
     if any(score in arms[name][i] for name in arms for i in common[:50]):
         fig, ax = plt.subplots(figsize=(11, 5))
         names = list(arms)
@@ -425,7 +487,8 @@ def main(args):
                 ax.plot([], [], color=colour, lw=6, label=name)
         ax.set_xticks(xs); ax.set_xticklabels(xlabels, fontsize=8)
         ax.set_xlabel("max identity of test protein to any train protein")
-        ax.set_ylabel(f"per-example {score}")
+        ax.set_ylabel(f"per-example {score}"
+                      + (" (within-arm percentile rank)" if args.score_normalise == "rank" else ""))
         ax.set_title(f"{args.title or args.out_prefix}: per-example {score} by identity")
         ax.legend(fontsize=8); ax.grid(alpha=.3)
         fig.tight_layout(); fig.savefig(f"{args.out_prefix}_{score}.png", dpi=150)
@@ -447,12 +510,19 @@ if __name__ == "__main__":
                    help="Arm every other arm is differenced against (e.g. per_prot).")
     p.add_argument("--out-prefix", required=True, help="Prefix for output CSVs/PNGs.")
     p.add_argument("--id-col", default="identifier")
-    p.add_argument("--identity-col", default="train_max_pident",
-                   help="Use train_max_pident_cov for the coverage-weighted version.")
-    p.add_argument("--cluster-col", default=None,
+    p.add_argument("--identity-col", default="train_max_pident_cov",
+                   help="Coverage-weighted identity by default: a short local hit at "
+                        "100 %% identity is not leakage. Use train_max_pident for raw.")
+    p.add_argument("--cluster-col", default="cluster",
                    help="Cluster id column; bootstrap resamples clusters, not proteins.")
     p.add_argument("--score", default="margin", choices=["margin", "nll"],
                    help="Per-example score for the box plot (default: margin).")
+    p.add_argument("--score-normalise", default="rank", choices=["rank", "none"],
+                   help="'rank' percentile-ranks each arm's scores before plotting, so "
+                        "arms with different output scales stay comparable (default).")
+    p.add_argument("--slope-acc-tolerance", type=float, default=0.05,
+                   help="Suppress the slope significance star when an arm's overall "
+                        "accuracy is more than this below the baseline's (default 0.05).")
     p.add_argument("--bins", type=float, nargs="+", default=DEFAULT_BINS)
     p.add_argument("--n-boot", type=int, default=2000)
     p.add_argument("--seed", type=int, default=0)

@@ -160,9 +160,11 @@ class TestMultiClassTrainer:
             class_weights_tensor=None, model="Transformer",
             criterion="CEL_weightless", optimizer="Adam", scheduler="None",
         )
-        report, preds, ids, labels = trainer.evaluate_on_loader(
+        report, preds, ids, labels, raw = trainer.evaluate_on_loader(
             val_loader, small_dataset.label_encoder,
         )
         assert "accuracy" in report
         assert len(preds) == len(labels)
         assert len(ids) == len(labels)
+        # raw outputs back the per-example margin/nll columns written by test_model
+        assert raw.shape == (len(labels), len(small_dataset.label_encoder.categories_[0]))
