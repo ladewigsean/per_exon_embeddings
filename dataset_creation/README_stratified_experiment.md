@@ -146,9 +146,10 @@ them:
 The printed table also gives a bin-free **slope comparison**: negative means that arm's
 accuracy rises less steeply with identity. Beware both ends. An arm near the ceiling
 *and* an arm near chance both have slope ≈ 0 for reasons that have nothing to do with
-homology. The script suppresses the significance star when an arm's overall accuracy is
-more than `--slope-acc-tolerance` below the baseline's, and says so; `meta_only` at
-0.18-0.27 macro-F1 against `per_prot`'s 0.53-0.82 is exactly that case.
+homology. The script suppresses the significance star when an arm's overall accuracy differs from
+the baseline's by more than `--slope-acc-tolerance` in EITHER direction, and says which
+end it hit; `meta_only` at 0.18-0.27 macro-F1 against `per_prot`'s 0.53-0.82 is exactly
+the floor case.
 
 Stars are **uncorrected for multiplicity** and the script prints how many comparisons it
 ran. Treat a lone star as a lead; the shape of the delta curve across bins is the
@@ -157,6 +158,20 @@ evidence.
 Per-bin numbers are **accuracy, not macro-F1**: a bin routinely holds 0-2 examples of
 some class, whose per-class recall is then 0 or 1 and macro-F1 becomes noise. Report
 macro-F1 on the full test set and accuracy per bin, and say so.
+
+**Bins and power.** `DEFAULT_BINS` is six bins, which is too many for these test sets
+(split 2 is 443/220/177/174/119 proteins for CYP/HOX/PCDH/FGF/KLF). Pass `--bins` to use
+three or four. Even then the resolution is modest: a Wilson interval at n=30, p=0.8 is
+about ±0.14 wide, so only large effects will clear it, and the paired delta is where the
+power is.
+
+**Do not pool the five families into one curve.** The per-family effects reverse sign
+(`per_prot_meta` − `per_prot` runs from +0.014 on CYP to −0.223 on PCDH), and the tasks
+differ in class count (19-36), baseline difficulty (0.53-0.82) and size, so a fixed-effect
+pool would average away the actual result. Report per family, side by side, forest-plot
+style. With k=5 there is no way to estimate between-task heterogeneity properly, so a
+random-effects pool would not rescue it either. If every family points the same way, say
+so in words; that is more honest than a pooled number.
 
 **What the CIs do not cover.** `train_model` keeps only the val-best checkpoint, so the
 test evaluation and the per-example predictions come from a **single seed**. Every
@@ -173,13 +188,15 @@ left it unused. The bias is specific: `train_and_validate` checkpoints on the be
 macro-F1 across ~35 epochs and then reports *that* checkpoint's val metrics, so each
 number is a maximum over epochs on the set it is scored against. (HPO itself used 5-fold
 CV inside train and leaked nothing, and the reported mean is over all 5 seeds rather than
-the best, so neither of those is the problem.) The upside is that split 2 is genuinely
+the best, so neither of those is the problem. Note also that the surviving checkpoint is
+picked across seeds by val **accuracy**, while early stopping within a run uses val
+**macro-F1**, so the arm you end up testing is not the one the headline metric selected.) The upside is that split 2 is genuinely
 untouched, which is the cleanest possible resource for the final thesis numbers. The
 runner now evaluates it and writes `test_acc` / `test_macro_f1` / `test_status`
 (`--skip_test` restores the old behaviour).
 
-**`per_prot_meta` was compared against the wrong baseline.** Read the shuffle control in
-the committed results (macro-F1, ± the 5-seed sd from the same file):
+**Read `per_prot_meta` against BOTH baselines, and trust neither on its own.** From the
+committed results (macro-F1 on split 1):
 
 | | CYP | FGF | HOX | KLF | PCDH |
 |---|---|---|---|---|---|
@@ -187,34 +204,54 @@ the committed results (macro-F1, ± the 5-seed sd from the same file):
 | `per_prot_meta` | 0.613 | 0.522 | 0.680 | 0.796 | 0.550 |
 | `per_prot_meta_shuffle` | 0.597 | 0.478 | 0.687 | 0.809 | 0.437 |
 
-`per_prot_meta_shuffle` carries **row-permuted, information-free** features. A healthy
-arm would learn to ignore useless inputs and land on `per_prot`. On CYP, KLF and FGF it
-roughly does (0.06, 0.44 and 1.28 combined sd below). On **HOX (2.3 sd) and PCDH (6.4
-sd)** it does not, and on those two the concatenation arm is damaged by something other
-than the features' content. That is enough to stop "`per_prot_meta` ≤ `per_prot`,
-therefore architecture is redundant" from following on those two families; it is not
-evidence of damage on the other three.
+**A yardstick note before any of the numbers below.** "n sd" here means the difference
+divided by the two arms' combined 5-seed spread. That is an EFFECT-SIZE HEURISTIC, not a
+test. The stored sds are population sds (`ddof=0`, n=5) over seeds on one fixed
+validation split, so they capture initialisation noise only: not test-set sampling error,
+not split variance. A proper Welch t on the 5-seed means comes out at exactly twice the
+sd figure quoted here. The real test is the paired per-protein bootstrap on split 2, which
+is what this whole document is for. Do not put "6.4 sd" in a thesis as if it were a
+p-value.
 
-Against the **matched** control instead, the differences are small and mostly inside
-noise: CYP +0.016 (0.4 sd), FGF +0.044 (2.0 sd), PCDH +0.113 (1.6 sd), HOX −0.007
-(−0.2 sd), KLF −0.013 (−0.3 sd). Only FGF and PCDH are suggestive, and neither is
-decisive on its own. Three candidate
-causes worth one diagnostic each before drawing any conclusion:
+First, the contrast that actually decides the question. `per_prot_meta` vs `per_prot`:
+CYP **+0.014**, FGF **−0.007**, KLF **−0.026**, HOX **−0.143**, PCDH **−0.223**. Adding
+real architecture features to sequence **never helps and clearly hurts twice**. That is
+the headline and it is negative.
+
+Second, why that is not quite the end of it. `per_prot_meta_shuffle` carries
+**row-permuted, information-free** features, so a healthy arm would ignore them and land
+on `per_prot`. On CYP, KLF and FGF it roughly does (0.06, 0.44 and 1.28 sd below). On
+**HOX (2.3 sd) and PCDH (6.4 sd)** it does not, so on those two the concatenation arm is
+damaged by something other than the features' content.
+
+Third, and this is the trap: because the shuffle arm is itself damaged, comparing
+`per_prot_meta` against it is comparing against a **degraded** comparator, which biases
+that contrast **toward** finding an architecture benefit. So the matched-control numbers
+(CYP +0.016, FGF +0.044, PCDH +0.113, HOX −0.007, KLF −0.013) must not be quoted as
+evidence that architecture helps. They only say "the real features are no worse than
+permuted ones, on an arm that is misbehaving anyway". Fix the arm, then re-read it.
+
+Three candidate causes, one diagnostic each:
 
 - **Scale.** `exon_architecture.py` z-scores the 17 features to unit variance, then
   concatenates them onto raw ProtT5 dims whose per-dimension std is roughly 0.1. The 17
   features arrive with about ten times the scale of the 1024 they join. Check the
   per-dimension std of both blocks in the concatenated h5.
-- **Dropped proteins.** The concat loop keeps only ids present in *both* the per_prot h5
-  and the architecture dict, so any protein missing from the FASTA silently disappears
-  and can take a whole class with it. Compare `len(h5.keys())` and the per-class counts
-  between `X_per_prot.h5` and `X_per_prot_meta.h5`.
 - **HPO luck.** Every arm gets its own **unseeded** 30-trial Optuna study, so arm-to-arm
   differences confound feature content with search luck. Seed the study, or repeat it.
+- **Dropped proteins** (least likely, check last). The concat loop keeps only ids present
+  in *both* the per_prot h5 and the architecture dict, so a protein missing from the
+  FASTA disappears silently. This is a possible mechanism, not an observed one: every
+  arm's accuracy granularity is consistent with the full split size, so nothing is
+  visibly missing. Compare `len(h5.keys())` between `X_per_prot.h5` and
+  `X_per_prot_meta.h5` to rule it out.
 
 The one clean architecture result is untouched by any of this: `meta_only` beats
 `meta_only_shuffle` by **+0.138 to +0.207** macro-F1 on **all five** families, at 5.5-8.8
-combined sd. Architecture carries real, replicated class signal. It is weak, but it is
+combined sd. Architecture carries real, replicated class signal. But note what the bar
+is: beating **destroyed labels**. In absolute terms `meta_only` scores 0.18-0.27 against
+`per_prot`'s 0.53-0.82. It is weak, it does not survive concatenation with sequence, but
+it is
 not nothing, and it is the positive result the write-up should state plainly.
 
 ## Also fixed here
@@ -224,6 +261,9 @@ phase arm has never actually run. The committed numbers are *consistent with* th
 `phase_only` and `length_only` agree within noise on all five families) but do not prove
 it, since phase features could independently be uninformative. The definitive check is
 one line: `h5py.File("X_phase_only.h5")[key].shape` is 2 for the length features and 3
-for the phase fractions. Worth re-running either way: intron phase is the one
-architecture feature that mean-pooled per-exon embeddings *cannot* carry, which is why
-`exon_architecture.py` calls it "the actual genealogical signal".
+for the phase fractions. Worth re-running either way: intron phase is the *clearest*
+architecture feature mean-pooled per-exon embeddings cannot carry, since chunking at
+`floor(cut/3)` discards `cut mod 3` outright. Not the only one, though: mean pooling is
+length-invariant, so exon lengths are not carried either, and strictly the `floor`/`ceil`
+boundary duplicates one residue when phase is non-zero, leaving a faint
+phase-zero-vs-non-zero trace. Phase is the cleanest case, not a unique one.

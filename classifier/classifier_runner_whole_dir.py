@@ -4,6 +4,7 @@ import argparse
 import pandas as pd
 import pathlib
 import os
+import re
 import sys
 from scripts.custom_datasets import split_dataset_into_subsets, MultiClassDataset
 from scripts.runners_eval import run, test_model, train_model
@@ -18,14 +19,28 @@ COLUMNS = ["method", "mean_acc", "std_acc", "mean_macro_f1", "std_macro_f1",
 
 
 def find_surviving_checkpoint(entity):
-    """The one checkpoint train_model kept for `entity`, or None.
+    """The one checkpoint train_model kept for `entity`, or None if that is ambiguous.
 
     train_model names them f"val_seed_{seed}_{wandb_project}.pt" and deletes all but the
-    val-best, so a completed arm leaves exactly one file behind. Finding it is what lets
-    --force_test evaluate an already-trained arm without repeating the sweep.
+    val-best, so a COMPLETED arm leaves exactly one file behind. But --force_test exists
+    to recover runs that did not complete, which is exactly when several seeds survive
+    and there is no record of which was best. Refuse to guess rather than silently score
+    an arbitrary seed and report it as the result.
+
+    The regex matters too: a bare glob lets `*` swallow a family prefix, so entity
+    "HOX_per_prot" would match "val_seed_1_NCBIHOX_per_prot_test.pt" from a different
+    dataset (model_weights/ is one shared folder and the repo has both HOX and NCBI_HOX).
     """
-    matches = sorted(pathlib.Path(MODEL_WEIGHTS_FOLDER).glob(f"val_seed_*_{entity}_test.pt"))
-    return str(matches[0]) if matches else None
+    pattern = re.compile(rf"val_seed_\d+_{re.escape(entity)}_test\.pt$")
+    matches = sorted(p for p in pathlib.Path(MODEL_WEIGHTS_FOLDER).glob("val_seed_*.pt")
+                     if pattern.match(p.name))
+    if len(matches) == 1:
+        return str(matches[0])
+    if len(matches) > 1:
+        print(f"WARNING: {len(matches)} surviving checkpoints for {entity} "
+              f"({', '.join(p.name for p in matches)}); cannot tell which seed was "
+              f"val-best, so refusing to guess. Retrain this arm.", file=sys.stderr)
+    return None
 
 
 if __name__ == '__main__':
@@ -67,22 +82,40 @@ if __name__ == '__main__':
     # failure modes and costs nothing at this size.
     rows = {}
     if os.path.isfile(output):
-        old_data = pd.read_csv(output)
-        # Older files were written with a 5-column header, and two of them with an EMPTY
-        # first header; normalise both shapes onto COLUMNS without losing a row.
-        old_data.columns = [COLUMNS[0]] + list(old_data.columns[1:])
-        for col in COLUMNS:
-            if col not in old_data.columns:
-                old_data[col] = ""
-        old_data = old_data[COLUMNS].fillna("")
-        for _, r in old_data.iterrows():
-            rows[str(r[COLUMNS[0]])] = [r[c] for c in COLUMNS[1:]]
-        print(f"resuming from {output}: {len(rows)} arms already recorded")
+        try:
+            # dtype=str so legacy cells round-trip as their original text. Reading them
+            # as floats and writing them back reformats at ~16 significant digits
+            # (0.9519379844961241 -> 0.951937984496124), perturbing values that this
+            # script did not compute.
+            old_data = pd.read_csv(output, dtype=str)
+        except pd.errors.EmptyDataError:
+            print(f"WARNING: {output} is empty; starting a fresh results file",
+                  file=sys.stderr)
+            old_data = None
+        if old_data is not None:
+            # Older files were written with a 5-column header, and two of them with an
+            # EMPTY first header; normalise both shapes onto COLUMNS without losing a row.
+            old_data.columns = [COLUMNS[0]] + list(old_data.columns[1:])
+            for col in COLUMNS:
+                if col not in old_data.columns:
+                    old_data[col] = ""
+            old_data = old_data[COLUMNS].fillna("")
+            for _, r in old_data.iterrows():
+                rows[str(r[COLUMNS[0]])] = [r[c] for c in COLUMNS[1:]]
+            if len(rows) != len(old_data):
+                print(f"WARNING: {len(old_data) - len(rows)} duplicate method row(s) in "
+                      f"{output} collapsed to the last occurrence", file=sys.stderr)
+            print(f"resuming from {output}: {len(rows)} arms already recorded")
 
     def flush():
+        # Write-then-rename: to_csv truncates in place, so a kill or a full disk during
+        # any of the N+1 flushes in a sweep would otherwise leave a truncated results
+        # file that pandas cannot reopen, with no way back.
         os.makedirs(OUTPUT_CSVS_FOLDER, exist_ok=True)
+        tmp = output + ".tmp"
         pd.DataFrame([[k] + v for k, v in rows.items()],
-                     columns=COLUMNS).to_csv(output, index=False)
+                     columns=COLUMNS).to_csv(tmp, index=False)
+        os.replace(tmp, output)
 
     flush()
     for h5 in h5s:
@@ -103,6 +136,22 @@ if __name__ == '__main__':
         if "per_res" in entity and args.skip_per_res:
             print(f"Skip_per_res flag given, Skipping {h5}\n")
             continue
+
+        # Check the artefacts --force_test depends on BEFORE opening the h5. Building the
+        # dataset first means a per_res arm reads a multi-GB file and scans every key,
+        # only to bail two lines later because there is no checkpoint to score.
+        yaml_path = best_model = None
+        if test_only:
+            yaml_path = os.path.join(YAML_FOLDER, f"{entity}_HPO.yaml")
+            best_model = find_surviving_checkpoint(entity)
+            if not os.path.isfile(yaml_path) or best_model is None:
+                reason = (f"missing {yaml_path}" if not os.path.isfile(yaml_path)
+                          else f"no unambiguous checkpoint in {MODEL_WEIGHTS_FOLDER}")
+                print(f"WARNING: cannot --force_test {entity}: {reason}", file=sys.stderr)
+                rows[entity] = list(rows[entity][:4]) + ["", "", "no_checkpoint"]
+                flush()
+                continue
+
         train_dataset, val_dataset, test_dataset, max_length =split_dataset_into_subsets(MultiClassDataset(embeddings_path=h5,csv_path=csv_file))
         embed_size = train_dataset.embedding_dim
         print(f"Max Length: {max_length}")
@@ -112,16 +161,8 @@ if __name__ == '__main__':
             nn_model = "Basic"
 
         if test_only:
-            yaml_path = os.path.join(YAML_FOLDER, f"{entity}_HPO.yaml")
-            best_model = find_surviving_checkpoint(entity)
+            # yaml_path / best_model were resolved and validated above.
             data = rows[entity][:4]
-            if not os.path.isfile(yaml_path) or best_model is None:
-                print(f"WARNING: cannot --force_test {entity}: "
-                      f"{'missing ' + yaml_path if not os.path.isfile(yaml_path) else 'no checkpoint in ' + MODEL_WEIGHTS_FOLDER}",
-                      file=sys.stderr)
-                rows[entity] = list(data) + ["", "", "no_checkpoint"]
-                flush()
-                continue
         else:
             yaml_path = run(train_dataset,entity+"_HPO",args.project,nn_model=nn_model,n_trials=args.hpo_trials,num_epochs=35,patience=5,wandb_disable=args.wandb_disable,max_length=max_length,embed_size=embed_size,yaml_folder=YAML_FOLDER, checkpoint_folder=MODEL_WEIGHTS_FOLDER,)
             best_model, data= train_model(train_dataset,val_dataset,entity+"_test",args.project,yaml_path,nn_model = nn_model,wandb_disable=args.wandb_disable,max_length=max_length,embed_size=embed_size,checkpoints_folder=MODEL_WEIGHTS_FOLDER)
@@ -157,8 +198,14 @@ if __name__ == '__main__':
         rows[entity] = [str(d) for d in data] + [str(test_acc), str(test_f1), test_status]
         flush()
 
-    failed = [k for k, v in rows.items() if str(v[-1]).startswith("failed")]
-    if failed:
-        print(f"\n{len(failed)} arm(s) have no test result: {', '.join(failed)}\n"
-              f"re-run with --force_test to retry just those.", file=sys.stderr)
+    # Report on the test_acc CELL, not on test_status: "failed", "no_checkpoint" and
+    # "skipped" all leave the result blank, and filtering on one prefix silently passed
+    # over the other two.
+    test_ix = COLUMNS[1:].index("test_acc")
+    missing = [k for k, v in rows.items() if not str(v[test_ix]).strip()]
+    if missing:
+        print(f"\n{len(missing)} of {len(rows)} arm(s) have no test result:", file=sys.stderr)
+        for k in missing:
+            print(f"  {k}: {rows[k][-1] or 'not run'}", file=sys.stderr)
+        print("re-run with --force_test to retry just those.", file=sys.stderr)
     print(f"wrote {output}")

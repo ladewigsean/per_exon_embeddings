@@ -34,6 +34,12 @@ Note on the metric: raw `fident` from a LOCAL alignment is misleading on its own
 writes both the raw value and a coverage-weighted one (`fident * qcov`); prefer the
 latter for filtering, and say which one you used.
 
+`fident * qcov` is not a standard measure and it is ASYMMETRIC: a short domain matching
+inside a long protein scores very differently depending on which one is the query. It is
+normalised by the QUERY, i.e. by the held-out protein, which is the right direction for a
+leakage question ("how much of this test protein is already in train"). If you want the
+conservative form, take the larger of `fident*qcov` and `fident*tcov`.
+
 Queries with NO hit at all are the HARDEST and most valuable test cases. They are kept
 with identity 0.0 and `train_n_hits` 0, never dropped -- dropping them would silently
 delete exactly the regime the experiment is about.
@@ -51,6 +57,7 @@ unit-tested in test_stratified_helpers.py.
 import argparse
 import contextlib
 import os
+import shutil
 import subprocess
 import tempfile
 
@@ -104,13 +111,23 @@ def run_mmseqs_search(query_fasta, train_fasta, mmseqs_cmd, workdir,
                       sensitivity=7.5, evalue=10000.0, max_seqs=300):
     """easy-search query vs train -> list of dicts with M8_FIELDS keys.
 
-    Deliberately permissive: max sensitivity and a huge E-value cutoff, because we WANT
-    the weak hits. A missed hit here silently becomes "identity 0", i.e. it would fake a
-    hard test case that is not actually hard -- the one error mode that would flatter the
-    result, so the search is tuned to over-report rather than under-report.
+    Deliberately permissive, because a missed hit silently becomes "identity 0" and fakes
+    a hard test case that is not hard, which is the one error mode that would flatter the
+    result. Note which knob does the work: weak hits are lost in the k-mer PREFILTER,
+    which `-e` does not control, so `-s 7.5` is what recovers them and the large `-e` is
+    close to cosmetic. easy-search already defaults to `-c 0` and `--min-seq-id 0`, so
+    there is no silent coverage or identity filter to undo.
+
+    `--max-seqs` is a prefilter cap on results per query, kept in score order, so on a
+    large training set the weakest hits are exactly what gets truncated. Raise it if
+    `train_n_hits` saturates at this value.
     """
     out_m8 = os.path.join(workdir, "hits.m8")
     tmp = os.path.join(workdir, "tmp_search")
+    # easy-search reuses a populated tmp directory by design, so with an explicit
+    # --workdir a second run against a changed FASTA can silently return the first run's
+    # hits. Always start from an empty one.
+    shutil.rmtree(tmp, ignore_errors=True)
     cmd = mmseqs_cmd.split() + [
         "easy-search", query_fasta, train_fasta, out_m8, tmp,
         "-s", str(sensitivity), "-e", str(evalue), "--max-seqs", str(max_seqs),
@@ -204,7 +221,8 @@ def main(args):
     missing = [i for i in df[args.id_col] if i not in seqs]
     if missing:
         print(f"WARNING: {len(missing)} ids in the CSV have no sequence in the FASTA "
-              f"(e.g. {missing[:3]}); they get no identity value.")
+              f"(e.g. {missing[:3]}); they get NaN, not 0.0, so they are dropped by the "
+              f"analysis rather than counted as hard test cases.")
 
     with _scratch_dir(args.workdir) as workdir:
         train_fa, query_fa, n_train, n_query = write_split_fastas(
@@ -225,19 +243,28 @@ def main(args):
         sub = {i: a for i, a in agg.items() if id_to_split.get(i) == split}
         summarise(sub, label=f"split {split}")
 
+    # A protein with no SEQUENCE in the FASTA is not the same as a protein with no HIT.
+    # Giving both 0.0 would inject a CSV/FASTA mismatch straight into the lowest identity
+    # bin, which the analysis reads as "the hardest and most valuable test cases". Absent
+    # proteins get NaN, which the analysis drops.
     for col in ("train_max_pident", "train_max_pident_cov", "train_best_hit",
                 "train_n_hits"):
-        default = "" if col == "train_best_hit" else 0
-        values = [agg.get(i, {}).get(col, default) for i in df[args.id_col]]
-        # float, not int, so the blanking below does not trip pandas' incompatible-dtype
-        # warning (an error from pandas 3).
-        df[col] = values if col == "train_best_hit" else [float(v) for v in values]
+        if col == "train_best_hit":
+            df[col] = [agg.get(i, {}).get(col, "") for i in df[args.id_col]]
+        else:
+            # float, not int, so the blanking below does not trip pandas'
+            # incompatible-dtype warning (an error from pandas 3).
+            df[col] = [float(agg[i][col]) if i in agg else float("nan")
+                       for i in df[args.id_col]]
     # Train rows have no meaningful identity-to-train; blank them so they cannot be
     # silently plotted as if they were held-out points.
     is_query = df[args.split_col].isin(args.query_splits)
     for col in ("train_max_pident", "train_max_pident_cov", "train_n_hits"):
         df.loc[~is_query, col] = float("nan")
 
+    out_dir = os.path.dirname(args.out)
+    if out_dir:
+        os.makedirs(out_dir, exist_ok=True)
     df.to_csv(args.out, index=False)
     print(f"\nwrote {args.out}  (+ train_max_pident, train_max_pident_cov, "
           f"train_best_hit, train_n_hits)")

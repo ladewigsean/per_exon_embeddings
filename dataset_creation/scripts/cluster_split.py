@@ -175,10 +175,27 @@ def main(args):
         if args.split_col not in df.columns:
             raise SystemExit(f"--annotate-only needs an existing '{args.split_col}' column "
                              f"in {args.csv}; run without it to create one.")
+        if args.cluster_col in df.columns:
+            print(f"NOTE: overwriting the existing '{args.cluster_col}' column.")
         id_to_cluster = {i: c for c, items in cluster_to_items.items() for i in items}
         df[args.cluster_col] = df[args.id_col].map(id_to_cluster)
+        # These clusters come from whatever --min-seq-id/--cov were passed NOW, which need
+        # not be what produced the existing split. If they disagree, clusters straddle
+        # splits and the "resample whole clusters" bootstrap is no longer measuring the
+        # unit it claims to. Same check the normal path runs at the end.
+        split_by_id = dict(zip(df[args.id_col], df[args.split_col]))
+        spans = sum(len({split_by_id[i] for i in items if i in split_by_id}) > 1
+                    for items in cluster_to_items.values())
         print(f"\n--annotate-only: wrote '{args.cluster_col}' only; "
               f"'{args.split_col}' left exactly as it was.")
+        if spans:
+            print(f"WARNING: {spans} cluster(s) span more than one {args.split_col} value. "
+                  f"This clustering does not match the one that made the split, so these "
+                  f"cluster ids are NOT the unit the split was built on. Re-run with the "
+                  f"--min-seq-id/--cov used originally (default 0.3 / 0.8).")
+        else:
+            print(f"all clusters fall inside a single {args.split_col}: this clustering "
+                  f"agrees with the existing split.")
         df.to_csv(args.out, index=False)
         print(f"wrote {args.out}")
         return

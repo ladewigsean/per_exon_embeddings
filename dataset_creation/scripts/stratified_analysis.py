@@ -21,9 +21,14 @@ order you should trust them:
      accuracy(arm) - accuracy(baseline) per identity bin with a paired bootstrap CI.
      Two independent noisy curves eyeballed side by side will not resolve a 3-point
      difference; their paired difference often will, because the protein-to-protein
-     variance cancels. It also cancels a real confound: class composition shifts across
-     identity bins (the hardest bin is not a random sample of classes), which biases
-     each raw curve but not their difference, since both arms see the same proteins.
+     variance cancels.
+
+     It also removes class composition from the comparison WITHIN a bin, since both arms
+     see the identical proteins there. It does NOT remove it from the TREND ACROSS bins,
+     which is the actual research question: the low-identity bin is not a random sample
+     of classes, so if an arm happens to be good at whichever classes are enriched there,
+     the delta curve slopes for that reason alone. Check the class mix per bin before
+     reading a slope as evidence about homology.
 
   2. BINNED ACCURACY + WILSON CI (`accuracy` plot). What a bare binned-average plot
      becomes once it is honest. The lowest-identity bin is always the smallest, so its
@@ -47,10 +52,14 @@ order you should trust them:
      one-hot targets (runners_eval default criterion), so the outputs are not logits in
      the cross-entropy sense either. `--score-normalise rank` (the default) therefore
      converts each arm's margins to within-arm percentile ranks before plotting, which
-     is scale-free and keeps the comparison honest. Pass `--score-normalise none` to see
-     the raw values for a single arm. Read the score plot as "which proteins does this
-     arm find hard, relative to the rest of its own test set", and keep ACCURACY as the
-     primary endpoint; if the two disagree, believe accuracy and find out why.
+     is scale-free. Pass `--score-normalise none` to see the raw values for a single arm.
+
+     READ THIS PLOT ONE WAY ONLY: "within its own test set, which proteins does this arm
+     find hard". Ranking is uniform on [0,1] BY CONSTRUCTION, so every arm has the same
+     overall median by definition and the plot CANNOT tell you that one arm is better
+     than another; it can only show where each arm's difficulty sits relative to
+     identity. Which arm is better is the accuracy plot's job, and accuracy is the
+     primary endpoint regardless.
 
 Metric note: this reports ACCURACY per bin, not macro-F1. Macro-F1 within a bin is
 unstable, because a bin routinely contains 0-2 examples of some class and the per-class
@@ -60,6 +69,12 @@ bin, and say so.
 Non-independence: test proteins from the same cluster are not independent draws. Pass
 `--cluster-col` and the bootstrap resamples CLUSTERS instead of proteins, which is the
 honest unit. Without it the CIs are too narrow.
+
+Note the asymmetry this creates, and do not quote the two as if they were the same kind
+of interval: the paired-delta CIs respect clusters, but the Wilson intervals on the raw
+per-bin accuracies use raw n and therefore assume independence. Wilson has no clustered
+form here, so treat those as descriptive error bars and let the paired delta carry any
+inferential claim.
 
     python stratified_analysis.py --identity split_ident.csv \
         --predictions per_prot=preds/per_prot.csv per_exon=preds/per_exon.csv \
@@ -72,6 +87,7 @@ pandas/matplotlib are imported inside main().
 import argparse
 import csv
 import math
+import os
 import random
 from collections import defaultdict
 
@@ -326,14 +342,20 @@ def main(args):
         if b is not None:
             idx_by_bin[b].append(pos)
     outside = sum(1 for b in binned if b is None)
+    # Refuse on MOST-out-of-range, not only all-out-of-range. Identity given as 0-100
+    # percentages leaves a handful of genuinely-low values inside [0,1], which is enough
+    # to produce a complete table and three publication-looking PNGs built from ~2 % of
+    # the data. Silent and thesis-ready is worse than the KeyError this replaced.
+    if outside > 0.2 * len(binned):
+        raise SystemExit(
+            f"{outside} of {len(binned)} proteins fall outside --bins "
+            f"[{edges[0]}, {edges[-1]}]. Is '{args.identity_col}' a percentage (0-100) "
+            f"rather than a fraction (0-1)? Pass --bins to match your units if this is "
+            f"deliberate.")
     if outside:
         print(f"NOTE: {outside} of {len(binned)} proteins fall outside --bins "
               f"[{edges[0]}, {edges[-1]}]; they are excluded from the per-bin table but "
               f"still included in the slope comparison.")
-    if not idx_by_bin:
-        raise SystemExit(f"no protein falls inside --bins [{edges[0]}, {edges[-1]}]. "
-                         f"Is '{args.identity_col}' a fraction (0-1) rather than a "
-                         f"percentage (0-100)?")
 
     correct = {name: [arms[name][i]["correct"] for i in common] for name in arms}
     overall_acc = {name: sum(v) / len(v) for name, v in correct.items()}
@@ -376,17 +398,20 @@ def main(args):
             continue
         pt, lo, hi = slope_difference(identity, correct[name], correct[args.baseline],
                                       groups=groups, n_boot=args.n_boot, seed=args.seed)
-        # An arm far below the baseline overall has slope ~0 because it is bad
-        # everywhere, not because it is identity-independent -- exactly the reading this
-        # number invites. Withhold the star and say why rather than let it be misread.
+        # An arm far below the baseline has slope ~0 because it is bad everywhere, and an
+        # arm far ABOVE it has slope ~0 because it cannot rise; neither is
+        # identity-independence, which is what this number invites you to read. Withhold
+        # the star in both directions and say why. abs(), not gap > tol: a ceiling arm is
+        # just as misleading as a floor arm.
         gap = overall_acc[args.baseline] - overall_acc[name]
-        floored = gap > args.slope_acc_tolerance
+        floored = abs(gap) > args.slope_acc_tolerance
         sig = "" if (lo <= 0 <= hi or math.isnan(lo)) else "  *"
         note = ""
         if floored:
             sig = ""
+            why = "a weak arm" if gap > 0 else "an arm near ceiling"
             note = (f"   [no star: overall accuracy {overall_acc[name]:.3f} vs baseline "
-                    f"{overall_acc[args.baseline]:.3f}; a weak arm has a flat slope "
+                    f"{overall_acc[args.baseline]:.3f}; {why} has a flat slope "
                     f"regardless]")
         print(f"  {name:<24} slope delta {pt:+.3f} [{lo:+.3f},{hi:+.3f}]{sig}{note}")
         slope_records.append({"arm": name, "slope_delta_vs_baseline": pt,
@@ -396,10 +421,15 @@ def main(args):
                               "accuracy_gap_suppresses_star": floored})
     n_tests = sum(1 for r in records if r.get("delta_vs_baseline") is not None) + len(slope_records)
     print(f"\n* = 95 % CI excludes 0, UNCORRECTED for multiplicity ({n_tests} comparisons "
-          f"here, so ~{max(1, round(0.05 * n_tests))} spurious star(s) expected). Treat a "
-          f"lone star as a lead, not a result; the shape of the delta curve across bins "
-          f"is the evidence.")
+          f"here, so ~{0.05 * n_tests:.1f} spurious star(s) expected). Treat a lone star "
+          f"as a lead, not a result; the shape of the delta curve across bins is the "
+          f"evidence.")
 
+    # Create the output directory before anything is written: the first write happens
+    # after all the bootstrap work, so a missing directory would throw away the whole run.
+    out_dir = os.path.dirname(args.out_prefix)
+    if out_dir:
+        os.makedirs(out_dir, exist_ok=True)
     out_csv = f"{args.out_prefix}_stratified.csv"
     pd.DataFrame(records).to_csv(out_csv, index=False)
     print(f"\nwrote {out_csv}")
@@ -420,8 +450,11 @@ def main(args):
         for b in present:
             r = sub.loc[labels[b]]
             ys.append(r["accuracy"])
-            los.append(r["accuracy"] - r["wilson_lo"])
-            his.append(r["wilson_hi"] - r["accuracy"])
+            # clamp at 0: at accuracy exactly 1.0 (or 0.0) the Wilson bound coincides
+            # with the point estimate and float error can put it a whisker the wrong
+            # side, which matplotlib rejects outright as a negative error bar.
+            los.append(max(0.0, r["accuracy"] - r["wilson_lo"]))
+            his.append(max(0.0, r["wilson_hi"] - r["accuracy"]))
         ax.errorbar(xs, ys, yerr=[los, his], marker="o", capsize=3, label=name)
     ax.set_xticks(xs); ax.set_xticklabels(xlabels, fontsize=8)
     ax.set_xlabel("max identity of test protein to any train protein")
@@ -440,8 +473,10 @@ def main(args):
         for b in present:
             r = sub.loc[labels[b]]
             ys.append(r["delta_vs_baseline"])
-            los.append(r["delta_vs_baseline"] - r["delta_lo"])
-            his.append(r["delta_hi"] - r["delta_vs_baseline"])
+            # same clamp: a skewed bootstrap can put a percentile bound on the wrong
+            # side of the point estimate when the delta sits at an extreme.
+            los.append(max(0.0, r["delta_vs_baseline"] - r["delta_lo"]))
+            his.append(max(0.0, r["delta_hi"] - r["delta_vs_baseline"]))
         ax.errorbar(xs, ys, yerr=[los, his], marker="o", capsize=3, label=name)
     ax.axhline(0, color="k", lw=1)
     ax.set_xticks(xs); ax.set_xticklabels(xlabels, fontsize=8)
@@ -495,8 +530,7 @@ def main(args):
         print(f"wrote {args.out_prefix}_{score}.png")
     else:
         print(f"\nno '{score}' column in the prediction CSVs, so the per-example score "
-              f"box plot was skipped. Re-run test_model with --pred-out to emit it; the "
-              f"score plot is the higher-power version of the accuracy plot.")
+              f"box plot was skipped. Re-run test_model with --pred-out to emit it.")
 
 
 if __name__ == "__main__":

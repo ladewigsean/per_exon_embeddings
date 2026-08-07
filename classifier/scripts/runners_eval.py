@@ -15,7 +15,7 @@ import torch.nn as nn
 from torch.utils.data import DataLoader, Subset
 from lion_pytorch import Lion
 from sklearn.model_selection import StratifiedKFold
-from sklearn.metrics import classification_report,log_loss
+from sklearn.metrics import classification_report,log_loss,accuracy_score
 import matplotlib.pyplot as plt
 
 import wandb
@@ -273,13 +273,26 @@ class MultiClassTrainer:
         # does not match size of target_names"). A cluster-aware split routinely leaves a
         # small class out of val/test, and that would kill the run at the last step.
         class_names = list(label_encoder.categories_[0])
+        all_class_ids = list(range(len(class_names)))
         report = classification_report(
             all_labels, all_preds,
-            labels=list(range(len(class_names))),
+            labels=all_class_ids,
             target_names=class_names,
             output_dict=True,
             zero_division=0
         )
+        # On scikit-learn < 1.5, passing labels= when a class is absent from this split
+        # makes classification_report emit "micro avg" INSTEAD of "accuracy", so
+        # report["accuracy"] raises KeyError deep inside the epoch loop. Restore it
+        # unconditionally; where sklearn already provides it the value is identical.
+        if "accuracy" not in report:
+            report["accuracy"] = float(accuracy_score(all_labels, all_preds))
+        # With labels=, a class absent from this split contributes f1=0 to the macro
+        # average, which the old code could never produce (it raised instead). Record how
+        # many, so a macro-F1 computed over a split with missing classes is not silently
+        # compared against one where every class was present.
+        report["n_classes_zero_support"] = int(
+            sum(1 for c in all_class_ids if c not in set(all_labels)))
         all_labels = np.array(all_labels)
         all_preds = np.array(all_preds)
         all_lengths = np.array(all_lengths)
@@ -291,9 +304,13 @@ class MultiClassTrainer:
         report["bucket_2_val_acc"] = float(np.sum(all_labels[bucket2_ind]==all_preds[bucket2_ind])/len(bucket2_ind)) if len(bucket2_ind)!=0 else np.nan
         report["bucket_3_val_acc"] = float(np.sum(all_labels[bucket3_ind]==all_preds[bucket3_ind])/len(bucket3_ind)) if len(bucket3_ind)!=0 else np.nan
         try:
+            # labels= is needed for the same reason as above: without it log_loss raises
+            # "y_true and y_prob contain different number of classes" whenever a class is
+            # absent from this split, and the bare except below turns that into a silently
+            # missing entropy metric rather than an error anyone would notice.
             report["entropy"] = log_loss(
                 all_labels, self.softmax(all_preds_raw).numpy(),
-                #labels=label_encoder.categories_[0],
+                labels=all_class_ids,
                 #sample_weight=self.class_weights
             )
         except Exception:
