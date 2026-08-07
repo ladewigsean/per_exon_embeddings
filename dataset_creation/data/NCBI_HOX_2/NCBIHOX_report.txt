@@ -1,0 +1,322 @@
+**********
+Short Report
+**********
+
+NCBIHOXA1	858-->75   	90%	
+NCBIHOXA10	709-->82   	90%	
+NCBIHOXA11	660-->59   	90%	
+NCBIHOXA13	605-->41   	90%	
+NCBIHOXA2	702-->35   	90%	
+NCBIHOXA3	2512-->43  	90%	
+NCBIHOXA4	563-->85   	90%	
+NCBIHOXA5	665-->57   	90%	
+NCBIHOXA6	740-->29   	90%	
+NCBIHOXA7	774-->63   	90%	
+NCBIHOXA9	688-->55   	90%	
+NCBIHOXB1	620-->129  	90%	
+NCBIHOXB13	512-->66   	90%	
+NCBIHOXB2	606-->131  	90%	
+NCBIHOXB3	2341-->67  	90%	
+NCBIHOXB4	666-->65   	90%	
+NCBIHOXB5	603-->36   	90%	
+NCBIHOXB6	860-->25   	90%	
+NCBIHOXB7	730-->21   	90%	
+NCBIHOXB8	1252-->16  	90%	X
+NCBIHOXB9	735-->39   	90%	
+NCBIHOXC10	577-->46   	90%	
+NCBIHOXC11	640-->45   	90%	
+NCBIHOXC12	574-->59   	90%	
+NCBIHOXC13	582-->30   	90%	
+NCBIHOXC4	1129-->56  	90%	
+NCBIHOXC5	556-->52   	90%	
+NCBIHOXC6	1319-->44  	90%	
+NCBIHOXC8	612-->4    	90%	X
+NCBIHOXC9	604-->28   	90%	
+NCBIHOXD1	462-->131  	90%	
+NCBIHOXD10	702-->48   	90%	
+NCBIHOXD11	627-->87   	90%	
+NCBIHOXD12	557-->49   	90%	
+NCBIHOXD13	534-->36   	90%	
+NCBIHOXD3	1602-->42  	90%	
+NCBIHOXD4	822-->67   	90%	
+NCBIHOXD8	1087-->75  	90%	
+NCBIHOXD9	758-->107  	90%	
+
+**********************
+Complete Positive Dataset Report
+**********************
+
+********
+NCBIHOXA1
+********
+ncbi efetch proteins: 858
+Proteins after filtering outliers: 856
+Proteins after clustering: 75
+
+********
+NCBIHOXA10
+********
+ncbi efetch proteins: 709
+Proteins after filtering outliers: 625
+Proteins after clustering: 82
+
+********
+NCBIHOXA11
+********
+ncbi efetch proteins: 660
+Proteins after filtering outliers: 631
+Proteins after clustering: 59
+
+********
+NCBIHOXA13
+********
+ncbi efetch proteins: 605
+Proteins after filtering outliers: 591
+Proteins after clustering: 41
+
+********
+NCBIHOXA2
+********
+ncbi efetch proteins: 702
+Proteins after filtering outliers: 549
+Proteins after clustering: 35
+
+********
+NCBIHOXA3
+********
+ncbi efetch proteins: 2512
+Proteins after filtering outliers: 2477
+Proteins after clustering: 43
+
+********
+NCBIHOXA4
+********
+ncbi efetch proteins: 563
+Proteins after filtering outliers: 534
+Proteins after clustering: 85
+
+********
+NCBIHOXA5
+********
+ncbi efetch proteins: 665
+Proteins after filtering outliers: 657
+Proteins after clustering: 57
+
+********
+NCBIHOXA6
+********
+ncbi efetch proteins: 740
+Proteins after filtering outliers: 563
+Proteins after clustering: 29
+
+********
+NCBIHOXA7
+********
+ncbi efetch proteins: 774
+Proteins after filtering outliers: 729
+Proteins after clustering: 63
+
+********
+NCBIHOXA9
+********
+ncbi efetch proteins: 688
+Proteins after filtering outliers: 605
+Proteins after clustering: 55
+
+********
+NCBIHOXB1
+********
+ncbi efetch proteins: 620
+Proteins after filtering outliers: 586
+Proteins after clustering: 129
+
+********
+NCBIHOXB13
+********
+ncbi efetch proteins: 512
+Proteins after filtering outliers: 436
+Proteins after clustering: 66
+
+********
+NCBIHOXB2
+********
+ncbi efetch proteins: 606
+Proteins after filtering outliers: 539
+Proteins after clustering: 131
+
+********
+NCBIHOXB3
+********
+ncbi efetch proteins: 2341
+Proteins after filtering outliers: 2197
+Proteins after clustering: 67
+
+********
+NCBIHOXB4
+********
+ncbi efetch proteins: 666
+Proteins after filtering outliers: 546
+Proteins after clustering: 65
+
+********
+NCBIHOXB5
+********
+ncbi efetch proteins: 603
+Proteins after filtering outliers: 496
+Proteins after clustering: 36
+
+********
+NCBIHOXB6
+********
+ncbi efetch proteins: 860
+Proteins after filtering outliers: 670
+Proteins after clustering: 25
+
+********
+NCBIHOXB7
+********
+ncbi efetch proteins: 730
+Proteins after filtering outliers: 519
+Proteins after clustering: 21
+
+********
+NCBIHOXB8
+********
+ncbi efetch proteins: 1252
+Proteins after filtering outliers: 1094
+Proteins after clustering: 16
+Not enough data in class, the entire class will be removed from final data(16 < 20)
+
+********
+NCBIHOXB9
+********
+ncbi efetch proteins: 735
+Proteins after filtering outliers: 538
+Proteins after clustering: 39
+
+********
+NCBIHOXC10
+********
+ncbi efetch proteins: 577
+Proteins after filtering outliers: 535
+Proteins after clustering: 46
+
+********
+NCBIHOXC11
+********
+ncbi efetch proteins: 640
+Proteins after filtering outliers: 557
+Proteins after clustering: 45
+
+********
+NCBIHOXC12
+********
+ncbi efetch proteins: 574
+Proteins after filtering outliers: 553
+Proteins after clustering: 59
+
+********
+NCBIHOXC13
+********
+ncbi efetch proteins: 582
+Proteins after filtering outliers: 572
+Proteins after clustering: 30
+
+********
+NCBIHOXC4
+********
+ncbi efetch proteins: 1129
+Proteins after filtering outliers: 1005
+Proteins after clustering: 56
+
+********
+NCBIHOXC5
+********
+ncbi efetch proteins: 556
+Proteins after filtering outliers: 496
+Proteins after clustering: 52
+
+********
+NCBIHOXC6
+********
+ncbi efetch proteins: 1319
+Proteins after filtering outliers: 1309
+Proteins after clustering: 44
+
+********
+NCBIHOXC8
+********
+ncbi efetch proteins: 612
+Proteins after filtering outliers: 493
+Proteins after clustering: 4
+Not enough data in class, the entire class will be removed from final data(4 < 20)
+
+********
+NCBIHOXC9
+********
+ncbi efetch proteins: 604
+Proteins after filtering outliers: 557
+Proteins after clustering: 28
+
+********
+NCBIHOXD1
+********
+ncbi efetch proteins: 462
+Proteins after filtering outliers: 457
+Proteins after clustering: 131
+
+********
+NCBIHOXD10
+********
+ncbi efetch proteins: 702
+Proteins after filtering outliers: 682
+Proteins after clustering: 48
+
+********
+NCBIHOXD11
+********
+ncbi efetch proteins: 627
+Proteins after filtering outliers: 622
+Proteins after clustering: 87
+
+********
+NCBIHOXD12
+********
+ncbi efetch proteins: 557
+Proteins after filtering outliers: 511
+Proteins after clustering: 49
+
+********
+NCBIHOXD13
+********
+ncbi efetch proteins: 534
+Proteins after filtering outliers: 507
+Proteins after clustering: 36
+
+********
+NCBIHOXD3
+********
+ncbi efetch proteins: 1602
+Proteins after filtering outliers: 1567
+Proteins after clustering: 42
+
+********
+NCBIHOXD4
+********
+ncbi efetch proteins: 822
+Proteins after filtering outliers: 777
+Proteins after clustering: 67
+
+********
+NCBIHOXD8
+********
+ncbi efetch proteins: 1087
+Proteins after filtering outliers: 1006
+Proteins after clustering: 75
+
+********
+NCBIHOXD9
+********
+ncbi efetch proteins: 758
+Proteins after filtering outliers: 707
+Proteins after clustering: 107

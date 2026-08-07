@@ -79,7 +79,9 @@ def thin_data(data, ram = "32G",p_identity="50",mode = "diamond"):
             os.remove(temp_output)
     elif mode == "mmseqs":
         p_identity = str(int(p_identity)/100)
-        subprocess.run(["mmseqs","easy-cluster",temp_input,temp_output,"temp/","--min-seq-id",p_identity,"-c","0.8","--cov-mode","0"])
+        #not sure, but i think cov is redundant when below p_identity anyways so... keeping it cause i dont want to redo tests, dont think it has major influence(if any) 
+        cov = 0.6 if float(p_identity) > 0.7 else float(p_identity)-0.1 
+        subprocess.run(["mmseqs","easy-cluster",temp_input,temp_output,"temp/","--min-seq-id",p_identity,"-c",str(cov),"--cov-mode","0"],stdout=subprocess.DEVNULL,stderr=subprocess.STDOUT)
         """
         with open(temp_output+"_cluster.tsv", "r") as file:
             tsv = file.read().replace("\n\t","\t")
@@ -151,7 +153,7 @@ def filter_outliers_all_graphic(parsed_dict,folder,prefix = "boxplot",whisk = 2)
     sns.set_style('whitegrid')
     plt.xticks(rotation=30)
     ax = sns.countplot(x='Gene',data=df)
-    
+    print(df)
     ax.bar_label(ax.containers[0])
     plt.savefig(os.path.join(folder,prefix + "_counts.png"))
 def filter_outliers_length_data(flat_dict,whisk = 2):
@@ -219,6 +221,125 @@ def splice_aware_filter_attmept1(dict1,prefix,folder, ident_threshold="80",mode=
         file.write("\n".join(short_report))
         file.write("\n".join(log))
     return combined_all_filtered 
+def split_fasta(train,test,fasta):
+    train_records = []
+    test_records = []
+    
+    for record in SeqIO.parse(fasta, "fasta"):
+        if str(record.id) in train:
+            train_records.append(record)
+        elif str(record.id) in test:
+            test_records.append(record)
+        
+    SeqIO.write(train_records,os.path.join("temp","temp_train.fasta"),"fasta")
+    SeqIO.write(test_records,os.path.join("temp","temp_test.fasta"),"fasta")
+    
+def get_train_test_alignment(fasta,csv,prot_dict,output,filter=0.3,pool_size=20,png_output=None):
+    from multiprocessing.pool import ThreadPool as Pool
+   
+    
+    
+    #yeah i dont know this is so messy. dont know why i didnt just move the pooling in prev for loop, forced locks now. like idk
+    
+    def init_pool_processes( aligner,prot_dict,train_ids):
+        global aligner_object,protein_dict,train_ids_list
+        protein_dict = prot_dict
+        aligner_object = aligner
+        
+        train_ids_list = train_ids
+        
+    def align(test_id):
+        test_seq = re.sub("[UJXOBZ]","", protein_dict[test_id]["seq"])
+        best_pident = -1
+                    
+        best_id = None
+        best_aln = None
+        
+
+        for train_id in train_ids_list:
+            train_seq = re.sub("[UJXOBZ]","",prot_dict[train_id]["seq"])
+            global_aln = aligner.align(train_seq,test_seq)[0]
+            counts = global_aln.counts()
+            cur_pident = counts.identities / global_aln.length
+            if cur_pident > best_pident:
+                best_pident = cur_pident
+                #lock should protect this :)
+                best_id = train_id
+                best_aln = global_aln
+        """
+        if best_pident > filter:
+            print(f"test id: {test_id}")
+            print(f"train id: {best_id}")
+            print(f"pident: {best_pident}")
+            #print(best_aln)
+        """
+        return test_id,best_pident,best_id
+    
+    df = pd.read_csv(csv)
+    train = set(df[df["test_split"] == 0]["identifier"])
+    test = set(df[df["test_split"] == 2]["identifier"])
+    df = df.reset_index().set_index('identifier',drop=False)
+    aln = os.path.join("temp","temp_aln.m8")
+    #XP_011508968.1	NP_689728.3
+    
+    genes = set(df["gene"])
+    from Bio.Align import substitution_matrices
+    matrix = substitution_matrices.load('BLOSUM62')
+    
+    from Bio import Align
+    aligner = Align.PairwiseAligner()
+    aligner.substitution_matrix = matrix
+    aligner.open_gap_score = -11
+    aligner.extend_gap_score = -1
+    df["train_max_pident"] = 0
+    
+    for gene in genes:
+        #make sure in same category
+        train_ids = set(df[df["gene"]==gene]["identifier"]).intersection(train) 
+        test_ids = set(df[df["gene"]==gene]["identifier"]).intersection(test) 
+        #split_fasta(train_ids,test_ids,fasta)
+        """
+        subprocess.run(["mmseqs","easy-search",os.path.join("temp","temp_test.fasta"),os.path.join("temp","temp_train.fasta"),aln,"temp","--format-mode","4","-e","1000000"],stdout=subprocess.DEVNULL,stderr=subprocess.STDOUT)
+        df_aln = pd.read_csv(aln,sep="\t")
+        df_aln = df_aln.sort_values(by="evalue",ascending=True)
+        """
+        pool = Pool(pool_size,initializer=init_pool_processes,initargs=(aligner,prot_dict,train_ids))
+        
+        results = pool.map(align,test_ids )
+        pool.close()
+        pool.join() 
+        """
+        df_test = df_aln[df_aln["query"] == test_id].iloc[:10]
+        
+        if len(df_test) == 0:
+            print(f"id: {test_id} has no match")
+            
+            train_ids = train 
+        else:   
+            train_ids = list(df_test["target"])
+        """
+        results = list(map(list, zip(*results)))
+        df.loc[results[0],"train_max_pident"] = results[1]
+        df.loc[results[0],"train_best_match"] = results[2]
+        
+        
+        
+        
+    df.drop(["index"], axis=1)
+    print(df[df["test_split"] == 2].sort_values(by="train_max_pident",ascending=False).to_string())#.to_string()
+    if not png_output is None:
+        plt.close()
+        sns.set_theme(rc={'figure.figsize':(40,8)})
+        sns.set_style('whitegrid')
+        ax = sns.boxplot(x=df[df["test_split"] == 2]["train_max_pident"])
+        plt.savefig(png_output)
+    df.to_csv(output,index=False)
+        
+
+    
+
+
+
 """
 with open('CYP_input.json',"r") as f:
     main_family_dict = json.load(f)
@@ -250,4 +371,8 @@ filter_outliers_all_graphic(parsed_data,prefix=prefix,whisk=whisk)
 combined_all_filtered = splice_aware_filter_attmept1(parsed_data,prefix, ident_threshold="85",mode="mmseqs",whisk=whisk)
 scripts.grab_data.save_fasta(combined_all_filtered,f"{prefix}.fasta")
 scripts.grab_data.save_csv_splits(combined_all_filtered,f"{prefix}.csv")
+
+NP_193443.4: MSVIAHVDHGKSTLTDSLVAAAGIIAQETAGDVRMTDTRADEAERGITIKSTGISLYYEMTDASLKSFTGARDGNEYLINLIDSPGHVDFSSEVTAALRITDGALVVVDCIEGVCVQTETVLRQSLGERIRPVLTVNKMDRCFLELKVDGEEAYQNFQRVIENANVIMATHEDPLLGDVQVYPEKGTVAFSAGLHGWAFTLTNFAKMYASKFGVSESKMMERLWGENFFDSATRKWTTKTGSPTCKRGFVQFCYEPIKIMINTCMNDQKDKLWPMLEKLGIQMKPDEKELMGKPLMKRVMQAWLPASTALLEMMIFHLPSPYTAQRYRVENLYEGPLDDKYAAAIRNCDPDGPLMLYVSKMIPASDKGRFFAFGRVFSGTVSTGMKVRIMGPNYVPGEKKDLYVKSVQRTVIWMGKKQETVEDVPCGNTVAMVGLDQFITKNGTLTNEKEVDAHPLRAMKFSVSPVVRVAVKCKLASDLPKLVEGLKRLAKSDPMVLCTMEESGEHIVAGAGELHIEICVKDLQDFMGGADIIVSDPVVSLRETVFERSCRTVMSKSPNKHNRLYMEARPMEDGLAEAIDEGRIGPSDDPKIRSKILAEEFGWDKDLAKKIWAFGPDTTGPNMVVDMCKGVQYLNEIKDSVVAGFQWASKEGPLAEENMRGVCYEVCDVVLHADAIHRGCGQMISTARRAIYASQLTAKPRLLEPVYMVEIQAPEGALGGIYSVLNQKRGHVFEEMQRPGTPLYNIKAYLPVVESFGFSGQLRAATSGQAFPQCVFDHWDMMSSDPLETGSQAATLVADIRKRKGLKLQMTPLSDYEDKLGNLJCVIMRNAATGGNLJCVIATG
+NP_200640.2: MDYDLLRSKKSIKRVESTKSNPWWWDSHIGLKNSKWLENNLDEMDRSVKRMVKLIEEDADSFAKKAEMYYQSRPELIALVDEFHRMYRALAERYENITGELRKGSPLELQSQGSGLSDISASDLSALWTSNEVNRLGRPPSGRRAPGFEYFLGNGGLPSDLYHKDGDDSASITDSELESDDSSVTNYPGYVSIGSDFQSLSKRIMDLEIELREAKERLRMQLEGNTESLLPRVKSETKFVDFPAKLAACEQELKDVNEKLQNSEDQIYILKSQLARYLPSGLDDEQSEGAASTQELDIETLSEELRITSLRLREAEKQNGIMRKEVEKSKSDDAKLKSLQDMLESAQKEAAAWKSKASADKREVVKLLDRISMLKSSLAGRDHEIRDLKTALSDAEEKIFPEKAQVKADIAKLLEEKIHRDDQFKELEANVRYLEDERRKVNNEKIEEEEKLKSEIEVLTLEKVEKGRCIETLSRKVSELESEISRLGSEIKARDDRTMEMEKEVEKQRRELEEVAEEKREVIRQLCFSLDYSRDEYKRLRIAFSGHPPTRPSSILAS
 """
+

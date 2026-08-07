@@ -1,0 +1,2194 @@
+**********
+Short Report
+**********
+
+homologous_superfamily_10	1557-->518 	75%	
+homologous_superfamily_100	71-->29    	75%	
+homologous_superfamily_1000	4-->2      	75%	X
+homologous_superfamily_10050	1-->1      	75%	X
+homologous_superfamily_10090	2-->1      	75%	X
+homologous_superfamily_1010	18-->1     	75%	X
+homologous_superfamily_10130	2-->2      	75%	X
+homologous_superfamily_10140	24-->4     	75%	X
+homologous_superfamily_10190	4-->1      	75%	X
+homologous_superfamily_1020	4-->4      	75%	X
+homologous_superfamily_1030	5-->1      	75%	X
+homologous_superfamily_1040	11-->1     	75%	X
+homologous_superfamily_10420	2-->1      	75%	X
+homologous_superfamily_10470	1-->1      	75%	X
+homologous_superfamily_10480	2-->2      	75%	X
+homologous_superfamily_10490	6-->4      	75%	X
+homologous_superfamily_1050	4-->3      	75%	X
+homologous_superfamily_10590	1-->1      	75%	X
+homologous_superfamily_1060	5-->4      	75%	X
+homologous_superfamily_1080	5-->1      	75%	X
+homologous_superfamily_10890	1-->1      	75%	X
+homologous_superfamily_10900	1-->1      	75%	X
+homologous_superfamily_10980	1-->1      	75%	X
+homologous_superfamily_11	14-->6     	75%	X
+homologous_superfamily_110	111-->31   	75%	
+homologous_superfamily_1100	35-->1     	75%	X
+homologous_superfamily_1110	7-->6      	75%	X
+homologous_superfamily_1120	7-->3      	75%	X
+homologous_superfamily_11210	1-->1      	75%	X
+homologous_superfamily_11260	2-->1      	75%	X
+homologous_superfamily_1130	3-->2      	75%	X
+homologous_superfamily_11340	1-->1      	75%	X
+homologous_superfamily_11350	4-->3      	75%	X
+homologous_superfamily_1140	1-->1      	75%	X
+homologous_superfamily_11530	1-->1      	75%	X
+homologous_superfamily_1180	1-->1      	75%	X
+homologous_superfamily_11950	1-->1      	75%	X
+homologous_superfamily_11980	4-->2      	75%	X
+homologous_superfamily_12	3-->3      	75%	X
+homologous_superfamily_120	27-->16    	75%	X
+homologous_superfamily_12050	1-->1      	75%	X
+homologous_superfamily_12100	1-->1      	75%	X
+homologous_superfamily_12120	1-->1      	75%	X
+homologous_superfamily_12190	2-->1      	75%	X
+homologous_superfamily_12350	3-->1      	75%	X
+homologous_superfamily_12360	1-->1      	75%	X
+homologous_superfamily_12430	14-->1     	75%	X
+homologous_superfamily_12620	1-->1      	75%	X
+homologous_superfamily_12650	20-->1     	75%	X
+homologous_superfamily_12760	5-->1      	75%	X
+homologous_superfamily_130	40-->12    	75%	X
+homologous_superfamily_1300	3-->1      	75%	X
+homologous_superfamily_1310	2-->1      	75%	X
+homologous_superfamily_1320	8-->1      	75%	X
+homologous_superfamily_1330	1-->1      	75%	X
+homologous_superfamily_1340	1-->1      	75%	X
+homologous_superfamily_1360	8-->4      	75%	X
+homologous_superfamily_1380	7-->5      	75%	X
+homologous_superfamily_1390	1-->1      	75%	X
+homologous_superfamily_140	202-->65   	75%	
+homologous_superfamily_1400	18-->1     	75%	X
+homologous_superfamily_141	3-->1      	75%	X
+homologous_superfamily_1410	1-->1      	75%	X
+homologous_superfamily_1430	4-->2      	75%	X
+homologous_superfamily_1440	7-->3      	75%	X
+homologous_superfamily_1450	23-->3     	75%	X
+homologous_superfamily_1460	48-->9     	75%	X
+homologous_superfamily_1470	10-->4     	75%	X
+homologous_superfamily_1480	13-->1     	75%	X
+homologous_superfamily_1490	2-->2      	75%	X
+homologous_superfamily_150	173-->62   	75%	
+homologous_superfamily_1500	8-->1      	75%	X
+homologous_superfamily_1510	4-->2      	75%	X
+homologous_superfamily_1520	6-->2      	75%	X
+homologous_superfamily_1530	5-->2      	75%	X
+homologous_superfamily_1540	2-->2      	75%	X
+homologous_superfamily_1550	5-->1      	75%	X
+homologous_superfamily_1560	2-->2      	75%	X
+homologous_superfamily_1580	9-->2      	75%	X
+homologous_superfamily_1590	1-->1      	75%	X
+homologous_superfamily_160	19-->12    	75%	X
+homologous_superfamily_1600	1-->1      	75%	X
+homologous_superfamily_1610	1-->1      	75%	X
+homologous_superfamily_1630	3-->2      	75%	X
+homologous_superfamily_1650	1-->1      	75%	X
+homologous_superfamily_1660	1-->1      	75%	X
+homologous_superfamily_170	52-->22    	75%	
+homologous_superfamily_1770	1-->1      	75%	X
+homologous_superfamily_180	51-->20    	75%	
+homologous_superfamily_1820	83-->25    	75%	
+homologous_superfamily_1840	2-->1      	75%	X
+homologous_superfamily_1860	1-->1      	75%	X
+homologous_superfamily_1870	1-->1      	75%	X
+homologous_superfamily_1880	4-->1      	75%	X
+homologous_superfamily_190	44-->14    	75%	X
+homologous_superfamily_1900	5-->2      	75%	X
+homologous_superfamily_1910	4-->2      	75%	X
+homologous_superfamily_1920	10-->1     	75%	X
+homologous_superfamily_1940	2-->2      	75%	X
+homologous_superfamily_1950	24-->2     	75%	X
+homologous_superfamily_1970	6-->3      	75%	X
+homologous_superfamily_20	645-->221  	75%	
+homologous_superfamily_200	61-->28    	75%	
+homologous_superfamily_2000	12-->9     	75%	X
+homologous_superfamily_2010	2-->2      	75%	X
+homologous_superfamily_2020	3-->3      	75%	X
+homologous_superfamily_2030	11-->3     	75%	X
+homologous_superfamily_2040	2-->1      	75%	X
+homologous_superfamily_2050	33-->4     	75%	X
+homologous_superfamily_2060	2-->2      	75%	X
+homologous_superfamily_2070	15-->1     	75%	X
+homologous_superfamily_2080	2-->1      	75%	X
+homologous_superfamily_210	34-->9     	75%	X
+homologous_superfamily_2140	1-->1      	75%	X
+homologous_superfamily_2150	1-->1      	75%	X
+homologous_superfamily_2170	6-->3      	75%	X
+homologous_superfamily_2190	10-->1     	75%	X
+homologous_superfamily_220	35-->16    	75%	X
+homologous_superfamily_2200	3-->1      	75%	X
+homologous_superfamily_2210	2-->1      	75%	X
+homologous_superfamily_2220	34-->1     	75%	X
+homologous_superfamily_2230	1-->1      	75%	X
+homologous_superfamily_2240	1-->1      	75%	X
+homologous_superfamily_2270	1-->1      	75%	X
+homologous_superfamily_230	63-->22    	75%	
+homologous_superfamily_240	17-->9     	75%	X
+homologous_superfamily_2420	2-->1      	75%	X
+homologous_superfamily_2430	2-->1      	75%	X
+homologous_superfamily_2440	8-->1      	75%	X
+homologous_superfamily_2450	1-->1      	75%	X
+homologous_superfamily_2460	5-->2      	75%	X
+homologous_superfamily_2470	5-->2      	75%	X
+homologous_superfamily_2480	11-->3     	75%	X
+homologous_superfamily_2490	1-->1      	75%	X
+homologous_superfamily_250	19-->1     	75%	X
+homologous_superfamily_2510	5-->3      	75%	X
+homologous_superfamily_2520	6-->1      	75%	X
+homologous_superfamily_2590	26-->4     	75%	X
+homologous_superfamily_260	61-->12    	75%	X
+homologous_superfamily_2600	1-->1      	75%	X
+homologous_superfamily_2610	1-->1      	75%	X
+homologous_superfamily_2630	1-->1      	75%	X
+homologous_superfamily_2650	2-->1      	75%	X
+homologous_superfamily_2660	3-->2      	75%	X
+homologous_superfamily_2690	1-->1      	75%	X
+homologous_superfamily_270	24-->10    	75%	X
+homologous_superfamily_280	1-->1      	75%	X
+homologous_superfamily_2860	2-->2      	75%	X
+homologous_superfamily_2890	3-->1      	75%	X
+homologous_superfamily_290	5-->5      	75%	X
+homologous_superfamily_2900	5-->2      	75%	X
+homologous_superfamily_2930	4-->2      	75%	X
+homologous_superfamily_2950	1-->1      	75%	X
+homologous_superfamily_30	459-->168  	75%	
+homologous_superfamily_300	11-->9     	75%	X
+homologous_superfamily_3000	4-->1      	75%	X
+homologous_superfamily_3020	1-->1      	75%	X
+homologous_superfamily_310	18-->2     	75%	X
+homologous_superfamily_3110	1-->1      	75%	X
+homologous_superfamily_3120	4-->2      	75%	X
+homologous_superfamily_3180	2-->1      	75%	X
+homologous_superfamily_320	5-->1      	75%	X
+homologous_superfamily_3220	1-->1      	75%	X
+homologous_superfamily_3290	1-->1      	75%	X
+homologous_superfamily_330	88-->32    	75%	
+homologous_superfamily_3310	2-->2      	75%	X
+homologous_superfamily_3370	2-->2      	75%	X
+homologous_superfamily_340	42-->16    	75%	X
+homologous_superfamily_3430	5-->1      	75%	X
+homologous_superfamily_3490	1-->1      	75%	X
+homologous_superfamily_350	20-->4     	75%	X
+homologous_superfamily_360	10-->2     	75%	X
+homologous_superfamily_370	25-->5     	75%	X
+homologous_superfamily_380	17-->2     	75%	X
+homologous_superfamily_3810	1-->1      	75%	X
+homologous_superfamily_3850	5-->1      	75%	X
+homologous_superfamily_390	2-->2      	75%	X
+homologous_superfamily_3960	1-->1      	75%	X
+homologous_superfamily_3990	1-->1      	75%	X
+homologous_superfamily_40	220-->96   	75%	
+homologous_superfamily_4010	3-->1      	75%	X
+homologous_superfamily_4060	1-->1      	75%	X
+homologous_superfamily_41	1-->1      	75%	X
+homologous_superfamily_410	7-->5      	75%	X
+homologous_superfamily_4100	5-->1      	75%	X
+homologous_superfamily_4160	1-->1      	75%	X
+homologous_superfamily_420	5-->4      	75%	X
+homologous_superfamily_4270	2-->1      	75%	X
+homologous_superfamily_4280	2-->1      	75%	X
+homologous_superfamily_4290	2-->1      	75%	X
+homologous_superfamily_4310	1-->1      	75%	X
+homologous_superfamily_4330	2-->1      	75%	X
+homologous_superfamily_44	1-->1      	75%	X
+homologous_superfamily_440	3-->2      	75%	X
+homologous_superfamily_450	2-->2      	75%	X
+homologous_superfamily_460	3-->1      	75%	X
+homologous_superfamily_4770	2-->1      	75%	X
+homologous_superfamily_510	6-->1      	75%	X
+homologous_superfamily_5160	1-->1      	75%	X
+homologous_superfamily_520	3-->2      	75%	X
+homologous_superfamily_530	3-->1      	75%	X
+homologous_superfamily_540	4-->4      	75%	X
+homologous_superfamily_550	15-->8     	75%	X
+homologous_superfamily_560	9-->3      	75%	X
+homologous_superfamily_570	4-->4      	75%	X
+homologous_superfamily_580	4-->4      	75%	X
+homologous_superfamily_590	21-->8     	75%	X
+homologous_superfamily_60	366-->121  	75%	
+homologous_superfamily_600	24-->9     	75%	X
+homologous_superfamily_610	17-->2     	75%	X
+homologous_superfamily_620	32-->19    	75%	X
+homologous_superfamily_630	7-->1      	75%	X
+homologous_superfamily_640	5-->3      	75%	X
+homologous_superfamily_650	48-->11    	75%	X
+homologous_superfamily_660	3-->3      	75%	X
+homologous_superfamily_670	2-->2      	75%	X
+homologous_superfamily_680	16-->5     	75%	X
+homologous_superfamily_690	4-->3      	75%	X
+homologous_superfamily_70	105-->54   	75%	
+homologous_superfamily_700	16-->4     	75%	X
+homologous_superfamily_710	18-->1     	75%	X
+homologous_superfamily_720	114-->40   	75%	
+homologous_superfamily_730	13-->8     	75%	X
+homologous_superfamily_740	6-->4      	75%	X
+homologous_superfamily_760	2-->2      	75%	X
+homologous_superfamily_770	15-->6     	75%	X
+homologous_superfamily_780	9-->6      	75%	X
+homologous_superfamily_790	23-->12    	75%	X
+homologous_superfamily_80	216-->56   	75%	
+homologous_superfamily_800	3-->3      	75%	X
+homologous_superfamily_810	13-->1     	75%	X
+homologous_superfamily_820	13-->5     	75%	X
+homologous_superfamily_830	9-->4      	75%	X
+homologous_superfamily_840	2-->2      	75%	X
+homologous_superfamily_850	6-->6      	75%	X
+homologous_superfamily_860	3-->2      	75%	X
+homologous_superfamily_870	6-->5      	75%	X
+homologous_superfamily_90	312-->86   	75%	
+homologous_superfamily_900	5-->1      	75%	X
+homologous_superfamily_910	2-->2      	75%	X
+homologous_superfamily_920	1-->1      	75%	X
+homologous_superfamily_930	3-->2      	75%	X
+homologous_superfamily_940	1-->1      	75%	X
+homologous_superfamily_970	11-->1     	75%	X
+homologous_superfamily_990	1-->1      	75%	X
+
+**********************
+Complete Positive Dataset Report
+**********************
+
+********
+homologous_superfamily_10
+********
+ncbi efetch proteins: 1557
+Proteins after filtering outliers: 1534
+Proteins after clustering: 518
+
+********
+homologous_superfamily_100
+********
+ncbi efetch proteins: 71
+Proteins after filtering outliers: 59
+Proteins after clustering: 29
+
+********
+homologous_superfamily_1000
+********
+ncbi efetch proteins: 4
+Proteins after filtering outliers: 4
+Proteins after clustering: 2
+Not enough data in class, the entire class will be removed from final data(2 < 20)
+
+********
+homologous_superfamily_10050
+********
+ncbi efetch proteins: 1
+Proteins after filtering outliers: 1
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_10090
+********
+ncbi efetch proteins: 2
+Proteins after filtering outliers: 2
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_1010
+********
+ncbi efetch proteins: 18
+Proteins after filtering outliers: 10
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_10130
+********
+ncbi efetch proteins: 2
+Proteins after filtering outliers: 2
+Proteins after clustering: 2
+Not enough data in class, the entire class will be removed from final data(2 < 20)
+
+********
+homologous_superfamily_10140
+********
+ncbi efetch proteins: 24
+Proteins after filtering outliers: 23
+Proteins after clustering: 4
+Not enough data in class, the entire class will be removed from final data(4 < 20)
+
+********
+homologous_superfamily_10190
+********
+ncbi efetch proteins: 4
+Proteins after filtering outliers: 4
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_1020
+********
+ncbi efetch proteins: 4
+Proteins after filtering outliers: 4
+Proteins after clustering: 4
+Not enough data in class, the entire class will be removed from final data(4 < 20)
+
+********
+homologous_superfamily_1030
+********
+ncbi efetch proteins: 5
+Proteins after filtering outliers: 3
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_1040
+********
+ncbi efetch proteins: 11
+Proteins after filtering outliers: 10
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_10420
+********
+ncbi efetch proteins: 2
+Proteins after filtering outliers: 2
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_10470
+********
+ncbi efetch proteins: 1
+Proteins after filtering outliers: 1
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_10480
+********
+ncbi efetch proteins: 2
+Proteins after filtering outliers: 2
+Proteins after clustering: 2
+Not enough data in class, the entire class will be removed from final data(2 < 20)
+
+********
+homologous_superfamily_10490
+********
+ncbi efetch proteins: 6
+Proteins after filtering outliers: 6
+Proteins after clustering: 4
+Not enough data in class, the entire class will be removed from final data(4 < 20)
+
+********
+homologous_superfamily_1050
+********
+ncbi efetch proteins: 4
+Proteins after filtering outliers: 4
+Proteins after clustering: 3
+Not enough data in class, the entire class will be removed from final data(3 < 20)
+
+********
+homologous_superfamily_10590
+********
+ncbi efetch proteins: 1
+Proteins after filtering outliers: 1
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_1060
+********
+ncbi efetch proteins: 5
+Proteins after filtering outliers: 5
+Proteins after clustering: 4
+Not enough data in class, the entire class will be removed from final data(4 < 20)
+
+********
+homologous_superfamily_1080
+********
+ncbi efetch proteins: 5
+Proteins after filtering outliers: 4
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_10890
+********
+ncbi efetch proteins: 1
+Proteins after filtering outliers: 1
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_10900
+********
+ncbi efetch proteins: 1
+Proteins after filtering outliers: 1
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_10980
+********
+ncbi efetch proteins: 1
+Proteins after filtering outliers: 1
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_11
+********
+ncbi efetch proteins: 14
+Proteins after filtering outliers: 12
+Proteins after clustering: 6
+Not enough data in class, the entire class will be removed from final data(6 < 20)
+
+********
+homologous_superfamily_110
+********
+ncbi efetch proteins: 111
+Proteins after filtering outliers: 96
+Proteins after clustering: 31
+
+********
+homologous_superfamily_1100
+********
+ncbi efetch proteins: 35
+Proteins after filtering outliers: 32
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_1110
+********
+ncbi efetch proteins: 7
+Proteins after filtering outliers: 7
+Proteins after clustering: 6
+Not enough data in class, the entire class will be removed from final data(6 < 20)
+
+********
+homologous_superfamily_1120
+********
+ncbi efetch proteins: 7
+Proteins after filtering outliers: 7
+Proteins after clustering: 3
+Not enough data in class, the entire class will be removed from final data(3 < 20)
+
+********
+homologous_superfamily_11210
+********
+ncbi efetch proteins: 1
+Proteins after filtering outliers: 1
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_11260
+********
+ncbi efetch proteins: 2
+Proteins after filtering outliers: 2
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_1130
+********
+ncbi efetch proteins: 3
+Proteins after filtering outliers: 3
+Proteins after clustering: 2
+Not enough data in class, the entire class will be removed from final data(2 < 20)
+
+********
+homologous_superfamily_11340
+********
+ncbi efetch proteins: 1
+Proteins after filtering outliers: 1
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_11350
+********
+ncbi efetch proteins: 4
+Proteins after filtering outliers: 4
+Proteins after clustering: 3
+Not enough data in class, the entire class will be removed from final data(3 < 20)
+
+********
+homologous_superfamily_1140
+********
+ncbi efetch proteins: 1
+Proteins after filtering outliers: 1
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_11530
+********
+ncbi efetch proteins: 1
+Proteins after filtering outliers: 1
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_1180
+********
+ncbi efetch proteins: 1
+Proteins after filtering outliers: 1
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_11950
+********
+ncbi efetch proteins: 1
+Proteins after filtering outliers: 1
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_11980
+********
+ncbi efetch proteins: 4
+Proteins after filtering outliers: 4
+Proteins after clustering: 2
+Not enough data in class, the entire class will be removed from final data(2 < 20)
+
+********
+homologous_superfamily_12
+********
+ncbi efetch proteins: 3
+Proteins after filtering outliers: 3
+Proteins after clustering: 3
+Not enough data in class, the entire class will be removed from final data(3 < 20)
+
+********
+homologous_superfamily_120
+********
+ncbi efetch proteins: 27
+Proteins after filtering outliers: 26
+Proteins after clustering: 16
+Not enough data in class, the entire class will be removed from final data(16 < 20)
+
+********
+homologous_superfamily_12050
+********
+ncbi efetch proteins: 1
+Proteins after filtering outliers: 1
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_12100
+********
+ncbi efetch proteins: 1
+Proteins after filtering outliers: 1
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_12120
+********
+ncbi efetch proteins: 1
+Proteins after filtering outliers: 1
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_12190
+********
+ncbi efetch proteins: 2
+Proteins after filtering outliers: 2
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_12350
+********
+ncbi efetch proteins: 3
+Proteins after filtering outliers: 3
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_12360
+********
+ncbi efetch proteins: 1
+Proteins after filtering outliers: 1
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_12430
+********
+ncbi efetch proteins: 14
+Proteins after filtering outliers: 13
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_12620
+********
+ncbi efetch proteins: 1
+Proteins after filtering outliers: 1
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_12650
+********
+ncbi efetch proteins: 20
+Proteins after filtering outliers: 17
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_12760
+********
+ncbi efetch proteins: 5
+Proteins after filtering outliers: 5
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_130
+********
+ncbi efetch proteins: 40
+Proteins after filtering outliers: 40
+Proteins after clustering: 12
+Not enough data in class, the entire class will be removed from final data(12 < 20)
+
+********
+homologous_superfamily_1300
+********
+ncbi efetch proteins: 3
+Proteins after filtering outliers: 3
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_1310
+********
+ncbi efetch proteins: 2
+Proteins after filtering outliers: 2
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_1320
+********
+ncbi efetch proteins: 8
+Proteins after filtering outliers: 8
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_1330
+********
+ncbi efetch proteins: 1
+Proteins after filtering outliers: 1
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_1340
+********
+ncbi efetch proteins: 1
+Proteins after filtering outliers: 1
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_1360
+********
+ncbi efetch proteins: 8
+Proteins after filtering outliers: 8
+Proteins after clustering: 4
+Not enough data in class, the entire class will be removed from final data(4 < 20)
+
+********
+homologous_superfamily_1380
+********
+ncbi efetch proteins: 7
+Proteins after filtering outliers: 7
+Proteins after clustering: 5
+Not enough data in class, the entire class will be removed from final data(5 < 20)
+
+********
+homologous_superfamily_1390
+********
+ncbi efetch proteins: 1
+Proteins after filtering outliers: 1
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_140
+********
+ncbi efetch proteins: 202
+Proteins after filtering outliers: 198
+Proteins after clustering: 65
+
+********
+homologous_superfamily_1400
+********
+ncbi efetch proteins: 18
+Proteins after filtering outliers: 16
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_141
+********
+ncbi efetch proteins: 3
+Proteins after filtering outliers: 3
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_1410
+********
+ncbi efetch proteins: 1
+Proteins after filtering outliers: 1
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_1430
+********
+ncbi efetch proteins: 4
+Proteins after filtering outliers: 4
+Proteins after clustering: 2
+Not enough data in class, the entire class will be removed from final data(2 < 20)
+
+********
+homologous_superfamily_1440
+********
+ncbi efetch proteins: 7
+Proteins after filtering outliers: 7
+Proteins after clustering: 3
+Not enough data in class, the entire class will be removed from final data(3 < 20)
+
+********
+homologous_superfamily_1450
+********
+ncbi efetch proteins: 23
+Proteins after filtering outliers: 20
+Proteins after clustering: 3
+Not enough data in class, the entire class will be removed from final data(3 < 20)
+
+********
+homologous_superfamily_1460
+********
+ncbi efetch proteins: 48
+Proteins after filtering outliers: 47
+Proteins after clustering: 9
+Not enough data in class, the entire class will be removed from final data(9 < 20)
+
+********
+homologous_superfamily_1470
+********
+ncbi efetch proteins: 10
+Proteins after filtering outliers: 10
+Proteins after clustering: 4
+Not enough data in class, the entire class will be removed from final data(4 < 20)
+
+********
+homologous_superfamily_1480
+********
+ncbi efetch proteins: 13
+Proteins after filtering outliers: 11
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_1490
+********
+ncbi efetch proteins: 2
+Proteins after filtering outliers: 2
+Proteins after clustering: 2
+Not enough data in class, the entire class will be removed from final data(2 < 20)
+
+********
+homologous_superfamily_150
+********
+ncbi efetch proteins: 173
+Proteins after filtering outliers: 173
+Proteins after clustering: 62
+
+********
+homologous_superfamily_1500
+********
+ncbi efetch proteins: 8
+Proteins after filtering outliers: 6
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_1510
+********
+ncbi efetch proteins: 4
+Proteins after filtering outliers: 4
+Proteins after clustering: 2
+Not enough data in class, the entire class will be removed from final data(2 < 20)
+
+********
+homologous_superfamily_1520
+********
+ncbi efetch proteins: 6
+Proteins after filtering outliers: 5
+Proteins after clustering: 2
+Not enough data in class, the entire class will be removed from final data(2 < 20)
+
+********
+homologous_superfamily_1530
+********
+ncbi efetch proteins: 5
+Proteins after filtering outliers: 4
+Proteins after clustering: 2
+Not enough data in class, the entire class will be removed from final data(2 < 20)
+
+********
+homologous_superfamily_1540
+********
+ncbi efetch proteins: 2
+Proteins after filtering outliers: 2
+Proteins after clustering: 2
+Not enough data in class, the entire class will be removed from final data(2 < 20)
+
+********
+homologous_superfamily_1550
+********
+ncbi efetch proteins: 5
+Proteins after filtering outliers: 5
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_1560
+********
+ncbi efetch proteins: 2
+Proteins after filtering outliers: 2
+Proteins after clustering: 2
+Not enough data in class, the entire class will be removed from final data(2 < 20)
+
+********
+homologous_superfamily_1580
+********
+ncbi efetch proteins: 9
+Proteins after filtering outliers: 7
+Proteins after clustering: 2
+Not enough data in class, the entire class will be removed from final data(2 < 20)
+
+********
+homologous_superfamily_1590
+********
+ncbi efetch proteins: 1
+Proteins after filtering outliers: 1
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_160
+********
+ncbi efetch proteins: 19
+Proteins after filtering outliers: 18
+Proteins after clustering: 12
+Not enough data in class, the entire class will be removed from final data(12 < 20)
+
+********
+homologous_superfamily_1600
+********
+ncbi efetch proteins: 1
+Proteins after filtering outliers: 1
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_1610
+********
+ncbi efetch proteins: 1
+Proteins after filtering outliers: 1
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_1630
+********
+ncbi efetch proteins: 3
+Proteins after filtering outliers: 3
+Proteins after clustering: 2
+Not enough data in class, the entire class will be removed from final data(2 < 20)
+
+********
+homologous_superfamily_1650
+********
+ncbi efetch proteins: 1
+Proteins after filtering outliers: 1
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_1660
+********
+ncbi efetch proteins: 1
+Proteins after filtering outliers: 1
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_170
+********
+ncbi efetch proteins: 52
+Proteins after filtering outliers: 51
+Proteins after clustering: 22
+
+********
+homologous_superfamily_1770
+********
+ncbi efetch proteins: 1
+Proteins after filtering outliers: 1
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_180
+********
+ncbi efetch proteins: 51
+Proteins after filtering outliers: 51
+Proteins after clustering: 20
+
+********
+homologous_superfamily_1820
+********
+ncbi efetch proteins: 83
+Proteins after filtering outliers: 83
+Proteins after clustering: 25
+
+********
+homologous_superfamily_1840
+********
+ncbi efetch proteins: 2
+Proteins after filtering outliers: 2
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_1860
+********
+ncbi efetch proteins: 1
+Proteins after filtering outliers: 1
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_1870
+********
+ncbi efetch proteins: 1
+Proteins after filtering outliers: 1
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_1880
+********
+ncbi efetch proteins: 4
+Proteins after filtering outliers: 4
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_190
+********
+ncbi efetch proteins: 44
+Proteins after filtering outliers: 44
+Proteins after clustering: 14
+Not enough data in class, the entire class will be removed from final data(14 < 20)
+
+********
+homologous_superfamily_1900
+********
+ncbi efetch proteins: 5
+Proteins after filtering outliers: 4
+Proteins after clustering: 2
+Not enough data in class, the entire class will be removed from final data(2 < 20)
+
+********
+homologous_superfamily_1910
+********
+ncbi efetch proteins: 4
+Proteins after filtering outliers: 4
+Proteins after clustering: 2
+Not enough data in class, the entire class will be removed from final data(2 < 20)
+
+********
+homologous_superfamily_1920
+********
+ncbi efetch proteins: 10
+Proteins after filtering outliers: 8
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_1940
+********
+ncbi efetch proteins: 2
+Proteins after filtering outliers: 2
+Proteins after clustering: 2
+Not enough data in class, the entire class will be removed from final data(2 < 20)
+
+********
+homologous_superfamily_1950
+********
+ncbi efetch proteins: 24
+Proteins after filtering outliers: 19
+Proteins after clustering: 2
+Not enough data in class, the entire class will be removed from final data(2 < 20)
+
+********
+homologous_superfamily_1970
+********
+ncbi efetch proteins: 6
+Proteins after filtering outliers: 6
+Proteins after clustering: 3
+Not enough data in class, the entire class will be removed from final data(3 < 20)
+
+********
+homologous_superfamily_20
+********
+ncbi efetch proteins: 645
+Proteins after filtering outliers: 631
+Proteins after clustering: 221
+
+********
+homologous_superfamily_200
+********
+ncbi efetch proteins: 61
+Proteins after filtering outliers: 60
+Proteins after clustering: 28
+
+********
+homologous_superfamily_2000
+********
+ncbi efetch proteins: 12
+Proteins after filtering outliers: 12
+Proteins after clustering: 9
+Not enough data in class, the entire class will be removed from final data(9 < 20)
+
+********
+homologous_superfamily_2010
+********
+ncbi efetch proteins: 2
+Proteins after filtering outliers: 2
+Proteins after clustering: 2
+Not enough data in class, the entire class will be removed from final data(2 < 20)
+
+********
+homologous_superfamily_2020
+********
+ncbi efetch proteins: 3
+Proteins after filtering outliers: 3
+Proteins after clustering: 3
+Not enough data in class, the entire class will be removed from final data(3 < 20)
+
+********
+homologous_superfamily_2030
+********
+ncbi efetch proteins: 11
+Proteins after filtering outliers: 11
+Proteins after clustering: 3
+Not enough data in class, the entire class will be removed from final data(3 < 20)
+
+********
+homologous_superfamily_2040
+********
+ncbi efetch proteins: 2
+Proteins after filtering outliers: 2
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_2050
+********
+ncbi efetch proteins: 33
+Proteins after filtering outliers: 33
+Proteins after clustering: 4
+Not enough data in class, the entire class will be removed from final data(4 < 20)
+
+********
+homologous_superfamily_2060
+********
+ncbi efetch proteins: 2
+Proteins after filtering outliers: 2
+Proteins after clustering: 2
+Not enough data in class, the entire class will be removed from final data(2 < 20)
+
+********
+homologous_superfamily_2070
+********
+ncbi efetch proteins: 15
+Proteins after filtering outliers: 11
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_2080
+********
+ncbi efetch proteins: 2
+Proteins after filtering outliers: 2
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_210
+********
+ncbi efetch proteins: 34
+Proteins after filtering outliers: 34
+Proteins after clustering: 9
+Not enough data in class, the entire class will be removed from final data(9 < 20)
+
+********
+homologous_superfamily_2140
+********
+ncbi efetch proteins: 1
+Proteins after filtering outliers: 1
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_2150
+********
+ncbi efetch proteins: 1
+Proteins after filtering outliers: 1
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_2170
+********
+ncbi efetch proteins: 6
+Proteins after filtering outliers: 6
+Proteins after clustering: 3
+Not enough data in class, the entire class will be removed from final data(3 < 20)
+
+********
+homologous_superfamily_2190
+********
+ncbi efetch proteins: 10
+Proteins after filtering outliers: 8
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_220
+********
+ncbi efetch proteins: 35
+Proteins after filtering outliers: 35
+Proteins after clustering: 16
+Not enough data in class, the entire class will be removed from final data(16 < 20)
+
+********
+homologous_superfamily_2200
+********
+ncbi efetch proteins: 3
+Proteins after filtering outliers: 3
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_2210
+********
+ncbi efetch proteins: 2
+Proteins after filtering outliers: 2
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_2220
+********
+ncbi efetch proteins: 34
+Proteins after filtering outliers: 25
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_2230
+********
+ncbi efetch proteins: 1
+Proteins after filtering outliers: 1
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_2240
+********
+ncbi efetch proteins: 1
+Proteins after filtering outliers: 1
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_2270
+********
+ncbi efetch proteins: 1
+Proteins after filtering outliers: 1
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_230
+********
+ncbi efetch proteins: 63
+Proteins after filtering outliers: 63
+Proteins after clustering: 22
+
+********
+homologous_superfamily_240
+********
+ncbi efetch proteins: 17
+Proteins after filtering outliers: 17
+Proteins after clustering: 9
+Not enough data in class, the entire class will be removed from final data(9 < 20)
+
+********
+homologous_superfamily_2420
+********
+ncbi efetch proteins: 2
+Proteins after filtering outliers: 2
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_2430
+********
+ncbi efetch proteins: 2
+Proteins after filtering outliers: 2
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_2440
+********
+ncbi efetch proteins: 8
+Proteins after filtering outliers: 8
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_2450
+********
+ncbi efetch proteins: 1
+Proteins after filtering outliers: 1
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_2460
+********
+ncbi efetch proteins: 5
+Proteins after filtering outliers: 5
+Proteins after clustering: 2
+Not enough data in class, the entire class will be removed from final data(2 < 20)
+
+********
+homologous_superfamily_2470
+********
+ncbi efetch proteins: 5
+Proteins after filtering outliers: 5
+Proteins after clustering: 2
+Not enough data in class, the entire class will be removed from final data(2 < 20)
+
+********
+homologous_superfamily_2480
+********
+ncbi efetch proteins: 11
+Proteins after filtering outliers: 10
+Proteins after clustering: 3
+Not enough data in class, the entire class will be removed from final data(3 < 20)
+
+********
+homologous_superfamily_2490
+********
+ncbi efetch proteins: 1
+Proteins after filtering outliers: 1
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_250
+********
+ncbi efetch proteins: 19
+Proteins after filtering outliers: 13
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_2510
+********
+ncbi efetch proteins: 5
+Proteins after filtering outliers: 5
+Proteins after clustering: 3
+Not enough data in class, the entire class will be removed from final data(3 < 20)
+
+********
+homologous_superfamily_2520
+********
+ncbi efetch proteins: 6
+Proteins after filtering outliers: 5
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_2590
+********
+ncbi efetch proteins: 26
+Proteins after filtering outliers: 26
+Proteins after clustering: 4
+Not enough data in class, the entire class will be removed from final data(4 < 20)
+
+********
+homologous_superfamily_260
+********
+ncbi efetch proteins: 61
+Proteins after filtering outliers: 53
+Proteins after clustering: 12
+Not enough data in class, the entire class will be removed from final data(12 < 20)
+
+********
+homologous_superfamily_2600
+********
+ncbi efetch proteins: 1
+Proteins after filtering outliers: 1
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_2610
+********
+ncbi efetch proteins: 1
+Proteins after filtering outliers: 1
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_2630
+********
+ncbi efetch proteins: 1
+Proteins after filtering outliers: 1
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_2650
+********
+ncbi efetch proteins: 2
+Proteins after filtering outliers: 2
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_2660
+********
+ncbi efetch proteins: 3
+Proteins after filtering outliers: 3
+Proteins after clustering: 2
+Not enough data in class, the entire class will be removed from final data(2 < 20)
+
+********
+homologous_superfamily_2690
+********
+ncbi efetch proteins: 1
+Proteins after filtering outliers: 1
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_270
+********
+ncbi efetch proteins: 24
+Proteins after filtering outliers: 24
+Proteins after clustering: 10
+Not enough data in class, the entire class will be removed from final data(10 < 20)
+
+********
+homologous_superfamily_280
+********
+ncbi efetch proteins: 1
+Proteins after filtering outliers: 1
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_2860
+********
+ncbi efetch proteins: 2
+Proteins after filtering outliers: 2
+Proteins after clustering: 2
+Not enough data in class, the entire class will be removed from final data(2 < 20)
+
+********
+homologous_superfamily_2890
+********
+ncbi efetch proteins: 3
+Proteins after filtering outliers: 3
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_290
+********
+ncbi efetch proteins: 5
+Proteins after filtering outliers: 5
+Proteins after clustering: 5
+Not enough data in class, the entire class will be removed from final data(5 < 20)
+
+********
+homologous_superfamily_2900
+********
+ncbi efetch proteins: 5
+Proteins after filtering outliers: 5
+Proteins after clustering: 2
+Not enough data in class, the entire class will be removed from final data(2 < 20)
+
+********
+homologous_superfamily_2930
+********
+ncbi efetch proteins: 4
+Proteins after filtering outliers: 4
+Proteins after clustering: 2
+Not enough data in class, the entire class will be removed from final data(2 < 20)
+
+********
+homologous_superfamily_2950
+********
+ncbi efetch proteins: 1
+Proteins after filtering outliers: 1
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_30
+********
+ncbi efetch proteins: 459
+Proteins after filtering outliers: 446
+Proteins after clustering: 168
+
+********
+homologous_superfamily_300
+********
+ncbi efetch proteins: 11
+Proteins after filtering outliers: 11
+Proteins after clustering: 9
+Not enough data in class, the entire class will be removed from final data(9 < 20)
+
+********
+homologous_superfamily_3000
+********
+ncbi efetch proteins: 4
+Proteins after filtering outliers: 4
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_3020
+********
+ncbi efetch proteins: 1
+Proteins after filtering outliers: 1
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_310
+********
+ncbi efetch proteins: 18
+Proteins after filtering outliers: 15
+Proteins after clustering: 2
+Not enough data in class, the entire class will be removed from final data(2 < 20)
+
+********
+homologous_superfamily_3110
+********
+ncbi efetch proteins: 1
+Proteins after filtering outliers: 1
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_3120
+********
+ncbi efetch proteins: 4
+Proteins after filtering outliers: 4
+Proteins after clustering: 2
+Not enough data in class, the entire class will be removed from final data(2 < 20)
+
+********
+homologous_superfamily_3180
+********
+ncbi efetch proteins: 2
+Proteins after filtering outliers: 2
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_320
+********
+ncbi efetch proteins: 5
+Proteins after filtering outliers: 4
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_3220
+********
+ncbi efetch proteins: 1
+Proteins after filtering outliers: 1
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_3290
+********
+ncbi efetch proteins: 1
+Proteins after filtering outliers: 1
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_330
+********
+ncbi efetch proteins: 88
+Proteins after filtering outliers: 88
+Proteins after clustering: 32
+
+********
+homologous_superfamily_3310
+********
+ncbi efetch proteins: 2
+Proteins after filtering outliers: 2
+Proteins after clustering: 2
+Not enough data in class, the entire class will be removed from final data(2 < 20)
+
+********
+homologous_superfamily_3370
+********
+ncbi efetch proteins: 2
+Proteins after filtering outliers: 2
+Proteins after clustering: 2
+Not enough data in class, the entire class will be removed from final data(2 < 20)
+
+********
+homologous_superfamily_340
+********
+ncbi efetch proteins: 42
+Proteins after filtering outliers: 42
+Proteins after clustering: 16
+Not enough data in class, the entire class will be removed from final data(16 < 20)
+
+********
+homologous_superfamily_3430
+********
+ncbi efetch proteins: 5
+Proteins after filtering outliers: 4
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_3490
+********
+ncbi efetch proteins: 1
+Proteins after filtering outliers: 1
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_350
+********
+ncbi efetch proteins: 20
+Proteins after filtering outliers: 20
+Proteins after clustering: 4
+Not enough data in class, the entire class will be removed from final data(4 < 20)
+
+********
+homologous_superfamily_360
+********
+ncbi efetch proteins: 10
+Proteins after filtering outliers: 7
+Proteins after clustering: 2
+Not enough data in class, the entire class will be removed from final data(2 < 20)
+
+********
+homologous_superfamily_370
+********
+ncbi efetch proteins: 25
+Proteins after filtering outliers: 16
+Proteins after clustering: 5
+Not enough data in class, the entire class will be removed from final data(5 < 20)
+
+********
+homologous_superfamily_380
+********
+ncbi efetch proteins: 17
+Proteins after filtering outliers: 12
+Proteins after clustering: 2
+Not enough data in class, the entire class will be removed from final data(2 < 20)
+
+********
+homologous_superfamily_3810
+********
+ncbi efetch proteins: 1
+Proteins after filtering outliers: 1
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_3850
+********
+ncbi efetch proteins: 5
+Proteins after filtering outliers: 4
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_390
+********
+ncbi efetch proteins: 2
+Proteins after filtering outliers: 2
+Proteins after clustering: 2
+Not enough data in class, the entire class will be removed from final data(2 < 20)
+
+********
+homologous_superfamily_3960
+********
+ncbi efetch proteins: 1
+Proteins after filtering outliers: 1
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_3990
+********
+ncbi efetch proteins: 1
+Proteins after filtering outliers: 1
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_40
+********
+ncbi efetch proteins: 220
+Proteins after filtering outliers: 218
+Proteins after clustering: 96
+
+********
+homologous_superfamily_4010
+********
+ncbi efetch proteins: 3
+Proteins after filtering outliers: 3
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_4060
+********
+ncbi efetch proteins: 1
+Proteins after filtering outliers: 1
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_41
+********
+ncbi efetch proteins: 1
+Proteins after filtering outliers: 1
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_410
+********
+ncbi efetch proteins: 7
+Proteins after filtering outliers: 7
+Proteins after clustering: 5
+Not enough data in class, the entire class will be removed from final data(5 < 20)
+
+********
+homologous_superfamily_4100
+********
+ncbi efetch proteins: 5
+Proteins after filtering outliers: 4
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_4160
+********
+ncbi efetch proteins: 1
+Proteins after filtering outliers: 1
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_420
+********
+ncbi efetch proteins: 5
+Proteins after filtering outliers: 4
+Proteins after clustering: 4
+Not enough data in class, the entire class will be removed from final data(4 < 20)
+
+********
+homologous_superfamily_4270
+********
+ncbi efetch proteins: 2
+Proteins after filtering outliers: 2
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_4280
+********
+ncbi efetch proteins: 2
+Proteins after filtering outliers: 2
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_4290
+********
+ncbi efetch proteins: 2
+Proteins after filtering outliers: 2
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_4310
+********
+ncbi efetch proteins: 1
+Proteins after filtering outliers: 1
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_4330
+********
+ncbi efetch proteins: 2
+Proteins after filtering outliers: 2
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_44
+********
+ncbi efetch proteins: 1
+Proteins after filtering outliers: 1
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_440
+********
+ncbi efetch proteins: 3
+Proteins after filtering outliers: 3
+Proteins after clustering: 2
+Not enough data in class, the entire class will be removed from final data(2 < 20)
+
+********
+homologous_superfamily_450
+********
+ncbi efetch proteins: 2
+Proteins after filtering outliers: 2
+Proteins after clustering: 2
+Not enough data in class, the entire class will be removed from final data(2 < 20)
+
+********
+homologous_superfamily_460
+********
+ncbi efetch proteins: 3
+Proteins after filtering outliers: 3
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_4770
+********
+ncbi efetch proteins: 2
+Proteins after filtering outliers: 2
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_510
+********
+ncbi efetch proteins: 6
+Proteins after filtering outliers: 6
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_5160
+********
+ncbi efetch proteins: 1
+Proteins after filtering outliers: 1
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_520
+********
+ncbi efetch proteins: 3
+Proteins after filtering outliers: 3
+Proteins after clustering: 2
+Not enough data in class, the entire class will be removed from final data(2 < 20)
+
+********
+homologous_superfamily_530
+********
+ncbi efetch proteins: 3
+Proteins after filtering outliers: 3
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_540
+********
+ncbi efetch proteins: 4
+Proteins after filtering outliers: 4
+Proteins after clustering: 4
+Not enough data in class, the entire class will be removed from final data(4 < 20)
+
+********
+homologous_superfamily_550
+********
+ncbi efetch proteins: 15
+Proteins after filtering outliers: 15
+Proteins after clustering: 8
+Not enough data in class, the entire class will be removed from final data(8 < 20)
+
+********
+homologous_superfamily_560
+********
+ncbi efetch proteins: 9
+Proteins after filtering outliers: 7
+Proteins after clustering: 3
+Not enough data in class, the entire class will be removed from final data(3 < 20)
+
+********
+homologous_superfamily_570
+********
+ncbi efetch proteins: 4
+Proteins after filtering outliers: 4
+Proteins after clustering: 4
+Not enough data in class, the entire class will be removed from final data(4 < 20)
+
+********
+homologous_superfamily_580
+********
+ncbi efetch proteins: 4
+Proteins after filtering outliers: 4
+Proteins after clustering: 4
+Not enough data in class, the entire class will be removed from final data(4 < 20)
+
+********
+homologous_superfamily_590
+********
+ncbi efetch proteins: 21
+Proteins after filtering outliers: 20
+Proteins after clustering: 8
+Not enough data in class, the entire class will be removed from final data(8 < 20)
+
+********
+homologous_superfamily_60
+********
+ncbi efetch proteins: 366
+Proteins after filtering outliers: 356
+Proteins after clustering: 121
+
+********
+homologous_superfamily_600
+********
+ncbi efetch proteins: 24
+Proteins after filtering outliers: 24
+Proteins after clustering: 9
+Not enough data in class, the entire class will be removed from final data(9 < 20)
+
+********
+homologous_superfamily_610
+********
+ncbi efetch proteins: 17
+Proteins after filtering outliers: 14
+Proteins after clustering: 2
+Not enough data in class, the entire class will be removed from final data(2 < 20)
+
+********
+homologous_superfamily_620
+********
+ncbi efetch proteins: 32
+Proteins after filtering outliers: 32
+Proteins after clustering: 19
+Not enough data in class, the entire class will be removed from final data(19 < 20)
+
+********
+homologous_superfamily_630
+********
+ncbi efetch proteins: 7
+Proteins after filtering outliers: 5
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_640
+********
+ncbi efetch proteins: 5
+Proteins after filtering outliers: 5
+Proteins after clustering: 3
+Not enough data in class, the entire class will be removed from final data(3 < 20)
+
+********
+homologous_superfamily_650
+********
+ncbi efetch proteins: 48
+Proteins after filtering outliers: 48
+Proteins after clustering: 11
+Not enough data in class, the entire class will be removed from final data(11 < 20)
+
+********
+homologous_superfamily_660
+********
+ncbi efetch proteins: 3
+Proteins after filtering outliers: 3
+Proteins after clustering: 3
+Not enough data in class, the entire class will be removed from final data(3 < 20)
+
+********
+homologous_superfamily_670
+********
+ncbi efetch proteins: 2
+Proteins after filtering outliers: 2
+Proteins after clustering: 2
+Not enough data in class, the entire class will be removed from final data(2 < 20)
+
+********
+homologous_superfamily_680
+********
+ncbi efetch proteins: 16
+Proteins after filtering outliers: 16
+Proteins after clustering: 5
+Not enough data in class, the entire class will be removed from final data(5 < 20)
+
+********
+homologous_superfamily_690
+********
+ncbi efetch proteins: 4
+Proteins after filtering outliers: 4
+Proteins after clustering: 3
+Not enough data in class, the entire class will be removed from final data(3 < 20)
+
+********
+homologous_superfamily_70
+********
+ncbi efetch proteins: 105
+Proteins after filtering outliers: 105
+Proteins after clustering: 54
+
+********
+homologous_superfamily_700
+********
+ncbi efetch proteins: 16
+Proteins after filtering outliers: 13
+Proteins after clustering: 4
+Not enough data in class, the entire class will be removed from final data(4 < 20)
+
+********
+homologous_superfamily_710
+********
+ncbi efetch proteins: 18
+Proteins after filtering outliers: 12
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_720
+********
+ncbi efetch proteins: 114
+Proteins after filtering outliers: 106
+Proteins after clustering: 40
+
+********
+homologous_superfamily_730
+********
+ncbi efetch proteins: 13
+Proteins after filtering outliers: 13
+Proteins after clustering: 8
+Not enough data in class, the entire class will be removed from final data(8 < 20)
+
+********
+homologous_superfamily_740
+********
+ncbi efetch proteins: 6
+Proteins after filtering outliers: 6
+Proteins after clustering: 4
+Not enough data in class, the entire class will be removed from final data(4 < 20)
+
+********
+homologous_superfamily_760
+********
+ncbi efetch proteins: 2
+Proteins after filtering outliers: 2
+Proteins after clustering: 2
+Not enough data in class, the entire class will be removed from final data(2 < 20)
+
+********
+homologous_superfamily_770
+********
+ncbi efetch proteins: 15
+Proteins after filtering outliers: 15
+Proteins after clustering: 6
+Not enough data in class, the entire class will be removed from final data(6 < 20)
+
+********
+homologous_superfamily_780
+********
+ncbi efetch proteins: 9
+Proteins after filtering outliers: 9
+Proteins after clustering: 6
+Not enough data in class, the entire class will be removed from final data(6 < 20)
+
+********
+homologous_superfamily_790
+********
+ncbi efetch proteins: 23
+Proteins after filtering outliers: 23
+Proteins after clustering: 12
+Not enough data in class, the entire class will be removed from final data(12 < 20)
+
+********
+homologous_superfamily_80
+********
+ncbi efetch proteins: 216
+Proteins after filtering outliers: 210
+Proteins after clustering: 56
+
+********
+homologous_superfamily_800
+********
+ncbi efetch proteins: 3
+Proteins after filtering outliers: 3
+Proteins after clustering: 3
+Not enough data in class, the entire class will be removed from final data(3 < 20)
+
+********
+homologous_superfamily_810
+********
+ncbi efetch proteins: 13
+Proteins after filtering outliers: 7
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_820
+********
+ncbi efetch proteins: 13
+Proteins after filtering outliers: 13
+Proteins after clustering: 5
+Not enough data in class, the entire class will be removed from final data(5 < 20)
+
+********
+homologous_superfamily_830
+********
+ncbi efetch proteins: 9
+Proteins after filtering outliers: 8
+Proteins after clustering: 4
+Not enough data in class, the entire class will be removed from final data(4 < 20)
+
+********
+homologous_superfamily_840
+********
+ncbi efetch proteins: 2
+Proteins after filtering outliers: 2
+Proteins after clustering: 2
+Not enough data in class, the entire class will be removed from final data(2 < 20)
+
+********
+homologous_superfamily_850
+********
+ncbi efetch proteins: 6
+Proteins after filtering outliers: 6
+Proteins after clustering: 6
+Not enough data in class, the entire class will be removed from final data(6 < 20)
+
+********
+homologous_superfamily_860
+********
+ncbi efetch proteins: 3
+Proteins after filtering outliers: 3
+Proteins after clustering: 2
+Not enough data in class, the entire class will be removed from final data(2 < 20)
+
+********
+homologous_superfamily_870
+********
+ncbi efetch proteins: 6
+Proteins after filtering outliers: 6
+Proteins after clustering: 5
+Not enough data in class, the entire class will be removed from final data(5 < 20)
+
+********
+homologous_superfamily_90
+********
+ncbi efetch proteins: 312
+Proteins after filtering outliers: 312
+Proteins after clustering: 86
+
+********
+homologous_superfamily_900
+********
+ncbi efetch proteins: 5
+Proteins after filtering outliers: 5
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_910
+********
+ncbi efetch proteins: 2
+Proteins after filtering outliers: 2
+Proteins after clustering: 2
+Not enough data in class, the entire class will be removed from final data(2 < 20)
+
+********
+homologous_superfamily_920
+********
+ncbi efetch proteins: 1
+Proteins after filtering outliers: 1
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_930
+********
+ncbi efetch proteins: 3
+Proteins after filtering outliers: 3
+Proteins after clustering: 2
+Not enough data in class, the entire class will be removed from final data(2 < 20)
+
+********
+homologous_superfamily_940
+********
+ncbi efetch proteins: 1
+Proteins after filtering outliers: 1
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_970
+********
+ncbi efetch proteins: 11
+Proteins after filtering outliers: 8
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+homologous_superfamily_990
+********
+ncbi efetch proteins: 1
+Proteins after filtering outliers: 1
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)

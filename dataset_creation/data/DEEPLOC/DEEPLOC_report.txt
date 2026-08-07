@@ -1,0 +1,96 @@
+**********
+Short Report
+**********
+
+Cell_membrane	2459-->861 	60%	
+Cytoplasm	2913-->1573	60%	
+Cytoplasm-Nucleus	239-->113  	60%	
+Endoplasmic_reticulum	1177-->663 	60%	
+Extracellular	1000-->580 	60%	
+Golgi_apparatus	624-->271  	60%	
+Lysosome_Vacuole	361-->230  	60%	
+Mitochondrion	1858-->1169	60%	
+Nucleus	6745-->3114	60%	
+Peroxisome	175-->114  	60%	
+Plastid	676-->482  	60%	
+
+**********************
+Complete Positive Dataset Report
+**********************
+
+********
+Cell_membrane
+********
+ncbi efetch proteins: 2459
+Proteins after filtering outliers: 2426
+Proteins after clustering: 861
+
+********
+Cytoplasm
+********
+ncbi efetch proteins: 2913
+Proteins after filtering outliers: 2876
+Proteins after clustering: 1573
+
+********
+Cytoplasm-Nucleus
+********
+ncbi efetch proteins: 239
+Proteins after filtering outliers: 238
+Proteins after clustering: 113
+
+********
+Endoplasmic_reticulum
+********
+ncbi efetch proteins: 1177
+Proteins after filtering outliers: 1158
+Proteins after clustering: 663
+
+********
+Extracellular
+********
+ncbi efetch proteins: 1000
+Proteins after filtering outliers: 947
+Proteins after clustering: 580
+
+********
+Golgi_apparatus
+********
+ncbi efetch proteins: 624
+Proteins after filtering outliers: 612
+Proteins after clustering: 271
+
+********
+Lysosome_Vacuole
+********
+ncbi efetch proteins: 361
+Proteins after filtering outliers: 357
+Proteins after clustering: 230
+
+********
+Mitochondrion
+********
+ncbi efetch proteins: 1858
+Proteins after filtering outliers: 1855
+Proteins after clustering: 1169
+
+********
+Nucleus
+********
+ncbi efetch proteins: 6745
+Proteins after filtering outliers: 6652
+Proteins after clustering: 3114
+
+********
+Peroxisome
+********
+ncbi efetch proteins: 175
+Proteins after filtering outliers: 164
+Proteins after clustering: 114
+
+********
+Plastid
+********
+ncbi efetch proteins: 676
+Proteins after filtering outliers: 670
+Proteins after clustering: 482

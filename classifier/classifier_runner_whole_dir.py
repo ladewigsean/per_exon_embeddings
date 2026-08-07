@@ -60,6 +60,8 @@ if __name__ == '__main__':
                         help="for arms already in the output CSV but with no test_acc, re-run "
                              "ONLY the test stage on the surviving checkpoint. Skips HPO and "
                              "training, so it costs a forward pass rather than a whole sweep.")
+    parser.add_argument("--n_bins", type= int,default=10, help="number of bins")
+    parser.add_argument("--overwrite",action="store_true",help="overwrite old files")
     args = parser.parse_args()
     dir_name = pathlib.Path(args.dir).stem
     print(dir_name)
@@ -72,52 +74,35 @@ if __name__ == '__main__':
     else:
         csv_file = str(csvlist[0])
     h5s = pathlib.Path(args.dir).rglob('*.h5')
-    output = os.path.join(OUTPUT_CSVS_FOLDER,f"{dir_name}.csv")
-
-    # Results are held in memory and the CSV is REWRITTEN after every arm, rather than
-    # appended to. Appending a wider row onto a narrower existing file produced a ragged
-    # CSV that pd.read_csv then refused to open on the next resume, destroying results
-    # that cost hours; four of the committed output_csvs also lack a trailing newline, so
-    # an append would have concatenated onto the last result row. Rewriting removes both
-    # failure modes and costs nothing at this size.
-    rows = {}
-    if os.path.isfile(output):
-        try:
-            # dtype=str so legacy cells round-trip as their original text. Reading them
-            # as floats and writing them back reformats at ~16 significant digits
-            # (0.9519379844961241 -> 0.951937984496124), perturbing values that this
-            # script did not compute.
-            old_data = pd.read_csv(output, dtype=str)
-        except pd.errors.EmptyDataError:
-            print(f"WARNING: {output} is empty; starting a fresh results file",
-                  file=sys.stderr)
-            old_data = None
-        if old_data is not None:
-            # Older files were written with a 5-column header, and two of them with an
-            # EMPTY first header; normalise both shapes onto COLUMNS without losing a row.
-            old_data.columns = [COLUMNS[0]] + list(old_data.columns[1:])
-            for col in COLUMNS:
-                if col not in old_data.columns:
-                    old_data[col] = ""
-            old_data = old_data[COLUMNS].fillna("")
-            for _, r in old_data.iterrows():
-                rows[str(r[COLUMNS[0]])] = [r[c] for c in COLUMNS[1:]]
-            if len(rows) != len(old_data):
-                print(f"WARNING: {len(old_data) - len(rows)} duplicate method row(s) in "
-                      f"{output} collapsed to the last occurrence", file=sys.stderr)
-            print(f"resuming from {output}: {len(rows)} arms already recorded")
-
-    def flush():
-        # Write-then-rename: to_csv truncates in place, so a kill or a full disk during
-        # any of the N+1 flushes in a sweep would otherwise leave a truncated results
-        # file that pandas cannot reopen, with no way back.
-        os.makedirs(OUTPUT_CSVS_FOLDER, exist_ok=True)
-        tmp = output + ".tmp"
-        pd.DataFrame([[k] + v for k, v in rows.items()],
-                     columns=COLUMNS).to_csv(tmp, index=False)
-        os.replace(tmp, output)
-
-    flush()
+    results = {}
+    output_folder = os.path.join(OUTPUT_CSVS_FOLDER,dir_name)
+    test_folder = os.path.join(output_folder,"test_values_folder")
+    if not os.path.isdir(output_folder):
+        os.mkdir(output_folder)
+        os.mkdir(test_folder)
+    
+    output_val = os.path.join(output_folder,f"{dir_name}_val.csv")
+    output_test = os.path.join(output_folder,f"{dir_name}_test.csv")
+    output_pident = os.path.join(output_folder,f"{dir_name}_pident_{args.n_bins}.csv")
+    old_data = None
+    if not os.path.isfile(output_val) or args.overwrite:
+        with open(output_val,"w") as file:
+            file.write(",".join(["method","mean_acc","std_acc","mean_macro_f1","std_macro_f1"]))
+            file.write("\n")
+    else:
+        old_data = pd.read_csv(output_val)    
+    
+        
+    if not os.path.isfile(output_test) or args.overwrite:
+        with open(output_test,"w") as file:
+            file.write(",".join(["method","mean_acc","std_acc","mean_macro_f1","std_macro_f1"]))
+            file.write("\n")
+    if not os.path.isfile(output_pident) or args.overwrite:
+        with open(output_pident,"w") as file:
+            size = 100// args.n_bins
+            ranges = [(f"{str(x*size)}-{str((x+1)*size)}%") for x in range(args.n_bins)]
+            file.write(",".join(["method"]+ranges))
+            file.write("\n")
     for h5 in h5s:
         entity = str(h5.stem)
 
@@ -159,6 +144,25 @@ if __name__ == '__main__':
             nn_model = "Transformer"
         else:
             nn_model = "Basic"
+        yaml_path = run(train_dataset,entity+"_HPO",args.project,nn_model=nn_model,n_trials=args.hpo_trials,num_epochs=25,patience=5,wandb_disable=args.wandb_disable,max_length=max_length,embed_size=embed_size,yaml_folder=YAML_FOLDER, checkpoint_folder=MODEL_WEIGHTS_FOLDER,)
+        best_model, val_data,test_data,pident,test_out_df= train_model(train_dataset,val_dataset,test_dataset,entity,args.project,yaml_path,nn_model = nn_model,wandb_disable=args.wandb_disable,max_length=max_length,embed_size=embed_size,checkpoints_folder=MODEL_WEIGHTS_FOLDER,n_bins=args.n_bins)
+        with open(output_val,"a") as file:
+            data = [str(d) for d in val_data]
+            file.write(",".join([entity]+data))
+            file.write("\n")
+        with open(output_test,"a") as file:
+            data = [str(d) for d in test_data]
+            file.write(",".join([entity]+data))
+            file.write("\n")
+        with open(output_pident,"a") as file:
+            data = [str(d) for d in pident]
+            file.write(",".join([entity]+data))
+            file.write("\n")
+        test_out_df.to_csv(os.path.join(test_folder,f"{entity}.csv"))
+        
+        
+        
+    
 
         if test_only:
             # yaml_path / best_model were resolved and validated above.
