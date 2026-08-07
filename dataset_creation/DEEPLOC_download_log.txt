@@ -1,0 +1,11 @@
+Starting: Cell_membrane
+Starting: Cytoplasm
+Starting: Cytoplasm-Nucleus
+Starting: Endoplasmic_reticulum
+Starting: Extracellular
+Starting: Golgi_apparatus
+Starting: Lysosome_Vacuole
+Starting: Mitochondrion
+Starting: Nucleus
+Starting: Peroxisome
+Starting: Plastid

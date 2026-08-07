@@ -1,0 +1,50 @@
+**********
+Short Report
+**********
+
+class_1	1559-->535 	75%	
+class_2	2432-->846 	75%	
+class_3	4291-->1605	75%	
+class_4	12-->1     	75%	X
+class_6	3-->3      	75%	X
+
+**********************
+Complete Positive Dataset Report
+**********************
+
+********
+class_1
+********
+ncbi efetch proteins: 1559
+Proteins after filtering outliers: 1476
+Proteins after clustering: 535
+
+********
+class_2
+********
+ncbi efetch proteins: 2432
+Proteins after filtering outliers: 2390
+Proteins after clustering: 846
+
+********
+class_3
+********
+ncbi efetch proteins: 4291
+Proteins after filtering outliers: 4175
+Proteins after clustering: 1605
+
+********
+class_4
+********
+ncbi efetch proteins: 12
+Proteins after filtering outliers: 8
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+class_6
+********
+ncbi efetch proteins: 3
+Proteins after filtering outliers: 3
+Proteins after clustering: 3
+Not enough data in class, the entire class will be removed from final data(3 < 20)

@@ -1,5 +1,5 @@
 {
-	"main_family":"homeobox genes","prefix":"NCBIFGF","query":"f\"(fgf{subfamily}[Preferred Symbol]) OR ((fibroblast growth factor {subfamily}[Protein Name] ) AND (FGF{subfamily}[Gene Name])) OR (fibroblast growth factor {subfamily}[Protein Full Name] ) OR (fibroblast growth factor {subfamily}-like[Protein Full Name] )\"",  "additional":" AND animals[porgn]",
+	"main_family":"Fibroblast growth factor","prefix":"NCBIFGF","query":"f\"(fgf{subfamily}[Preferred Symbol]) OR ((fibroblast growth factor {subfamily}[Protein Name] ) AND (FGF{subfamily}[Gene Name])) OR (fibroblast growth factor {subfamily}[Protein Full Name] ) OR (fibroblast growth factor {subfamily}-like[Protein Full Name] )\"",  "additional":" AND animals[porgn]",
 	"families":
 	[
 		{

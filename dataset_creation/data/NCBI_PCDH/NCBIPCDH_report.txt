@@ -2,33 +2,33 @@
 Short Report
 **********
 
-NCBIPCDH1	1967-->30  	90%	
-NCBIPCDH10	1613-->22  	90%	
-NCBIPCDH11	755-->23   	90%	
+NCBIPCDH1	1967-->27  	90%	
+NCBIPCDH10	1613-->24  	90%	
+NCBIPCDH11	755-->25   	90%	
 NCBIPCDH12	1163-->216 	90%	
-NCBIPCDH15	3317-->191 	90%	
-NCBIPCDH17	2556-->71  	90%	
+NCBIPCDH15	3317-->85  	90%	
+NCBIPCDH17	2556-->48  	90%	
 NCBIPCDH18	1209-->32  	90%	
-NCBIPCDH19	2713-->68  	90%	
-NCBIPCDH20	1038-->187 	90%	
-NCBIPCDH7	3162-->38  	90%	
-NCBIPCDH8	1220-->187 	90%	
-NCBIPCDH9	3151-->26  	90%	
+NCBIPCDH19	2713-->46  	90%	
+NCBIPCDH20	1038-->188 	90%	
+NCBIPCDH7	3162-->29  	90%	
+NCBIPCDH8	1220-->184 	90%	
+NCBIPCDH9	3151-->24  	90%	
 NCBIPCDHA1	112-->56   	90%	
-NCBIPCDHA10	45-->22    	90%	
+NCBIPCDHA10	45-->21    	90%	
 NCBIPCDHA11	39-->16    	90%	X
 NCBIPCDHA12	22-->13    	90%	X
 NCBIPCDHA13	67-->34    	90%	
 NCBIPCDHA2	36-->25    	90%	
 NCBIPCDHA3	16-->11    	90%	X
 NCBIPCDHA4	39-->25    	90%	
-NCBIPCDHA5	51-->30    	90%	
+NCBIPCDHA5	51-->29    	90%	
 NCBIPCDHA6	14-->10    	90%	X
 NCBIPCDHA7	12-->9     	90%	X
 NCBIPCDHA8	10-->6     	90%	X
 NCBIPCDHA9	11-->7     	90%	X
 NCBIPCDHAc1	170-->47   	90%	
-NCBIPCDHAc2	168-->46   	90%	
+NCBIPCDHAc2	168-->44   	90%	
 NCBIPCDHB1	267-->8    	90%	X
 NCBIPCDHB10	57-->15    	90%	X
 NCBIPCDHB11	31-->6     	90%	X
@@ -47,9 +47,9 @@ NCBIPCDHB6	117-->28   	90%
 NCBIPCDHB7	118-->26   	90%	
 NCBIPCDHB8	62-->13    	90%	X
 NCBIPCDHB9	11-->2     	90%	X
-NCBIPCDHGA1	436-->138  	90%	
-NCBIPCDHGA10	98-->50    	90%	
-NCBIPCDHGA11	66-->34    	90%	
+NCBIPCDHGA1	436-->134  	90%	
+NCBIPCDHGA10	98-->49    	90%	
+NCBIPCDHGA11	66-->32    	90%	
 NCBIPCDHGA12	31-->13    	90%	X
 NCBIPCDHGA2	18-->12    	90%	X
 NCBIPCDHGA3	24-->18    	90%	X
@@ -59,7 +59,7 @@ NCBIPCDHGA6	13-->7     	90%	X
 NCBIPCDHGA7	13-->7     	90%	X
 NCBIPCDHGA8	16-->8     	90%	X
 NCBIPCDHGA9	14-->7     	90%	X
-NCBIPCDHGB1	23-->17    	90%	X
+NCBIPCDHGB1	23-->14    	90%	X
 NCBIPCDHGB2	60-->28    	90%	
 NCBIPCDHGB3	25-->7     	90%	X
 NCBIPCDHGB4	18-->5     	90%	X
@@ -68,7 +68,7 @@ NCBIPCDHGB6	11-->5     	90%	X
 NCBIPCDHGB7	25-->10    	90%	X
 NCBIPCDHGC3	50-->11    	90%	X
 NCBIPCDHGC4	51-->2     	90%	X
-NCBIPCDHGC5	44-->11    	90%	X
+NCBIPCDHGC5	44-->10    	90%	X
 
 **********************
 Complete Positive Dataset Report
@@ -79,21 +79,21 @@ NCBIPCDH1
 ********
 ncbi efetch proteins: 1967
 Proteins after filtering outliers: 1943
-Proteins after clustering: 30
+Proteins after clustering: 27
 
 ********
 NCBIPCDH10
 ********
 ncbi efetch proteins: 1613
 Proteins after filtering outliers: 1447
-Proteins after clustering: 22
+Proteins after clustering: 24
 
 ********
 NCBIPCDH11
 ********
 ncbi efetch proteins: 755
 Proteins after filtering outliers: 755
-Proteins after clustering: 23
+Proteins after clustering: 25
 
 ********
 NCBIPCDH12
@@ -107,14 +107,14 @@ NCBIPCDH15
 ********
 ncbi efetch proteins: 3317
 Proteins after filtering outliers: 3287
-Proteins after clustering: 191
+Proteins after clustering: 85
 
 ********
 NCBIPCDH17
 ********
 ncbi efetch proteins: 2556
 Proteins after filtering outliers: 2547
-Proteins after clustering: 71
+Proteins after clustering: 48
 
 ********
 NCBIPCDH18
@@ -128,35 +128,35 @@ NCBIPCDH19
 ********
 ncbi efetch proteins: 2713
 Proteins after filtering outliers: 2591
-Proteins after clustering: 68
+Proteins after clustering: 46
 
 ********
 NCBIPCDH20
 ********
 ncbi efetch proteins: 1038
 Proteins after filtering outliers: 1022
-Proteins after clustering: 187
+Proteins after clustering: 188
 
 ********
 NCBIPCDH7
 ********
 ncbi efetch proteins: 3162
 Proteins after filtering outliers: 3162
-Proteins after clustering: 38
+Proteins after clustering: 29
 
 ********
 NCBIPCDH8
 ********
 ncbi efetch proteins: 1220
 Proteins after filtering outliers: 1144
-Proteins after clustering: 187
+Proteins after clustering: 184
 
 ********
 NCBIPCDH9
 ********
 ncbi efetch proteins: 3151
 Proteins after filtering outliers: 3119
-Proteins after clustering: 26
+Proteins after clustering: 24
 
 ********
 NCBIPCDHA1
@@ -170,7 +170,7 @@ NCBIPCDHA10
 ********
 ncbi efetch proteins: 45
 Proteins after filtering outliers: 45
-Proteins after clustering: 22
+Proteins after clustering: 21
 
 ********
 NCBIPCDHA11
@@ -222,7 +222,7 @@ NCBIPCDHA5
 ********
 ncbi efetch proteins: 51
 Proteins after filtering outliers: 51
-Proteins after clustering: 30
+Proteins after clustering: 29
 
 ********
 NCBIPCDHA6
@@ -268,7 +268,7 @@ NCBIPCDHAc2
 ********
 ncbi efetch proteins: 168
 Proteins after filtering outliers: 166
-Proteins after clustering: 46
+Proteins after clustering: 44
 
 ********
 NCBIPCDHB1
@@ -413,21 +413,21 @@ NCBIPCDHGA1
 ********
 ncbi efetch proteins: 436
 Proteins after filtering outliers: 314
-Proteins after clustering: 138
+Proteins after clustering: 134
 
 ********
 NCBIPCDHGA10
 ********
 ncbi efetch proteins: 98
 Proteins after filtering outliers: 70
-Proteins after clustering: 50
+Proteins after clustering: 49
 
 ********
 NCBIPCDHGA11
 ********
 ncbi efetch proteins: 66
 Proteins after filtering outliers: 65
-Proteins after clustering: 34
+Proteins after clustering: 32
 
 ********
 NCBIPCDHGA12
@@ -506,8 +506,8 @@ NCBIPCDHGB1
 ********
 ncbi efetch proteins: 23
 Proteins after filtering outliers: 23
-Proteins after clustering: 17
-Not enough data in class, the entire class will be removed from final data(17 < 20)
+Proteins after clustering: 14
+Not enough data in class, the entire class will be removed from final data(14 < 20)
 
 ********
 NCBIPCDHGB2
@@ -577,5 +577,5 @@ NCBIPCDHGC5
 ********
 ncbi efetch proteins: 44
 Proteins after filtering outliers: 41
-Proteins after clustering: 11
-Not enough data in class, the entire class will be removed from final data(11 < 20)
+Proteins after clustering: 10
+Not enough data in class, the entire class will be removed from final data(10 < 20)

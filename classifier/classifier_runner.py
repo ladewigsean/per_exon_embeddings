@@ -32,7 +32,7 @@ if __name__ == '__main__':
     if args.pt_file and args.yaml_file:
         best_model = args.pt_file
     else:
-        best_model,_= train_model(train_dataset,val_dataset,args.entity+"_test",args.project,yaml_path,nn_model = args.nn_model,wandb_disable=args.wandb_disable,max_length=max_length,embed_size=embed_size,checkpoints_folder=MODEL_WEIGHTS_FOLDER)
+        best_model,_= train_model(train_dataset,val_dataset,test_dataset,args.entity,args.project,yaml_path,nn_model = args.nn_model,wandb_disable=args.wandb_disable,max_length=max_length,embed_size=embed_size,checkpoints_folder=MODEL_WEIGHTS_FOLDER)
     test_model(test_dataset,args.entity+"_test",args.project,yaml_path,best_model,nn_model = args.nn_model,wandb_disable=args.wandb_disable,max_length=max_length,embed_size=embed_size)
 
 

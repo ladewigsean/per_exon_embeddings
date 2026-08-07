@@ -374,6 +374,8 @@ def parse_symbol_grab(file,gene, file_format="fasta",check_symbol= True):
                     regex = re.search(r"Predicted: ([^ ] [^ ]) ",seq_record.description)
                     if regex:
                         species = regex.group(1)
+
+        species = species.replace(",", "")
         if "|" in seq_record.id:
             seq_record.id = re.search(r"\|([^\|]*)\|",seq_record.id).group(1)
         if "_" not in seq_record.id:
@@ -392,7 +394,7 @@ def run_datasets_for_accession(accessions_file, json_file_output):
     with open(json_file_output, "w") as outfh:
         subprocess.run(cmd, stdout=outfh)
     return json_file_output
-def process_json(json_file,accessions):
+def process_json(json_file,accessions,debug=False):
     output_dict = {}
     with open(json_file) as f:
         try:
@@ -413,7 +415,7 @@ def process_json(json_file,accessions):
         gene_symbol = product_info.get("symbol", "unknown").lower()
         transcripts = product_info.get("transcripts", [])
        
-        if len(transcripts)==0:
+        if len(transcripts)==0 and debug:
             print(f"Report with Gene ID {product_info.get("gene_id","unkown")} has zero transcripts")
             
         
@@ -421,11 +423,13 @@ def process_json(json_file,accessions):
             acc_version = transcript.get("accession_version")
             prot_accession = transcript.get("protein", {}).get("accession_version")
             if prot_accession not in accessions:
-                print(f"The current protein({prot_accession}) accession does not match a searched protein accessions,skipping")
+                if debug:
+                    print(f"The current protein({prot_accession}) accession does not match a searched protein accessions,skipping")
                 continue
             glocs = transcript.get("genomic_locations", [])
             if not glocs or not glocs[0].get("exons"):
-                print(f" failed to find exons for {prot_accession}")
+                if debug:
+                    print(f" failed to find exons for {prot_accession}")
                 continue
             exons_sorted = sorted(glocs[0]["exons"], key=lambda e: int(e.get("order", 0)))
             cut_pos = []

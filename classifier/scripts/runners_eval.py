@@ -5,6 +5,7 @@ import os
 
 
 import numpy as np
+import pandas as pd
 from collections import Counter
 import yaml
 
@@ -331,7 +332,7 @@ def run_hpo_mode(train_dataset,wandb_project,wandb_entity,hpo_metric="macro avg"
         trial_params = {
             'learning_rate': trial.suggest_float('learning_rate', 1e-7, 1e-4, log=True),
             'weight_decay': trial.suggest_float('weight_decay', 1e-6, 1e-3, log=True),
-            'dropout_rate': trial.suggest_float('dropout_rate', 0.05, 0.8),
+            'dropout_rate': trial.suggest_float('dropout_rate', 0.05, 0.5),
             #'hidden_dim1': trial.suggest_categorical('hidden_dim1', [256, 512, 768]),
             #'batch_size': trial.suggest_categorical('batch_size', [16, 32, 64]),
             #"optimizer": trial.suggest_categorical("optimizer", ["Adam", "AdamW", "Lion"]),
@@ -346,7 +347,7 @@ def run_hpo_mode(train_dataset,wandb_project,wandb_entity,hpo_metric="macro avg"
             #trial_params["dim_feedforward"] = trial.suggest_categorical("dim_feedforward", [1024,1536, 2048 ])#, 4096
             #trial_params["num_layers_transformer"] = trial.suggest_categorical("num_layers_transformer", [1,2,4])#, 4
             if ("pe_mode" in trial_params and trial_params["pe_mode"]=="pe") or  ("pe_mode" not in trial_params and args["pe_mode"]=="pe"):
-                trial_params["pe_factor"]= trial.suggest_float("pe_factor", 1e-4, 5, log=True)
+                trial_params["pe_factor"]= trial.suggest_float("pe_factor", 1e-4, 0.5, log=True)
         elif nn_model == "Pooling":
             trial_params["dc"] = trial.suggest_categorical("dc",[4,8,16,32,64,96])
         
@@ -519,7 +520,7 @@ def run(test_dataset,wandb_project,wandb_entity,nn_model = "Transformer",
     return yaml_path
     #torch.backends.cudnn.deterministic = True
     #torch.backends.cudnn.benchmark = False
-def train_model(train_dataset,val_dataset, wandb_project,wandb_entity,yaml_file,wandb_disable=False,embed_size = 1024,max_length=500,num_epochs=100, nn_model="Transformer",patience = 10,checkpoints_folder="model_weights"):
+def train_model(train_dataset,val_dataset,test_dataset, wandb_project,wandb_entity,yaml_file,wandb_disable=False,embed_size = 1024,max_length=500,num_epochs=60, nn_model="Transformer",patience = 7,checkpoints_folder="model_weights",n_bins = 10):
     random_seeds = [42,121,1023,4398,5000]
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = False
@@ -571,6 +572,14 @@ def train_model(train_dataset,val_dataset, wandb_project,wandb_entity,yaml_file,
         persistent_workers=True,              
         shuffle=False
     )
+    test_loader = DataLoader(
+            test_dataset,
+            batch_size=args["batch_size"], 
+            num_workers=8,
+            worker_init_fn=_h5_worker_init_fn, 
+            persistent_workers=True,                 
+            shuffle=False
+    )
     labels = np.argmax(train_dataset.encodings, axis=1)
     class_counts = Counter(labels)
     weights = torch.tensor([1.0 / class_counts.get(i, 1) for i in range(train_dataset.num_classes)], dtype=torch.float)
@@ -579,6 +588,11 @@ def train_model(train_dataset,val_dataset, wandb_project,wandb_entity,yaml_file,
     best_checkpoint = None
     seed_accs = []
     seed_macro_f1 = []
+    test_seed_accs = []
+    test_seed_macro_f1 = []
+    test_buckets_pident = []
+    df = test_dataset.get_data()
+    df = df.set_index("identifier")
     for random_seed in random_seeds:
         print(f"starting random seed: {random_seed}")
         torch.manual_seed(random_seed)
@@ -588,7 +602,7 @@ def train_model(train_dataset,val_dataset, wandb_project,wandb_entity,yaml_file,
         trial_name = f"val_seed_{random_seed}"
         args["random_seed"] = random_seed
         run = wandb.init(
-            project=wandb_project, 
+            project=wandb_project+"_val", 
             entity=wandb_entity, 
             config=args, 
             reinit='finish_previous', 
@@ -623,11 +637,52 @@ def train_model(train_dataset,val_dataset, wandb_project,wandb_entity,yaml_file,
             if os.path.exists(checkpoint):
                 os.remove(checkpoint)
         run.finish()
+        run = wandb.init(
+            project=wandb_project+"_test", 
+            entity=wandb_entity, 
+            config=args, 
+            reinit='finish_previous', 
+            mode="disabled" if wandb_disable else "online",
+            name=trial_name
+        )
+        report, pred_labels, all_ids, true_labels = trainer.evaluate_on_loader(test_loader,train_dataset.label_encoder)
+        wandb.log({"report": report})
+        test_seed_accs.append(report["accuracy"])
+        test_seed_macro_f1.append(report["macro avg"]["f1-score"])
+        #make confusion matrix
+        cm_path = "final_model_confusion_matrix.png"
+        plot_multiclass_confusion_matrix(true_labels, pred_labels, train_dataset.label_encoder.categories_[0], cm_path)
+        wandb.log({"final_confusion_matrix": wandb.Image(cm_path)})
+        
+        correct = (np.array(pred_labels) ==  np.array(true_labels)).astype(np.int_)
+        df.loc[all_ids,"correct"] = list(correct)
+        df["correct"] = df["correct"].astype(int)
+        if  "train_max_pident" in df:
+            print("format pident buckets") 
+            test_buckets_pident.append(format_pident_buckets(pred_labels, all_ids, true_labels,df,n_bins))
+        df[f"seed_{random_seed}_correct"] = df["correct"]
     seed_accs = np.array(seed_accs)
     seed_macro_f1 = np.array(seed_macro_f1)
     print(f"average acc: {seed_accs.mean():.2f} ± {1.96 * seed_accs.std():.2f}")
     print(f"average macro f1: {seed_macro_f1.mean():.2f} ± {1.96 * seed_macro_f1.std():.2f}")
-    return best_checkpoint, [seed_accs.mean(),seed_accs.std(),seed_macro_f1.mean(),seed_macro_f1.std()]
+    test_seed_accs = np.array(test_seed_accs)
+    test_seed_macro_f1 = np.array(test_seed_macro_f1)
+    print(f"average acc: {test_seed_accs.mean():.2f} ± {1.96 * test_seed_accs.std():.2f}")
+    print(f"average macro f1: {test_seed_macro_f1.mean():.2f} ± {1.96 * test_seed_macro_f1.std():.2f}")
+    test_buckets_pident = np.array(test_buckets_pident).mean(axis=0)
+    print(test_buckets_pident)
+    return best_checkpoint, [seed_accs.mean(),seed_accs.std(),seed_macro_f1.mean(),seed_macro_f1.std()],[test_seed_accs.mean(),test_seed_accs.std(),test_seed_macro_f1.mean(),test_seed_macro_f1.std()],test_buckets_pident,df
+def format_pident_buckets(pred_labels, all_ids, true_labels, df,n_bins = 10):
+    
+    
+    bins = pd.qcut(df["train_max_pident"],n_bins,False) 
+    
+    df["bins"] = bins
+    df = df.sort_values(by="bins",ascending=True)
+    
+    #df["bins"] = (df["bins"]*size).astype(str)+"-"+((df["bins"]+1)*size).astype(str)
+    return list(df.groupby("bins")["correct"].mean() )
+
 def plot_multiclass_confusion_matrix(y_true, y_pred, class_names, save_path):
     from sklearn.metrics import confusion_matrix
     import seaborn as sns

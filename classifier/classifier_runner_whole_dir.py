@@ -21,6 +21,8 @@ if __name__ == '__main__':
     
     parser.add_argument("--hpo_trials",type=int, default=30,help="number of hpo trials. default 30")
     parser.add_argument("--skip_per_res", action="store_true", help="if flag given, skips over per_res.h5")
+    parser.add_argument("--n_bins", type= int,default=10, help="number of bins")
+    parser.add_argument("--overwrite",action="store_true",help="overwrite old files")
     args = parser.parse_args()
     dir_name = pathlib.Path(args.dir).stem
     print(dir_name)
@@ -34,13 +36,33 @@ if __name__ == '__main__':
         csv_file = str(csvlist[0])
     h5s = pathlib.Path(args.dir).rglob('*.h5')
     results = {}
-    output = os.path.join(OUTPUT_CSVS_FOLDER,f"{dir_name}.csv")
+    output_folder = os.path.join(OUTPUT_CSVS_FOLDER,dir_name)
+    test_folder = os.path.join(output_folder,"test_values_folder")
+    if not os.path.isdir(output_folder):
+        os.mkdir(output_folder)
+        os.mkdir(test_folder)
+    
+    output_val = os.path.join(output_folder,f"{dir_name}_val.csv")
+    output_test = os.path.join(output_folder,f"{dir_name}_test.csv")
+    output_pident = os.path.join(output_folder,f"{dir_name}_pident_{args.n_bins}.csv")
     old_data = None
-    if os.path.isfile(output):
-        old_data = pd.read_csv(output)
-    if old_data is None:
-        with open(output,"w") as file:
+    if not os.path.isfile(output_val) or args.overwrite:
+        with open(output_val,"w") as file:
             file.write(",".join(["method","mean_acc","std_acc","mean_macro_f1","std_macro_f1"]))
+            file.write("\n")
+    else:
+        old_data = pd.read_csv(output_val)    
+    
+        
+    if not os.path.isfile(output_test) or args.overwrite:
+        with open(output_test,"w") as file:
+            file.write(",".join(["method","mean_acc","std_acc","mean_macro_f1","std_macro_f1"]))
+            file.write("\n")
+    if not os.path.isfile(output_pident) or args.overwrite:
+        with open(output_pident,"w") as file:
+            size = 100// args.n_bins
+            ranges = [(f"{str(x*size)}-{str((x+1)*size)}%") for x in range(args.n_bins)]
+            file.write(",".join(["method"]+ranges))
             file.write("\n")
     for h5 in h5s:
         entity = h5.stem
@@ -58,12 +80,23 @@ if __name__ == '__main__':
             nn_model = "Transformer"
         else: 
             nn_model = "Basic"
-        yaml_path = run(train_dataset,entity+"_HPO",args.project,nn_model=nn_model,n_trials=args.hpo_trials,num_epochs=35,patience=5,wandb_disable=args.wandb_disable,max_length=max_length,embed_size=embed_size,yaml_folder=YAML_FOLDER, checkpoint_folder=MODEL_WEIGHTS_FOLDER,)
-        best_model, data= train_model(train_dataset,val_dataset,entity+"_test",args.project,yaml_path,nn_model = nn_model,wandb_disable=args.wandb_disable,max_length=max_length,embed_size=embed_size,checkpoints_folder=MODEL_WEIGHTS_FOLDER)
-        with open(output,"a") as file:
-            data = [str(d) for d in data]
+        yaml_path = run(train_dataset,entity+"_HPO",args.project,nn_model=nn_model,n_trials=args.hpo_trials,num_epochs=25,patience=5,wandb_disable=args.wandb_disable,max_length=max_length,embed_size=embed_size,yaml_folder=YAML_FOLDER, checkpoint_folder=MODEL_WEIGHTS_FOLDER,)
+        best_model, val_data,test_data,pident,test_out_df= train_model(train_dataset,val_dataset,test_dataset,entity,args.project,yaml_path,nn_model = nn_model,wandb_disable=args.wandb_disable,max_length=max_length,embed_size=embed_size,checkpoints_folder=MODEL_WEIGHTS_FOLDER,n_bins=args.n_bins)
+        with open(output_val,"a") as file:
+            data = [str(d) for d in val_data]
             file.write(",".join([entity]+data))
             file.write("\n")
+        with open(output_test,"a") as file:
+            data = [str(d) for d in test_data]
+            file.write(",".join([entity]+data))
+            file.write("\n")
+        with open(output_pident,"a") as file:
+            data = [str(d) for d in pident]
+            file.write(",".join([entity]+data))
+            file.write("\n")
+        test_out_df.to_csv(os.path.join(test_folder,f"{entity}.csv"))
+        
+        
         
     
 

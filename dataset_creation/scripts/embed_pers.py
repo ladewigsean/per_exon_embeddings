@@ -42,20 +42,39 @@ def read_fasta(file_path):
         headers.append(seq.name)
         sequences.append(str(seq))
     return headers, sequences
-def generate_splits_for_embed(per_res_embed, splits_list ):
-    new_embed = np.empty((0,per_res_embed.shape[-1]),np.float16)
+def generate_splits_for_embed(per_res_embed, splits_list,include_meta = False):
+    embed_size = per_res_embed.shape[-1]
+    total_length = per_res_embed.shape[1]*3
+    
+    if include_meta:
+        embed_size+=4
+    new_embed = np.empty((0,embed_size),np.float16)
     last_split = 0
-
+    count = 1
     for split in splits_list:
         #
         exon_embed = per_res_embed[:,math.floor(last_split/3):math.ceil(split/3), : ].mean(axis=1).flatten()
+        if include_meta:
+            #start phase, end phase, length of exon in nuc, exon #. (4 so nhead = 4 works)
+            meta = np.array([(last_split%3+1)/3,(split%3+1)/3,0,0],dtype=np.float16 )
+            #meta = np.array([(last_split%3+1)/3,(split%3+1)/3,(split-last_split)/150,(count/(len(splits_list)+1))],dtype=np.float16 )
+            #meta = np.array([0,0,0,0],dtype=np.float16 )
+            exon_embed = np.concatenate((exon_embed,meta), axis=None)
         last_split = split
+        count +=1
         new_embed = np.vstack([new_embed,[exon_embed]])
-    new_embed  = np.vstack([new_embed,[per_res_embed[:,math.floor(last_split/3):,:].mean(axis=1).flatten()]])
+    last_exon = per_res_embed[:,math.floor(last_split/3):,:].mean(axis=1).flatten()
+    if include_meta:
+        #start phase, end phase, length of exon in nuc, exon #
+        #meta = np.array([(last_split%3+1)/3,0,(total_length-last_split)/150,(count/(len(splits_list)+1))],dtype=np.float16 )
+        meta = np.array([(last_split%3+1)/3,0,0,0],dtype=np.float16 )
+        #meta = np.array([0,0,0,0],dtype=np.float16 )
+        last_exon = np.concatenate((last_exon,meta), axis=None)
+    new_embed  = np.vstack([new_embed,[last_exon]])
     return new_embed 
-def generate_same_size_splits(per_res_embed, size=150 ):
+def generate_same_size_splits(per_res_embed, size=150,include_meta = False ):
     number_nuc = per_res_embed.shape[1]*3
-    return generate_splits_for_embed(per_res_embed,list(range(size,number_nuc,size)))
+    return generate_splits_for_embed(per_res_embed,list(range(size,number_nuc,size)),include_meta=include_meta)
     
 def generate_same_total_splits(per_res_embed, total = 10 ):
     number_nuc = per_res_embed.shape[1]*3
@@ -111,9 +130,15 @@ def create_embedding(checkpoint, df, emb_types=["per_prot"], output_files=["prot
             if "per_exon" in hdf_dict and header not in hdf_dict["per_exon"]:
                 embedding_per_exon = generate_splits_for_embed(embedding_per_res,cut_pos)
                 hdf_dict["per_exon"].create_dataset(name=header, data=embedding_per_exon)
+            if "per_exon_meta" in hdf_dict and header not in hdf_dict["per_exon_meta"]:
+                embedding_per_exon = generate_splits_for_embed(embedding_per_res,cut_pos,include_meta=True)
+                hdf_dict["per_exon_meta"].create_dataset(name=header, data=embedding_per_exon)
+            if "fixed_length_chunks_meta" in hdf_dict and header not in hdf_dict["fixed_length_chunks_meta"]:
+                embedding_fixed_length_chunks = generate_same_size_splits(embedding_per_res)
+                hdf_dict["fixed_length_chunks_meta"].create_dataset(name=header, data=embedding_fixed_length_chunks)
             if "fixed_length_chunks" in hdf_dict and header not in hdf_dict["fixed_length_chunks"]:
                 embedding_fixed_length_chunks = generate_same_size_splits(embedding_per_res)
-                hdf_dict["fixed_length_chunks"].create_dataset(name=header, data=embedding_fixed_length_chunks)
+                hdf_dict["fixed_length_chunks"].create_dataset(name=header, data=embedding_fixed_length_chunks)            
             if "fixed_total_chunks" in hdf_dict and header not in hdf_dict["fixed_total_chunks"]:
                 embedding_fixed_total_chunks = generate_same_total_splits(embedding_per_res)
                 hdf_dict["fixed_total_chunks"].create_dataset(name=header, data=embedding_fixed_total_chunks)
