@@ -51,7 +51,7 @@ class TestEndToEndTransformerTraining:
             trainer._run_epoch(loader, training=True)
 
         # Evaluate — should achieve high accuracy on memorized data
-        report, preds, ids, labels = trainer.evaluate_on_loader(loader, ds.label_encoder)
+        report, preds, ids, labels, _ = trainer.evaluate_on_loader(loader, ds.label_encoder)
         accuracy = report["accuracy"]
         assert accuracy > 0.5, f"Model failed to overfit small batch: accuracy={accuracy:.2f}"
 

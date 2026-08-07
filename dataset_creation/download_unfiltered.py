@@ -80,7 +80,7 @@ if __name__ == '__main__':
         scripts.grab_data.save_fasta(combined_all_filtered,fasta)
         scripts.grab_data.save_csv_splits(combined_all_filtered,csv )
         #ivan script, prob should just restructure those/ integrate directly instead of writing files, but this is simple
-        args_cluster_split = Namespace({"fasta":fasta,"csv":csv,"out":csv,"min_seq_id": args.cluster_thresh/100,"id_col":"identifier","label_col":"gene","split_col":"test_split","cov":0.1,"mmseqs_cmd":"mmseqs","train":0.8,"val":0.1,"test":0.1})
+        args_cluster_split = Namespace({"fasta":fasta,"csv":csv,"out":csv,"min_seq_id": args.cluster_thresh/100,"id_col":"identifier","label_col":"gene","split_col":"test_split","cluster_col":"cluster","annotate_only":False,"cov":0.8,"mmseqs_cmd":"mmseqs","train":0.8,"val":0.1,"test":0.1})
         scripts.cluster_split.main(args=args_cluster_split)
         png_out_pident= os.path.join(args.output_folder,f"{args.prefix}_test_pident_distribution.png")
         scripts.filter_data.get_train_test_alignment(fasta,csv,combined_all_filtered,csv,filter=args.cluster_thresh/100,png_output=png_out_pident)

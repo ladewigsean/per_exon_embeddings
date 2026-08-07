@@ -7,6 +7,8 @@ wandb/
 *.h5
 *_no_filter*
 !.github/issue-assets/*.png
+# Stratified-analysis figures are results, not scratch output -- they go in the thesis.
+!results/*.png
 dataset_creation/json_folder/
 dataset_creation/data/old_outputs/
 dataset_creation/output_entrez/

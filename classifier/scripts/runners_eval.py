@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import sys
+import csv
 import random
 import os
 
@@ -15,7 +16,7 @@ import torch.nn as nn
 from torch.utils.data import DataLoader, Subset
 from lion_pytorch import Lion
 from sklearn.model_selection import StratifiedKFold
-from sklearn.metrics import classification_report,log_loss
+from sklearn.metrics import classification_report,log_loss,accuracy_score
 import matplotlib.pyplot as plt
 
 import wandb
@@ -137,7 +138,7 @@ class MultiClassTrainer:
             # Validation phase: get loss and full report
             self.model.eval()
             with torch.no_grad():
-                val_report, _, _, _ = self.evaluate_on_loader(val_loader, label_encoder)
+                val_report, _, _, _, _ = self.evaluate_on_loader(val_loader, label_encoder)
             
             # extract the F1 score
             current_val_f1 = val_report['macro avg']['f1-score'] 
@@ -195,7 +196,7 @@ class MultiClassTrainer:
             checkpoint= self.load_checkpoint(checkpoint_path)
             print(f"INFO: Loaded best model from checkpoint (val_f1: {checkpoint.get('val_f1_macro', 0):.4f})")
 
-        val_metrics, _, _,_ = self.evaluate_on_loader(val_loader, label_encoder)
+        val_metrics, _, _,_,_ = self.evaluate_on_loader(val_loader, label_encoder)
         
         return val_metrics, last_epoch + 1
     #default _run_epoch function, still includes training = false as option but isnt used
@@ -268,12 +269,31 @@ class MultiClassTrainer:
                 all_preds_raw = torch.vstack([all_preds_raw,outputs.cpu()])
                 all_lengths.extend(lengths.cpu().numpy())
 
+        # labels= is required, not optional: without it sklearn infers the class set from
+        # the data and raises when a class is absent from this split ("Number of classes
+        # does not match size of target_names"). A cluster-aware split routinely leaves a
+        # small class out of val/test, and that would kill the run at the last step.
+        class_names = list(label_encoder.categories_[0])
+        all_class_ids = list(range(len(class_names)))
         report = classification_report(
-            all_labels, all_preds, 
-            target_names=label_encoder.categories_[0], 
-            output_dict=True, 
+            all_labels, all_preds,
+            labels=all_class_ids,
+            target_names=class_names,
+            output_dict=True,
             zero_division=0
-        ) 
+        )
+        # On scikit-learn < 1.5, passing labels= when a class is absent from this split
+        # makes classification_report emit "micro avg" INSTEAD of "accuracy", so
+        # report["accuracy"] raises KeyError deep inside the epoch loop. Restore it
+        # unconditionally; where sklearn already provides it the value is identical.
+        if "accuracy" not in report:
+            report["accuracy"] = float(accuracy_score(all_labels, all_preds))
+        # With labels=, a class absent from this split contributes f1=0 to the macro
+        # average, which the old code could never produce (it raised instead). Record how
+        # many, so a macro-F1 computed over a split with missing classes is not silently
+        # compared against one where every class was present.
+        report["n_classes_zero_support"] = int(
+            sum(1 for c in all_class_ids if c not in set(all_labels)))
         all_labels = np.array(all_labels)
         all_preds = np.array(all_preds)
         all_lengths = np.array(all_lengths)
@@ -285,15 +305,19 @@ class MultiClassTrainer:
         report["bucket_2_val_acc"] = float(np.sum(all_labels[bucket2_ind]==all_preds[bucket2_ind])/len(bucket2_ind)) if len(bucket2_ind)!=0 else np.nan
         report["bucket_3_val_acc"] = float(np.sum(all_labels[bucket3_ind]==all_preds[bucket3_ind])/len(bucket3_ind)) if len(bucket3_ind)!=0 else np.nan
         try:
+            # labels= is needed for the same reason as above: without it log_loss raises
+            # "y_true and y_prob contain different number of classes" whenever a class is
+            # absent from this split, and the bare except below turns that into a silently
+            # missing entropy metric rather than an error anyone would notice.
             report["entropy"] = log_loss(
                 all_labels, self.softmax(all_preds_raw).numpy(),
-                #labels=label_encoder.categories_[0],
+                labels=all_class_ids,
                 #sample_weight=self.class_weights
             )
         except Exception:
             report["entropy"]= None
         #
-        return report,  all_preds, all_ids, all_labels
+        return report,  all_preds, all_ids, all_labels, all_preds_raw
 
 def run_hpo_mode(train_dataset,wandb_project,wandb_entity,hpo_metric="macro avg",n_trials = 50,
                  num_epochs = 100 ,wandb_disable=False,k_folds = 5,max_length = 5000,nn_model = "Transformer",random_seed = 42,embed_size=1024,
@@ -686,15 +710,20 @@ def format_pident_buckets(pred_labels, all_ids, true_labels, df,n_bins = 10):
 def plot_multiclass_confusion_matrix(y_true, y_pred, class_names, save_path):
     from sklearn.metrics import confusion_matrix
     import seaborn as sns
-    cm = confusion_matrix(y_true, y_pred)
-    
+    # labels= keeps the matrix square against class_names even when a class is absent
+    # from this split, which a cluster-aware split makes routine for small classes.
+    cm = confusion_matrix(y_true, y_pred, labels=list(range(len(class_names))))
+
     # Dynamic figure size based on number of classes
     fig_size = max(10, len(class_names) * 0.5)
     plt.figure(figsize=(fig_size, fig_size))
-    
+
     # Use percentage if many classes
-    
-    cm_normalized = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis] * 100
+
+    row_totals = cm.sum(axis=1)[:, np.newaxis]
+    # An absent class has an all-zero row; guard the divide so it shows as 0 rather than
+    # filling the figure with NaNs.
+    cm_normalized = np.divide(cm.astype('float'), np.where(row_totals == 0, 1, row_totals)) * 100
     fmt = '.1f'
     cbar_label = 'Percentage (%)'
     
@@ -713,8 +742,46 @@ def plot_multiclass_confusion_matrix(y_true, y_pred, class_names, save_path):
     plt.savefig(save_path, dpi=100, bbox_inches='tight')
     plt.close()
     print(f"INFO: Confusion matrix saved to {save_path}")
-#prob should add test to train_model function but i like them being callable seperate 
-def test_model(test_dataset, wandb_project,wandb_entity,yaml_file,checkpoint_path,wandb_disable=False,embed_size = 1024,max_length=500,num_epochs=200, nn_model="Transformer",patience = 20):
+
+
+def write_per_example_predictions(path, ids, true_idx, pred_idx, raw_outputs, class_names):
+    """One row per TEST protein: identifier, true/pred label, margin, nll.
+
+    Aggregate metrics cannot answer "where does this arm fail" -- that needs the
+    per-example rows, joined by identifier to each protein's identity to train
+    (dataset_creation/scripts/stratified_analysis.py consumes exactly this schema).
+
+    margin = logit(true class) - best competing logit. Pre-softmax, so it needs no
+    calibration assumption, and it keeps the information that collapsing to 0/1 throws
+    away. Positive means correct; how positive means how comfortably.
+    nll    = -log softmax(true class), the usual per-example loss.
+    """
+    raw = raw_outputs.detach().float().cpu()
+    true_t = torch.as_tensor(np.asarray(true_idx), dtype=torch.long)
+    rows_ix = torch.arange(len(true_t))
+    log_probs = torch.log_softmax(raw, dim=1)
+    nll = (-log_probs[rows_ix, true_t]).numpy()
+    true_logit = raw[rows_ix, true_t]
+    competitors = raw.clone()
+    competitors[rows_ix, true_t] = float("-inf")
+    margin = (true_logit - competitors.max(dim=1).values).numpy()
+
+    parent = os.path.dirname(path)
+    if parent:
+        os.makedirs(parent, exist_ok=True)
+    with open(path, "w", newline="") as fh:
+        writer = csv.writer(fh)
+        writer.writerow(["identifier", "true_label", "pred_label", "correct",
+                         "margin", "nll"])
+        for i, ident in enumerate(ids):
+            t, p = int(true_idx[i]), int(pred_idx[i])
+            writer.writerow([ident, class_names[t], class_names[p], int(t == p),
+                             f"{margin[i]:.6f}", f"{nll[i]:.6f}"])
+    print(f"INFO: per-example test predictions saved to {path}")
+
+
+#prob should add test to train_model function but i like them being callable seperate
+def test_model(test_dataset, wandb_project,wandb_entity,yaml_file,checkpoint_path,wandb_disable=False,embed_size = 1024,max_length=500,num_epochs=200, nn_model="Transformer",patience = 20,pred_out=None,cm_path=None):
     #default args
     args = default_args.copy()
     args.update({
@@ -770,10 +837,20 @@ def test_model(test_dataset, wandb_project,wandb_entity,yaml_file,checkpoint_pat
     trainer = MultiClassTrainer(model_config, cfg.learning_rate, cfg.weight_decay, None,model=nn_model,optimizer=cfg.optimizer,criterion=cfg.criterion,scheduler=cfg.scheduler)
     trainer.load_checkpoint(checkpoint_path)
     label_encoder = test_dataset.label_encoder
-    report, pred_labels, all_ids, true_labels = trainer.evaluate_on_loader(test_loader,label_encoder)
+    report, pred_labels, all_ids, true_labels, raw_outputs = trainer.evaluate_on_loader(test_loader,label_encoder)
     wandb.log({"report": report})
+    if pred_out:
+        write_per_example_predictions(pred_out, all_ids, true_labels, pred_labels,
+                                      raw_outputs, label_encoder.categories_[0])
     #make confusion matrix
-    cm_path = "final_model_confusion_matrix.png"
-    plot_multiclass_confusion_matrix(true_labels, pred_labels, label_encoder.categories_[0], cm_path)
-    wandb.log({"final_confusion_matrix": wandb.Image(cm_path)})
+    # Default name kept for backwards compatibility, but pass cm_path when sweeping arms
+    # or every arm overwrites the previous one's matrix. The plot is cosmetic and runs
+    # last, so a failure here must not discard an evaluation that already succeeded.
+    cm_path = cm_path or "final_model_confusion_matrix.png"
+    try:
+        plot_multiclass_confusion_matrix(true_labels, pred_labels, label_encoder.categories_[0], cm_path)
+        wandb.log({"final_confusion_matrix": wandb.Image(cm_path)})
+    except Exception as exc:
+        print(f"WARNING: confusion matrix failed ({exc}); metrics are unaffected")
     run.finish()
+    return report
