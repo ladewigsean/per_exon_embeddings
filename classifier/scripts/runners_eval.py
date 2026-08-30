@@ -9,7 +9,7 @@ import numpy as np
 import pandas as pd
 from collections import Counter
 import yaml
-
+import time
 import torch
 import torch.nn as nn
 
@@ -318,7 +318,62 @@ class MultiClassTrainer:
             report["entropy"]= None
         #
         return report,  all_preds, all_ids, all_labels, all_preds_raw
-
+    def performance_test(self,dataset,average_of=5,batch_size = 64, checkpoint_path="model_weights/performance.pt"):
+        seq_load_times =[]
+        batches_forward = []
+        batches_backwards = []
+        batches_lengths = []
+        general_time = []
+        torch.save({
+            'model_state_dict': self.model.state_dict(),
+            'optimizer_state_dict': self.optimizer.state_dict(),
+            'scheduler_state_dict': self.scheduler.state_dict(),
+        }, checkpoint_path)
+        for x in range(average_of):
+            self.load_checkpoint(checkpoint_path)
+            data_loader = DataLoader(
+                dataset,
+                batch_size=batch_size,
+                shuffle=True 
+            )
+            start = time.time()
+            for embeddings, labels, ids_batch, lengths in data_loader:
+                embeddings = embeddings.to(self.device)
+                labels = labels.float().to(self.device)
+                lengths = lengths.to(self.device)
+                local_max = torch.max(lengths)
+                embeddings = embeddings[:, :local_max, :]    
+                #actual = torch.argmax(labels, dim=1).cpu().numpy()
+            end = time.time()
+            seq_load_times.append(end-start)
+            start = time.time()
+            for embeddings, labels, _,lengths in tqdm(data_loader):
+                embeddings = embeddings.to(self.device)
+                labels = labels.float().to(self.device)
+                lengths = lengths.to(self.device)
+                # Trim padding to max actual length in this batch
+                local_max = torch.max(lengths)
+                batches_lengths.append(local_max.detach().cpu().numpy())
+                embeddings = embeddings[:,:local_max,:]
+                batch_start = time.time()
+                self.optimizer.zero_grad()
+                with autocast(device_type=self.device.type, enabled=self.use_amp):
+                    outputs = self.model(embeddings,lengths)
+                    loss = self.criterion(outputs, labels)
+                batch_end= time.time()
+                batches_forward.append(batch_end-batch_start)
+                batch_start = time.time()
+                self.scaler.scale(loss).backward()
+                
+                self.scaler.unscale_(self.optimizer)
+                torch.nn.utils.clip_grad_norm_(self.model.parameters(), max_norm=1.0)
+                batch_end = time.time()
+                batches_backwards.append(batch_end-batch_start)
+                self.scaler.step(self.optimizer)
+                self.scaler.update()
+            end = time.time()
+            general_time.append(end-start)
+        return seq_load_times, general_time, batches_lengths,batches_forward, batches_backwards
 def run_hpo_mode(train_dataset,wandb_project,wandb_entity,hpo_metric="macro avg",n_trials = 50,
                  num_epochs = 100 ,wandb_disable=False,k_folds = 5,max_length = 5000,nn_model = "Transformer",random_seed = 42,embed_size=1024,
                  patience = 10,yaml_folder = "yaml",checkpoint_folder="model_weights"):
@@ -546,6 +601,7 @@ def run(test_dataset,wandb_project,wandb_entity,nn_model = "Transformer",
     #torch.backends.cudnn.benchmark = False
 def train_model(train_dataset,val_dataset,test_dataset, wandb_project,wandb_entity,yaml_file,wandb_disable=False,embed_size = 1024,max_length=500,num_epochs=60, nn_model="Transformer",patience = 7,checkpoints_folder="model_weights",n_bins = 10):
     random_seeds = [42,121,1023,4398,5000]
+    #random_seeds = [1,8,14,27,42,60,80,82,102,121,131,145,500,631,1023,1242,1374,2899,4001,4398,5000,6490,12004,12026,31826]
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = False
     #defualt args
@@ -610,6 +666,7 @@ def train_model(train_dataset,val_dataset,test_dataset, wandb_project,wandb_enti
     weights = weights / weights.sum() * len(weights)  # Normalize weights
     best_acc = 0
     best_checkpoint = None
+    best_seed = -1
     seed_accs = []
     seed_macro_f1 = []
     test_seed_accs = []
@@ -653,6 +710,7 @@ def train_model(train_dataset,val_dataset,test_dataset, wandb_project,wandb_enti
         seed_macro_f1.append(val_metrics["macro avg"]["f1-score"])
         if current_acc > best_acc:
             best_acc = current_acc
+            test_seed = random_seed
             if best_checkpoint:
                 if os.path.exists(best_checkpoint):
                     os.remove(best_checkpoint)
@@ -667,9 +725,9 @@ def train_model(train_dataset,val_dataset,test_dataset, wandb_project,wandb_enti
             config=args, 
             reinit='finish_previous', 
             mode="disabled" if wandb_disable else "online",
-            name=trial_name
+            name=f"test_seed_{random_seed}"
         )
-        report, pred_labels, all_ids, true_labels = trainer.evaluate_on_loader(test_loader,train_dataset.label_encoder)
+        report, pred_labels, all_ids, true_labels, raw_output  = trainer.evaluate_on_loader(test_loader,train_dataset.label_encoder)
         wandb.log({"report": report})
         test_seed_accs.append(report["accuracy"])
         test_seed_macro_f1.append(report["macro avg"]["f1-score"])
@@ -678,13 +736,26 @@ def train_model(train_dataset,val_dataset,test_dataset, wandb_project,wandb_enti
         plot_multiclass_confusion_matrix(true_labels, pred_labels, train_dataset.label_encoder.categories_[0], cm_path)
         wandb.log({"final_confusion_matrix": wandb.Image(cm_path)})
         
+        raw = raw_output.detach().float().cpu()
         correct = (np.array(pred_labels) ==  np.array(true_labels)).astype(np.int_)
+        true_t = torch.as_tensor(np.asarray(true_labels), dtype=torch.long)
+        rows_ix = torch.arange(len(true_t))
+        log_probs = torch.log_softmax(raw, dim=1)
+        nll = (-log_probs[rows_ix, true_t]).numpy()
+        true_logit = raw[rows_ix, true_t]
+        competitors = raw.clone()
+        competitors[rows_ix, true_t] = float("-inf")
+        margin = (true_logit - competitors.max(dim=1).values).numpy()
         df.loc[all_ids,"correct"] = list(correct)
         df["correct"] = df["correct"].astype(int)
         if  "train_max_pident" in df:
             print("format pident buckets") 
             test_buckets_pident.append(format_pident_buckets(pred_labels, all_ids, true_labels,df,n_bins))
         df[f"seed_{random_seed}_correct"] = df["correct"]
+        df.loc[all_ids,f"seed_{random_seed}_pred"] = [train_dataset.label_encoder.categories_[0][i] for i in pred_labels]
+        df.loc[all_ids,f"seed_{random_seed}_margin"] = list(margin)
+        df.loc[all_ids,f"seed_{random_seed}_nll"] = list(nll)
+    df.loc[all_ids, "true_label"] = [train_dataset.label_encoder.categories_[0][i] for i in true_labels]
     seed_accs = np.array(seed_accs)
     seed_macro_f1 = np.array(seed_macro_f1)
     print(f"average acc: {seed_accs.mean():.2f} ± {1.96 * seed_accs.std():.2f}")
@@ -695,7 +766,11 @@ def train_model(train_dataset,val_dataset,test_dataset, wandb_project,wandb_enti
     print(f"average macro f1: {test_seed_macro_f1.mean():.2f} ± {1.96 * test_seed_macro_f1.std():.2f}")
     test_buckets_pident = np.array(test_buckets_pident).mean(axis=0)
     print(test_buckets_pident)
-    return best_checkpoint, [seed_accs.mean(),seed_accs.std(),seed_macro_f1.mean(),seed_macro_f1.std()],[test_seed_accs.mean(),test_seed_accs.std(),test_seed_macro_f1.mean(),test_seed_macro_f1.std()],test_buckets_pident,df
+    random_seed = random_seeds[np.argmax(seed_accs)]
+    best_df =df[["true_label",f"seed_{random_seed}_pred",f"seed_{random_seed}_correct",f"seed_{random_seed}_margin", f"seed_{random_seed}_nll","train_max_fident_cov","train_max_pident"]]
+    best_df = best_df.rename(columns={f"seed_{random_seed}_pred": "pred_label", f"seed_{random_seed}_correct": "correct",f"seed_{random_seed}_margin":"margin",f"seed_{random_seed}_nll":"nll"})
+
+    return best_checkpoint, [seed_accs.mean(),seed_accs.std(),seed_macro_f1.mean(),seed_macro_f1.std()],[test_seed_accs.mean(),test_seed_accs.std(),test_seed_macro_f1.mean(),test_seed_macro_f1.std()],test_buckets_pident,df,best_df
 def format_pident_buckets(pred_labels, all_ids, true_labels, df,n_bins = 10):
     
     
@@ -854,3 +929,37 @@ def test_model(test_dataset, wandb_project,wandb_entity,yaml_file,checkpoint_pat
         print(f"WARNING: confusion matrix failed ({exc}); metrics are unaffected")
     run.finish()
     return report
+def performance_test(dataset,yaml_file,embed_size = 1024,max_length=500,average_of=20, nn_model="Transformer",batch_size = 64):
+    args = default_args.copy()
+    
+    #update with hyperparameter values
+    with open(yaml_file, 'r') as stream:
+        data_loaded = yaml.safe_load(stream)
+    
+    args.update(data_loaded)
+    args.update({
+            "embed_size":embed_size,
+            "max_length":  max_length,
+            "nn_model":  nn_model,
+    
+        } ) 
+    #model args
+    model_config = {
+        'num_classes': dataset.num_classes, 
+        'embed_size': args["embed_size"], 
+        'hidden_dim1': args["hidden_dim1"], 
+        'dropout_rate': args["dropout_rate"], 
+        "max_length" : max_length
+        
+    }
+    if nn_model == "Transformer":
+        model_config["nhead"] = args["nhead"]
+        model_config["dim_feedforward"] = args["dim_feedforward"]
+        model_config["num_layers_transformer"] = args["num_layers_transformer"]
+        model_config["use_alibi"] = args["use_alibi"]
+        model_config["pe_factor"] = args["pe_factor"] 
+        model_config["pe_mode"] = args["pe_mode"]
+    elif nn_model == "Pooling":
+            model_config["dc"] = args["dc"]
+    trainer = MultiClassTrainer(model_config, args["learning_rate"], args["weight_decay"], None,model=nn_model,optimizer=args["optimizer"],criterion=args["criterion"],scheduler=args["scheduler"])
+    return trainer.performance_test(dataset,average_of=average_of,batch_size=batch_size)

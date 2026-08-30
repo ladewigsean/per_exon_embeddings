@@ -8,6 +8,7 @@ import scripts.train_val_test_splits
 import scripts.cluster_split
 import scripts.exon_architecture
 import scripts.from_dataset
+import scripts.identity_to_train
 import sys
 #to make personal args namespaces for Ivan scripts
 class Namespace:
@@ -80,8 +81,12 @@ if __name__ == '__main__':
         scripts.grab_data.save_fasta(combined_all_filtered,fasta)
         scripts.grab_data.save_csv_splits(combined_all_filtered,csv )
         #ivan script, prob should just restructure those/ integrate directly instead of writing files, but this is simple
-        args_cluster_split = Namespace({"fasta":fasta,"csv":csv,"out":csv,"min_seq_id": args.cluster_thresh/100,"id_col":"identifier","label_col":"gene","split_col":"test_split","cluster_col":"cluster","annotate_only":False,"cov":0.8,"mmseqs_cmd":"mmseqs","train":0.8,"val":0.1,"test":0.1})
+        args_cluster_split = Namespace({"fasta":fasta,"csv":csv,"out":csv,"min_seq_id": args.cluster_thresh/100,"id_col":"identifier","label_col":"gene","split_col":"test_split","cluster_col":"cluster","annotate_only":False,"cov":0.3,"mmseqs_cmd":"mmseqs","train":0.8,"val":0.1,"test":0.1})
         scripts.cluster_split.main(args=args_cluster_split)
+        png_out_pident= os.path.join(args.output_folder,f"{args.prefix}_test_fident_distribution.png")
+        args_fident = Namespace({"fasta":fasta,"csv":csv,"out":csv,"png":png_out_pident,"id_col":"identifier","split_col":"test_split","query_splits":[1,2],
+                                  "mmseqs_cmd":"mmseqs","workdir":None,"sensitivity":7.5,"evalue": 10000.0,"max_seqs":300})
+        scripts.identity_to_train.main(args_fident)
         png_out_pident= os.path.join(args.output_folder,f"{args.prefix}_test_pident_distribution.png")
         scripts.filter_data.get_train_test_alignment(fasta,csv,combined_all_filtered,csv,filter=args.cluster_thresh/100,png_output=png_out_pident)
         #scripts.train_val_test_splits.split_train_val_test(csv,min_per_class=args.min_per_class)

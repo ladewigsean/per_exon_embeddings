@@ -2,29 +2,29 @@
 Short Report
 **********
 
-NCBIFGF1	3477-->130 	80%	
-NCBIFGF10	1227-->67  	80%	
-NCBIFGF11	1348-->85  	80%	
-NCBIFGF12	3029-->87  	80%	
-NCBIFGF13	3474-->85  	80%	
-NCBIFGF14	3493-->97  	80%	
+NCBIFGF1	3477-->120 	80%	
+NCBIFGF10	1227-->62  	80%	
+NCBIFGF11	1348-->46  	80%	
+NCBIFGF12	3029-->38  	80%	
+NCBIFGF13	3474-->41  	80%	
+NCBIFGF14	3493-->42  	80%	
 NCBIFGF15	2-->2      	80%	X
-NCBIFGF16	1147-->31  	80%	
-NCBIFGF17	1672-->61  	80%	
-NCBIFGF18	1464-->104 	80%	
-NCBIFGF19	945-->148  	80%	
-NCBIFGF2	1203-->117 	80%	
-NCBIFGF20	887-->31   	80%	
+NCBIFGF16	1147-->28  	80%	
+NCBIFGF17	1672-->53  	80%	
+NCBIFGF18	1464-->78  	80%	
+NCBIFGF19	945-->147  	80%	
+NCBIFGF2	1203-->74  	80%	
+NCBIFGF20	887-->24   	80%	
 NCBIFGF21	763-->112  	80%	
-NCBIFGF22	1319-->186 	80%	
-NCBIFGF23	1113-->139 	80%	
-NCBIFGF3	1003-->55  	80%	
-NCBIFGF4	996-->65   	80%	
-NCBIFGF5	1310-->142 	80%	
-NCBIFGF6	1002-->24  	80%	
+NCBIFGF22	1319-->131 	80%	
+NCBIFGF23	1113-->137 	80%	
+NCBIFGF3	1003-->38  	80%	
+NCBIFGF4	996-->44   	80%	
+NCBIFGF5	1310-->117 	80%	
+NCBIFGF6	1002-->21  	80%	
 NCBIFGF7	1536-->28  	80%	
-NCBIFGF8	2011-->70  	80%	
-NCBIFGF9	1193-->138 	80%	
+NCBIFGF8	2011-->56  	80%	
+NCBIFGF9	1193-->96  	80%	
 
 **********************
 Complete Positive Dataset Report
@@ -35,42 +35,42 @@ NCBIFGF1
 ********
 ncbi efetch proteins: 3477
 Proteins after filtering outliers: 2585
-Proteins after clustering: 130
+Proteins after clustering: 120
 
 ********
 NCBIFGF10
 ********
 ncbi efetch proteins: 1227
 Proteins after filtering outliers: 1126
-Proteins after clustering: 67
+Proteins after clustering: 62
 
 ********
 NCBIFGF11
 ********
 ncbi efetch proteins: 1348
 Proteins after filtering outliers: 1247
-Proteins after clustering: 85
+Proteins after clustering: 46
 
 ********
 NCBIFGF12
 ********
 ncbi efetch proteins: 3029
 Proteins after filtering outliers: 2962
-Proteins after clustering: 87
+Proteins after clustering: 38
 
 ********
 NCBIFGF13
 ********
 ncbi efetch proteins: 3474
 Proteins after filtering outliers: 3468
-Proteins after clustering: 85
+Proteins after clustering: 41
 
 ********
 NCBIFGF14
 ********
 ncbi efetch proteins: 3493
 Proteins after filtering outliers: 3438
-Proteins after clustering: 97
+Proteins after clustering: 42
 
 ********
 NCBIFGF15
@@ -85,42 +85,42 @@ NCBIFGF16
 ********
 ncbi efetch proteins: 1147
 Proteins after filtering outliers: 1011
-Proteins after clustering: 31
+Proteins after clustering: 28
 
 ********
 NCBIFGF17
 ********
 ncbi efetch proteins: 1672
 Proteins after filtering outliers: 1462
-Proteins after clustering: 61
+Proteins after clustering: 53
 
 ********
 NCBIFGF18
 ********
 ncbi efetch proteins: 1464
 Proteins after filtering outliers: 1235
-Proteins after clustering: 104
+Proteins after clustering: 78
 
 ********
 NCBIFGF19
 ********
 ncbi efetch proteins: 945
 Proteins after filtering outliers: 827
-Proteins after clustering: 148
+Proteins after clustering: 147
 
 ********
 NCBIFGF2
 ********
 ncbi efetch proteins: 1203
 Proteins after filtering outliers: 1015
-Proteins after clustering: 117
+Proteins after clustering: 74
 
 ********
 NCBIFGF20
 ********
 ncbi efetch proteins: 887
 Proteins after filtering outliers: 730
-Proteins after clustering: 31
+Proteins after clustering: 24
 
 ********
 NCBIFGF21
@@ -134,42 +134,42 @@ NCBIFGF22
 ********
 ncbi efetch proteins: 1319
 Proteins after filtering outliers: 1286
-Proteins after clustering: 186
+Proteins after clustering: 131
 
 ********
 NCBIFGF23
 ********
 ncbi efetch proteins: 1113
 Proteins after filtering outliers: 1043
-Proteins after clustering: 139
+Proteins after clustering: 137
 
 ********
 NCBIFGF3
 ********
 ncbi efetch proteins: 1003
 Proteins after filtering outliers: 936
-Proteins after clustering: 55
+Proteins after clustering: 38
 
 ********
 NCBIFGF4
 ********
 ncbi efetch proteins: 996
 Proteins after filtering outliers: 937
-Proteins after clustering: 65
+Proteins after clustering: 44
 
 ********
 NCBIFGF5
 ********
 ncbi efetch proteins: 1310
 Proteins after filtering outliers: 1274
-Proteins after clustering: 142
+Proteins after clustering: 117
 
 ********
 NCBIFGF6
 ********
 ncbi efetch proteins: 1002
 Proteins after filtering outliers: 824
-Proteins after clustering: 24
+Proteins after clustering: 21
 
 ********
 NCBIFGF7
@@ -183,11 +183,11 @@ NCBIFGF8
 ********
 ncbi efetch proteins: 2011
 Proteins after filtering outliers: 1851
-Proteins after clustering: 70
+Proteins after clustering: 56
 
 ********
 NCBIFGF9
 ********
 ncbi efetch proteins: 1193
 Proteins after filtering outliers: 996
-Proteins after clustering: 138
+Proteins after clustering: 96

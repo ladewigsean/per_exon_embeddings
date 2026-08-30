@@ -380,9 +380,9 @@ def parse_symbol_grab(file,gene, file_format="fasta",check_symbol= True):
             seq_record.id = re.search(r"\|([^\|]*)\|",seq_record.id).group(1)
         if "_" not in seq_record.id:
             continue
-        if len(str(seq_record.seq)) <20:
-            print(seq_record.id)
+        if len(str(seq_record.seq)) <20 or len(str(seq_record.seq)) >3000:
             continue 
+
         parsed_data[seq_record.id] = {'meta': [seq_record.id, gene, species], 'seq': str(seq_record.seq), 'full_header': seq_record.description}
     return parsed_data 
 

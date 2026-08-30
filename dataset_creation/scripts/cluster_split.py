@@ -54,23 +54,22 @@ def run_mmseqs_cluster(fasta_path, min_seq_id, cov, mmseqs_cmd, workdir):
     tmp = os.path.join(workdir, "tmp")
     cmd = mmseqs_cmd.split() + [
         "easy-cluster", fasta_path, out_prefix, tmp,
-        "--min-seq-id", str(min_seq_id)
-    ]#, "-c", str(cov), "--cov-mode", "0",
+        "--min-seq-id", str(min_seq_id), "-c", str(cov), "--cov-mode", "0",
+    ]
     print("running:", " ".join(cmd))
     subprocess.run(cmd, check=True,stdout=subprocess.DEVNULL,stderr=subprocess.STDOUT)
-    clusters_dict = defaultdict(list)
-    
+    member_to_cluster = {}
     with open(out_prefix + "_cluster.tsv") as fh:
         for line in fh:
             parts = line.rstrip("\n").split("\t")
             if len(parts) < 2:
                 continue
             rep, member = parts[0], parts[1]
-            clusters_dict[rep].append(member)
-    return clusters_dict
+            member_to_cluster[member] = rep
+    return member_to_cluster
 
 
-def assign_clusters_stratified(clusters, fracs=(0.8, 0.1, 0.1)):
+def assign_clusters_stratified(cluster_to_items, labels_by_id, fracs=(0.8, 0.1, 0.1)):
     """Greedy, label-stratified assignment of WHOLE clusters to 3 splits.
 
     cluster_to_items : {cluster_id: [identifier, ...]}
@@ -85,43 +84,56 @@ def assign_clusters_stratified(clusters, fracs=(0.8, 0.1, 0.1)):
     splits by `fracs` while keeping clusters intact.
     """
     # Per-cluster label composition, size and primary label.
-    cluster_size = {c:len(clusters[c]) for c in clusters}
-    
-    
-    assign = {}
-    
-    clusters_list = sorted(clusters, key=lambda c: -cluster_size[c])
-    
-    total = sum(cluster_size[c] for c in clusters_list)
-    targets = [total * f for f in fracs]
-    counts = [0, 0, 0]
-    for c in clusters_list:
-        # most-owed split for this label (largest target deficit)
-        s = max(range(3), key=lambda i: targets[i] - counts[i])
-        assign[c] = s
-        counts[s] += cluster_size[c]
+    cluster_label_counts, cluster_size, cluster_primary = {}, {}, {}
+    for c, items in cluster_to_items.items():
+        cc = defaultdict(int)
+        for i in items:
+            lab = labels_by_id.get(i)
+            if lab is not None:
+                cc[lab] += 1
+        cluster_label_counts[c] = cc
+        cluster_size[c] = sum(cc.values())
+        cluster_primary[c] = max(cc, key=cc.get) if cc else None
 
-    # Rescue: the greedy fills train first, so a label with few clusters can leave
-    # val/test EMPTY -- which silently makes that class untestable and craters
-    # macro-F1. Force val(1) then test(2) to receive a cluster when enough exist.
-    in_split = lambda s: [c for c in clusters_list if assign[c] == s]
-    for tgt in (1, 2):
-        if not in_split(tgt) and len(in_split(0)) >= 2:
-            donor = min(in_split(0), key=lambda c: cluster_size[c])
-            assign[donor] = tgt
-    reached = {assign[c] for c in clusters_list}
-    if reached != {0, 1, 2}:
-        print(f"  NOTE: label reached splits {sorted(reached)} from "
-                f"{len(clusters_list)} clusters -- too few for 3-way coverage; consider a "
-                f"coarser --min-seq-id or dropping this class.")
+    by_label = defaultdict(list)
+    for c, lab in cluster_primary.items():
+        if lab is not None:
+            by_label[lab].append(c)
+
+    assign = {}
+    for lab, clusters in by_label.items():
+        clusters = sorted(clusters, key=lambda c: -cluster_size[c])
+        total = sum(cluster_size[c] for c in clusters)
+        targets = [total * f for f in fracs]
+        counts = [0, 0, 0]
+        for c in clusters:
+            # most-owed split for this label (largest target deficit)
+            s = max(range(3), key=lambda i: targets[i] - counts[i])
+            assign[c] = s
+            counts[s] += cluster_size[c]
+
+        # Rescue: the greedy fills train first, so a label with few clusters can leave
+        # val/test EMPTY -- which silently makes that class untestable and craters
+        # macro-F1. Force val(1) then test(2) to receive a cluster when enough exist.
+        in_split = lambda s: [c for c in clusters if assign[c] == s]
+        for tgt in (1, 2):
+            if not in_split(tgt) and len(in_split(0)) >= 2:
+                donor = min(in_split(0), key=lambda c: cluster_size[c])
+                assign[donor] = tgt
+        reached = {assign[c] for c in clusters}
+        if reached != {0, 1, 2}:
+            print(f"  NOTE: label {lab!r} reached splits {sorted(reached)} from "
+                  f"{len(clusters)} clusters -- too few for 3-way coverage; consider a "
+                  f"coarser --min-seq-id or dropping this class.")
 
     id_to_split = {}
-    for c, items in clusters.items():
+    for c, items in cluster_to_items.items():
         s = assign.get(c)
         if s is None:
             continue
         for i in items:
-            id_to_split[i] = s
+            if i in labels_by_id:
+                id_to_split[i] = s
     return id_to_split
 
 
@@ -135,30 +147,15 @@ def split_report(df, label_col="gene", split_col="test_split"):
             tab[s] = 0
     return tab[["train", "val", "test"]]
 
-def subset_fasta(subset,fasta,output):
-    from Bio import SeqIO
-    subset_seqs = [] 
-    
-    
-    for record in SeqIO.parse(fasta, "fasta"):
-        if str(record.id) in subset:
-            subset_seqs.append(record)
-        
-        
-    SeqIO.write(subset_seqs,output,"fasta")
-    
+
 def main(args):
     import pandas as pd
     df = pd.read_csv(args.csv, dtype={args.id_col: str})
     for col in (args.id_col, args.label_col):
         if col not in df.columns:
             raise SystemExit(f"column '{col}' not in {args.csv} (have: {list(df.columns)})")
-    
-    unique_labels = set(df[args.label_col])
-    dfs = []
-    clusters_total = {}
-    ids_total = {}
-    
+    labels_by_id = dict(zip(df[args.id_col], df[args.label_col]))
+
     with tempfile.TemporaryDirectory() as workdir:
         member_to_cluster = run_mmseqs_cluster(
             args.fasta, args.min_seq_id, args.cov, args.mmseqs_cmd, workdir)
@@ -225,9 +222,10 @@ def main(args):
     to_remove = list(splits[splits["test"] == 0].index)
     print(f"removing following classes:\n{"\n".join(to_remove)}")
     df = df[~df[args.label_col].isin(to_remove)]
+    
     # Leakage guarantee: every cluster lands in exactly one split (by construction).
-    spans = sum(len({ids_total[i] for i in items if i in ids_total}) > 1
-                for items in clusters_total.values())
+    spans = sum(len({id_to_split[i] for i in items if i in id_to_split}) > 1
+                for items in cluster_to_items.values())
     print(f"\nclusters spanning >1 split: {spans}  (must be 0)")
 
     df.to_csv(args.out, index=False)

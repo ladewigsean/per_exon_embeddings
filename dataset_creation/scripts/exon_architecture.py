@@ -188,7 +188,7 @@ def main(args):
               f"(architecture<->label link broken).")
     with h5py.File(args.out_h5, "w") as h5:
         for ident, vec in zip(ids, standardized):
-            h5.create_dataset(name=ident, data=vec.astype(np.float32))
+            h5.create_dataset(name=ident, data=vec.astype(np.float16))
     print(f"wrote {args.out_h5}  ({len(ids)} vectors, dim {matrix.shape[1]})")
 
     if args.scaler:
@@ -198,7 +198,7 @@ def main(args):
         print(f"wrote {args.scaler}")
 
     if args.concat:
-        arch = {i: v.astype(np.float32) for i, v in zip(ids, standardized)}
+        arch = {i: v.astype(np.float16) for i, v in zip(ids, standardized)}
         n = 0
         with h5py.File(args.concat, "r") as src, h5py.File(args.concat_out, "w") as dst:
             for ident in src.keys():

@@ -1,0 +1,372 @@
+**********
+Short Report
+**********
+
+ZNF10	309-->5    	85%	X
+ZNF143	651-->4    	85%	X
+ZNF146	445-->1    	85%	X
+ZNF148	882-->14   	85%	X
+ZNF165	138-->7    	85%	X
+ZNF19	207-->10   	85%	X
+ZNF202	441-->6    	85%	X
+ZNF217	561-->65   	85%	
+ZNF219	507-->10   	85%	X
+ZNF22	145-->6    	85%	X
+ZNF239	395-->10   	85%	X
+ZNF24	182-->1    	85%	X
+ZNF259	897-->399  	85%	
+ZNF267	30-->2     	85%	X
+ZNF268	190-->25   	85%	
+ZNF281	161-->7    	85%	X
+ZNF3	548-->10   	85%	X
+ZNF300	246-->5    	85%	X
+ZNF318	210-->51   	85%	
+ZNF330	442-->9    	85%	X
+ZNF33b	55-->10    	85%	X
+ZNF34	346-->7    	85%	X
+ZNF346	576-->44   	85%	
+ZNF35	173-->1    	85%	X
+ZNF350	116-->8    	85%	X
+ZNF365	273-->33   	85%	
+ZNF366	331-->30   	85%	
+ZNF384	1171-->19  	85%	X
+ZNF41	506-->29   	85%	
+ZNF423	603-->4    	85%	X
+ZNF43	39-->1     	85%	X
+ZNF451	561-->59   	85%	
+ZNF452	60-->3     	85%	X
+ZNF471	95-->7     	85%	X
+ZNF593	849-->299  	85%	
+ZNF638	530-->32   	85%	
+ZNF644	1673-->15  	85%	X
+ZNF649	7-->2      	85%	X
+ZNF655	662-->25   	85%	
+ZNF7	631-->13   	85%	X
+ZNF74	147-->21   	85%	
+ZNF804a	158-->46   	85%	
+
+**********************
+Complete Positive Dataset Report
+**********************
+
+********
+ZNF10
+********
+ncbi efetch proteins: 309
+Proteins after filtering outliers: 208
+Proteins after clustering: 5
+Not enough data in class, the entire class will be removed from final data(5 < 20)
+
+********
+ZNF143
+********
+ncbi efetch proteins: 651
+Proteins after filtering outliers: 490
+Proteins after clustering: 4
+Not enough data in class, the entire class will be removed from final data(4 < 20)
+
+********
+ZNF146
+********
+ncbi efetch proteins: 445
+Proteins after filtering outliers: 429
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+ZNF148
+********
+ncbi efetch proteins: 882
+Proteins after filtering outliers: 624
+Proteins after clustering: 14
+Not enough data in class, the entire class will be removed from final data(14 < 20)
+
+********
+ZNF165
+********
+ncbi efetch proteins: 138
+Proteins after filtering outliers: 116
+Proteins after clustering: 7
+Not enough data in class, the entire class will be removed from final data(7 < 20)
+
+********
+ZNF19
+********
+ncbi efetch proteins: 207
+Proteins after filtering outliers: 202
+Proteins after clustering: 10
+Not enough data in class, the entire class will be removed from final data(10 < 20)
+
+********
+ZNF202
+********
+ncbi efetch proteins: 441
+Proteins after filtering outliers: 352
+Proteins after clustering: 6
+Not enough data in class, the entire class will be removed from final data(6 < 20)
+
+********
+ZNF217
+********
+ncbi efetch proteins: 561
+Proteins after filtering outliers: 556
+Proteins after clustering: 65
+
+********
+ZNF219
+********
+ncbi efetch proteins: 507
+Proteins after filtering outliers: 421
+Proteins after clustering: 10
+Not enough data in class, the entire class will be removed from final data(10 < 20)
+
+********
+ZNF22
+********
+ncbi efetch proteins: 145
+Proteins after filtering outliers: 145
+Proteins after clustering: 6
+Not enough data in class, the entire class will be removed from final data(6 < 20)
+
+********
+ZNF239
+********
+ncbi efetch proteins: 395
+Proteins after filtering outliers: 377
+Proteins after clustering: 10
+Not enough data in class, the entire class will be removed from final data(10 < 20)
+
+********
+ZNF24
+********
+ncbi efetch proteins: 182
+Proteins after filtering outliers: 154
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+ZNF259
+********
+ncbi efetch proteins: 897
+Proteins after filtering outliers: 873
+Proteins after clustering: 399
+
+********
+ZNF267
+********
+ncbi efetch proteins: 30
+Proteins after filtering outliers: 30
+Proteins after clustering: 2
+Not enough data in class, the entire class will be removed from final data(2 < 20)
+
+********
+ZNF268
+********
+ncbi efetch proteins: 190
+Proteins after filtering outliers: 190
+Proteins after clustering: 25
+
+********
+ZNF281
+********
+ncbi efetch proteins: 161
+Proteins after filtering outliers: 140
+Proteins after clustering: 7
+Not enough data in class, the entire class will be removed from final data(7 < 20)
+
+********
+ZNF3
+********
+ncbi efetch proteins: 548
+Proteins after filtering outliers: 523
+Proteins after clustering: 10
+Not enough data in class, the entire class will be removed from final data(10 < 20)
+
+********
+ZNF300
+********
+ncbi efetch proteins: 246
+Proteins after filtering outliers: 225
+Proteins after clustering: 5
+Not enough data in class, the entire class will be removed from final data(5 < 20)
+
+********
+ZNF318
+********
+ncbi efetch proteins: 210
+Proteins after filtering outliers: 207
+Proteins after clustering: 51
+
+********
+ZNF330
+********
+ncbi efetch proteins: 442
+Proteins after filtering outliers: 349
+Proteins after clustering: 9
+Not enough data in class, the entire class will be removed from final data(9 < 20)
+
+********
+ZNF33b
+********
+ncbi efetch proteins: 55
+Proteins after filtering outliers: 47
+Proteins after clustering: 10
+Not enough data in class, the entire class will be removed from final data(10 < 20)
+
+********
+ZNF34
+********
+ncbi efetch proteins: 346
+Proteins after filtering outliers: 286
+Proteins after clustering: 7
+Not enough data in class, the entire class will be removed from final data(7 < 20)
+
+********
+ZNF346
+********
+ncbi efetch proteins: 576
+Proteins after filtering outliers: 572
+Proteins after clustering: 44
+
+********
+ZNF35
+********
+ncbi efetch proteins: 173
+Proteins after filtering outliers: 109
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+ZNF350
+********
+ncbi efetch proteins: 116
+Proteins after filtering outliers: 79
+Proteins after clustering: 8
+Not enough data in class, the entire class will be removed from final data(8 < 20)
+
+********
+ZNF365
+********
+ncbi efetch proteins: 273
+Proteins after filtering outliers: 251
+Proteins after clustering: 33
+
+********
+ZNF366
+********
+ncbi efetch proteins: 331
+Proteins after filtering outliers: 291
+Proteins after clustering: 30
+
+********
+ZNF384
+********
+ncbi efetch proteins: 1171
+Proteins after filtering outliers: 1171
+Proteins after clustering: 19
+Not enough data in class, the entire class will be removed from final data(19 < 20)
+
+********
+ZNF41
+********
+ncbi efetch proteins: 506
+Proteins after filtering outliers: 506
+Proteins after clustering: 29
+
+********
+ZNF423
+********
+ncbi efetch proteins: 603
+Proteins after filtering outliers: 544
+Proteins after clustering: 4
+Not enough data in class, the entire class will be removed from final data(4 < 20)
+
+********
+ZNF43
+********
+ncbi efetch proteins: 39
+Proteins after filtering outliers: 26
+Proteins after clustering: 1
+Not enough data in class, the entire class will be removed from final data(1 < 20)
+
+********
+ZNF451
+********
+ncbi efetch proteins: 561
+Proteins after filtering outliers: 497
+Proteins after clustering: 59
+
+********
+ZNF452
+********
+ncbi efetch proteins: 60
+Proteins after filtering outliers: 53
+Proteins after clustering: 3
+Not enough data in class, the entire class will be removed from final data(3 < 20)
+
+********
+ZNF471
+********
+ncbi efetch proteins: 95
+Proteins after filtering outliers: 94
+Proteins after clustering: 7
+Not enough data in class, the entire class will be removed from final data(7 < 20)
+
+********
+ZNF593
+********
+ncbi efetch proteins: 849
+Proteins after filtering outliers: 828
+Proteins after clustering: 299
+
+********
+ZNF638
+********
+ncbi efetch proteins: 530
+Proteins after filtering outliers: 457
+Proteins after clustering: 32
+
+********
+ZNF644
+********
+ncbi efetch proteins: 1673
+Proteins after filtering outliers: 1367
+Proteins after clustering: 15
+Not enough data in class, the entire class will be removed from final data(15 < 20)
+
+********
+ZNF649
+********
+ncbi efetch proteins: 7
+Proteins after filtering outliers: 6
+Proteins after clustering: 2
+Not enough data in class, the entire class will be removed from final data(2 < 20)
+
+********
+ZNF655
+********
+ncbi efetch proteins: 662
+Proteins after filtering outliers: 662
+Proteins after clustering: 25
+
+********
+ZNF7
+********
+ncbi efetch proteins: 631
+Proteins after filtering outliers: 623
+Proteins after clustering: 13
+Not enough data in class, the entire class will be removed from final data(13 < 20)
+
+********
+ZNF74
+********
+ncbi efetch proteins: 147
+Proteins after filtering outliers: 145
+Proteins after clustering: 21
+
+********
+ZNF804a
+********
+ncbi efetch proteins: 158
+Proteins after filtering outliers: 139
+Proteins after clustering: 46

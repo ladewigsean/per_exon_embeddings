@@ -2,79 +2,80 @@
 Short Report
 **********
 
-LAE_1	270-->142  	80%	
-LAE_2	2638-->1194	80%	
-LAE_3	248-->125  	80%	
-LAE_4	77-->43    	80%	
-LAE_5	149-->38   	80%	
-LAE_6	56-->37    	80%	
-LAE_AWA_WDS	193-->92   	80%	
-LAE_Dehydrin	351-->181  	80%	
-LAE_SMP	373-->199  	80%	
+LEA_1	270-->107  	70%	
+LEA_2	2638-->794 	70%	
+LEA_3	247-->99   	70%	
+LEA_4	77-->36    	70%	
+LEA_5	149-->7    	70%	X
+LEA_6	56-->29    	70%	
+LEA_AWA_WDS	193-->52   	70%	
+LEA_Dehydrin	351-->146  	70%	
+LEA_SMP	373-->128  	70%	
 
 **********************
 Complete Positive Dataset Report
 **********************
 
 ********
-LAE_1
+LEA_1
 ********
 ncbi efetch proteins: 270
 Proteins after filtering outliers: 270
-Proteins after clustering: 142
+Proteins after clustering: 107
 
 ********
-LAE_2
+LEA_2
 ********
 ncbi efetch proteins: 2638
 Proteins after filtering outliers: 2602
-Proteins after clustering: 1194
+Proteins after clustering: 794
 
 ********
-LAE_3
+LEA_3
 ********
-ncbi efetch proteins: 248
-Proteins after filtering outliers: 237
-Proteins after clustering: 125
+ncbi efetch proteins: 247
+Proteins after filtering outliers: 236
+Proteins after clustering: 99
 
 ********
-LAE_4
+LEA_4
 ********
 ncbi efetch proteins: 77
 Proteins after filtering outliers: 76
-Proteins after clustering: 43
+Proteins after clustering: 36
 
 ********
-LAE_5
+LEA_5
 ********
 ncbi efetch proteins: 149
 Proteins after filtering outliers: 143
-Proteins after clustering: 38
+Proteins after clustering: 7
+Not enough data in class, the entire class will be removed from final data(7 < 20)
 
 ********
-LAE_6
+LEA_6
 ********
 ncbi efetch proteins: 56
 Proteins after filtering outliers: 55
-Proteins after clustering: 37
+Proteins after clustering: 29
 
 ********
-LAE_AWA_WDS
+LEA_AWA_WDS
 ********
 ncbi efetch proteins: 193
 Proteins after filtering outliers: 188
-Proteins after clustering: 92
+Proteins after clustering: 52
 
 ********
-LAE_Dehydrin
+LEA_Dehydrin
 ********
 ncbi efetch proteins: 351
 Proteins after filtering outliers: 329
-Proteins after clustering: 181
+Proteins after clustering: 146
 
 ********
-LAE_SMP
+LEA_SMP
 ********
 ncbi efetch proteins: 373
 Proteins after filtering outliers: 373
-Proteins after clustering: 199
+Proteins after clustering: 128

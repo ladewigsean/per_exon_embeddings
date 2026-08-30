@@ -60,7 +60,8 @@ import os
 import shutil
 import subprocess
 import tempfile
-
+import seaborn as sns
+import matplotlib.pyplot as plt
 # pandas is imported inside main() so the pure logic stays importable with only the
 # stdlib -- same convention as cluster_split.py / exon_architecture.py.
 
@@ -151,7 +152,7 @@ def run_mmseqs_search(query_fasta, train_fasta, mmseqs_cmd, workdir,
 def aggregate_best_hits(rows, query_ids):
     """Per query: best raw identity, best coverage-weighted identity, hit count.
 
-    Returns {query_id: {"train_max_pident", "train_max_pident_cov", "train_best_hit",
+    Returns {query_id: {"train_max_fident", "train_max_fident_cov", "train_best_hit",
                         "train_n_hits"}} covering EVERY id in `query_ids`, so a query
     with no hit is present with zeros rather than missing (see module docstring).
 
@@ -159,7 +160,7 @@ def aggregate_best_hits(rows, query_ids):
     highest identity*coverage hit need not be the same alignment, and reporting the raw
     identity of the coverage-best hit would understate leakage.
     """
-    agg = {q: {"train_max_pident": 0.0, "train_max_pident_cov": 0.0,
+    agg = {q: {"train_max_fident": 0.0, "train_max_fident_cov": 0.0,
                "train_best_hit": "", "train_n_hits": 0} for q in query_ids}
     for r in rows:
         q = r["query"]
@@ -167,18 +168,18 @@ def aggregate_best_hits(rows, query_ids):
             continue
         a = agg[q]
         a["train_n_hits"] += 1
-        if r["fident"] > a["train_max_pident"]:
-            a["train_max_pident"] = r["fident"]
+        if r["fident"] > a["train_max_fident"]:
+            a["train_max_fident"] = r["fident"]
             a["train_best_hit"] = r["target"]
         cov_weighted = r["fident"] * r["qcov"]
-        if cov_weighted > a["train_max_pident_cov"]:
-            a["train_max_pident_cov"] = cov_weighted
+        if cov_weighted > a["train_max_fident_cov"]:
+            a["train_max_fident_cov"] = cov_weighted
     return agg
 
 
-def summarise(agg, label="query"):
+def summarise(agg,png_out = None, label="query"):
     """Print the distribution that decides whether the split is usable."""
-    vals = sorted(a["train_max_pident"] for a in agg.values())
+    vals = sorted(a["train_max_fident"] for a in agg.values())
     n = len(vals)
     if n == 0:
         print(f"no {label} sequences")
@@ -187,13 +188,18 @@ def summarise(agg, label="query"):
         return vals[min(n - 1, int(p * n))]
     no_hit = sum(1 for a in agg.values() if a["train_n_hits"] == 0)
     print(f"\n{label}: n={n}  no-hit-to-train={no_hit} ({100.0 * no_hit / n:.1f} %)")
-    print(f"  train_max_pident  min {vals[0]:.3f}  p25 {pct(.25):.3f}  median "
+    print(f"  train_max_fident  min {vals[0]:.3f}  p25 {pct(.25):.3f}  median "
           f"{pct(.5):.3f}  p75 {pct(.75):.3f}  p95 {pct(.95):.3f}  max {vals[-1]:.3f}")
     for thr in (0.3, 0.4, 0.5):
         over = sum(1 for v in vals if v > thr)
         print(f"  above {thr:.0%} identity to train: {over} ({100.0 * over / n:.1f} %)")
-
-
+    vals = sorted(a["train_max_fident_cov"] for a in agg.values())    
+    if not png_out is None:
+        plt.close()
+        sns.set_theme(rc={'figure.figsize':(40,8)})
+        sns.set_style('whitegrid')
+        ax = sns.boxplot(x= vals)
+        plt.savefig(png_out)
 @contextlib.contextmanager
 def _scratch_dir(workdir):
     """Yield a scratch directory: `workdir` if given, else a self-cleaning temp dir.
@@ -241,13 +247,13 @@ def main(args):
 
     for split in args.query_splits:
         sub = {i: a for i, a in agg.items() if id_to_split.get(i) == split}
-        summarise(sub, label=f"split {split}")
+        summarise(sub,args.png, label=f"split {split}")
 
     # A protein with no SEQUENCE in the FASTA is not the same as a protein with no HIT.
     # Giving both 0.0 would inject a CSV/FASTA mismatch straight into the lowest identity
     # bin, which the analysis reads as "the hardest and most valuable test cases". Absent
     # proteins get NaN, which the analysis drops.
-    for col in ("train_max_pident", "train_max_pident_cov", "train_best_hit",
+    for col in ("train_max_fident", "train_max_fident_cov", "train_best_hit",
                 "train_n_hits"):
         if col == "train_best_hit":
             df[col] = [agg.get(i, {}).get(col, "") for i in df[args.id_col]]
@@ -259,14 +265,14 @@ def main(args):
     # Train rows have no meaningful identity-to-train; blank them so they cannot be
     # silently plotted as if they were held-out points.
     is_query = df[args.split_col].isin(args.query_splits)
-    for col in ("train_max_pident", "train_max_pident_cov", "train_n_hits"):
+    for col in ("train_max_fident", "train_max_fident_cov", "train_n_hits"):
         df.loc[~is_query, col] = float("nan")
 
     out_dir = os.path.dirname(args.out)
     if out_dir:
         os.makedirs(out_dir, exist_ok=True)
     df.to_csv(args.out, index=False)
-    print(f"\nwrote {args.out}  (+ train_max_pident, train_max_pident_cov, "
+    print(f"\nwrote {args.out}  (+ train_max_fident, train_max_fident_cov, "
           f"train_best_hit, train_n_hits)")
 
 
@@ -276,6 +282,7 @@ if __name__ == "__main__":
     p.add_argument("--fasta", required=True, help="All sequences (ids = CSV identifiers).")
     p.add_argument("--csv", required=True, help="Metadata CSV with identifier + test_split.")
     p.add_argument("--out", required=True, help="Output CSV (input + identity columns).")
+    p.add_argument("--png", required=True, help="Output PNG of distribution")
     p.add_argument("--id-col", default="identifier")
     p.add_argument("--split-col", default="test_split")
     p.add_argument("--query-splits", type=int, nargs="+", default=[1, 2],
@@ -289,3 +296,4 @@ if __name__ == "__main__":
     p.add_argument("--evalue", type=float, default=10000.0, help="mmseqs -e (default 10000).")
     p.add_argument("--max-seqs", type=int, default=300, help="mmseqs --max-seqs (default 300).")
     main(p.parse_args())
+    main()

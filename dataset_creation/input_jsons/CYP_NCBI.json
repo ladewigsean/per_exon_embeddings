@@ -1,0 +1,28 @@
+{
+	"main_family":"cytochrome P450",
+	"query":"f\"(({main_family} {family_name}{subfamily}*[Gene/Protein Name]) OR (({main_family}[Gene/Protein Name]) AND (subfamily {subfamily}[Gene/Protein Name] AND family {family_name}[Gene/Protein Name]) ) )\"", 
+	"prefix":"CYP",
+	"additional":"AND animals{porgn}",
+	"families":
+	[
+
+		{"family":"1", "subfamily":{"A":null,"B":null,"C":null,"D":null}},
+		{"family":"2", "subfamily":{"A":null,"AB":null,"AC":null,"AF":null,"AH":null,"AR":null,"B":null,"C":null,"D":null,"E":null,"F":null,"G":null,"J":null,"R":null,"S":null,"T":null,"U":null,"W":null}},
+		{"family":"3", "subfamily":{"A":null}},
+		{"family":"4", "subfamily":{"A":null,"B":null,"F":null,"V":null,"X":null,"Z":null}},
+		{"family":"5", "subfamily":{"A":null}},
+		{"family":"7", "subfamily":{"A":null,"B":null}},
+		{"family":"8", "subfamily":{"A":null,"B":null}},
+		{"family":"11", "subfamily":{"A":null,"B":null}},
+		{"family":"17", "subfamily":{"A":null}},
+		{"family":"19", "subfamily":{"A":null}},
+		{"family":"20", "subfamily":{"A":null}},
+		{"family":"21", "subfamily":{"A":null}},
+		{"family":"24", "subfamily":{"A":null}},
+		{"family":"26", "subfamily":{"A":null,"B":null,"C":null}},
+		{"family":"27", "subfamily":{"A":null,"B":null,"C":null}},
+		{"family":"39", "subfamily":{"A":null}},
+		{"family":"46", "subfamily":{"A":null}},
+		{"family":"51", "subfamily":{"A":null}}
+	]
+}

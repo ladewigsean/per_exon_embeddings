@@ -86,10 +86,10 @@ class NominalClassifier(nn.Module):
         self.network = nn.Sequential(
             #nn.Dropout(dropout_rate),
             nn.Linear(embed_size, hidden_dim1),
+            nn.BatchNorm1d(hidden_dim1),
             nn.ReLU(),
             nn.Dropout(dropout_rate),
-            nn.BatchNorm1d(hidden_dim1),
-
+            
             nn.Linear(hidden_dim1, num_classes),
             
         )
