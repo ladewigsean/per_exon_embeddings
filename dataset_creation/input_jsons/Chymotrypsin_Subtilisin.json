@@ -1,9 +1,0 @@
-{
-	"main_family":"Chymotrypsin_Subtilisin","query":"f\"({subfamily}[Gene/Protein Name] AND animals[porgn]) NOt inhibitor \"", "prefix":"",
-	"families":
-	[
-		{"family":"", "subfamily":["chymotrypsin"]},
-		{"family":"", "subfamily":["Subtilisin"]},
-		{"family":"plant_", "subfamily":["Subtilisin"], "custom_query":"f\"({subfamily}[Gene/Protein Name] AND \\\"green plants\\\"[porgn]) NOt inhibitor \""}
-	]
-}
